@@ -33,7 +33,7 @@ $ yarn run dev
 
 #### How to deploy
 
-1. 
+1. Get the latest version
 
 ```
 $ git clone https://github.com/xugy0926/community.git
