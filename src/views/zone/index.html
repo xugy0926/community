@@ -1,0 +1,199 @@
+<div class="row">
+  <div class="col-md-3">
+    <div class="ui vertical menu">
+      <div class="item"
+        v-for="(index, item) in zones"
+        v-bind:class="{active: index === selectedZoneIndex}"
+        v-on:click="onSelectedZone(index)">
+        {{ item.value }}
+      </div>
+      <div class="item" v-on:click="onShowAddZoneDialog">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 添加大板块
+      </div>
+    </div>
+  </div>
+  <div class="col-md-9">
+    <div class="ui segment" v-if="zones[selectedZoneIndex]">
+      <div class="card-header">
+        板块/<strong>{{zones[selectedZoneIndex].value}}</strong>/属性
+      </div>
+      <div class="ui form">
+        <div class="field">
+          <label for="zoneId">Id</label>
+          <input type="text" class="form-control" id="zoneId" v-cloak disabled v-model="zones[selectedZoneIndex]._id">
+        </div>
+        <div class="field">
+          <label for="zoneKey1">Key</label>
+          <input type="text" class="form-control" id="zoneKey1" v-cloak v-model="zones[selectedZoneIndex].key">
+        </div>
+        <div class="field">
+          <label for="zoneValue1">值</label>
+          <input type="text" class="form-control" id="zoneValue1" v-cloak v-model="zones[selectedZoneIndex].value">
+        </div>
+        <div class="field">
+          <label for="zoneWeight">权值</label>
+          <input type="text" class="form-control" id="zoneWeight" v-cloak v-model="zones[selectedZoneIndex].weight">
+        </div>
+
+        <div class="field">
+          <label>菜单是否有效</label>
+          <div>
+            <input type="radio" id="zoneEnable1" v-bind:value="true" v-cloak v-model="zones[selectedZoneIndex].enable">
+            <label for="zoneEnable1">有效</label>
+            <input type="radio" id="zoneEnable2" v-bind:value="false" v-cloak v-model="zones[selectedZoneIndex].enable">
+            <label for="zoneEnable2">无效</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>内容是否要评审</label>
+          <div>
+            <input type="radio" id="mustReview1" v-bind:value="true" v-cloak v-model="zones[selectedZoneIndex].mustReview">
+            <label for="mustReview1">需要评审</label>
+            <input type="radio" id="mustReview2" v-bind:value="false" v-cloak v-model="zones[selectedZoneIndex].mustReview">
+            <label for="mustReview2">不需要评审</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="href">板块使用的模板（目前只有两种模板：club, recommend）</label>
+          <input type="text" class="form-control" id="template" v-cloak v-model="zones[selectedZoneIndex].template">
+        </div>
+
+        <div class="field">
+          <label for="icon">板块ICON (ex: <a target="_blank" href="http://fontawesome.dashgame.com/">http://fontawesome.dashgame.com/</a>)</label>
+          <input type="text" class="form-control" id="icon" v-cloak v-model="zones[selectedZoneIndex].icon">
+        </div>
+
+        <div class="field">
+          <label for="icon">创建内容的文案 (ex: 发帖)</label>
+          <input type="text" class="form-control" id="icon" v-cloak v-model="zones[selectedZoneIndex].createText">
+        </div>
+
+        <div class="ui button" v-on:click="onUpdateZone">更新</div>
+        <div class="ui button" v-on:click="onDeleteZone">删除</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 添加大板块dialog -->
+  <div class="ui modal">
+    <div class="header">
+      添加大板块
+    </div>
+    <div class="content">
+      <div class='ui form'>
+        <div class="field">
+          <label>Key</label>
+          <input id='zoneKey' name='zoneKey' size='30' type='text' v-model="zoneKey"/>
+        </div>
+        <div class="field">
+          <label>Value</label>
+          <input id='zoneValue' name='zoneValue' size='30' type='text' v-model="zoneValue"/>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <div class="ui button">取消</div>
+      <div class="ui button" v-on:click="onAddZone">添加</div>
+    </div>
+  </div>
+</div>
+<script>
+  var vue = new Vue({
+    el: '#app',
+    data: {
+      // zones
+      zones: [],
+      selectedZoneIndex: 0,
+      zoneKey: '',
+      zoneValue: '',
+      // others
+      errorMsg: '',
+      successMsg: ''
+    },
+    methods: {
+      getZones: function() {
+        axios.get(dataPrefix + '/zones')
+          .then(function(response) {
+            let result = response.data;
+            if (result.err) vue.errorMsg = err;
+            else {
+              result.zones.forEach(function(item) {
+                item.active = false;
+              });
+
+              vue.zones = result.zones;
+              vue.onSelectedZone(0);
+            }
+          })
+          .catch(function(err) {
+            console.log(err);
+          })
+      },
+      onSelectedZone: function (index) {
+        vue.selectedZoneIndex = index;
+      },
+      onUpdateZone: function () {
+        axios.patch(dataPrefix + '/zones/' + vue.zones[vue.selectedZoneIndex]._id, vue.zones[vue.selectedZoneIndex])
+          .then(function(response) {
+            let result = reponse.data;
+            vue.resetMessage();
+            if(result.err) vue.errorMsg = result.err;
+            else {
+              vue.successMsg = result.msg;
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+      },
+      onDeleteZone: function() {
+        axios.delete(dataPrefix + '/zones/' + vue.zones[vue.selectedZoneIndex]._id)
+          .then(function(response) {
+            let result = response.data;
+            if (result.err) vue.errorMsg = result.err;
+            else {
+              vue.resetMessage();
+              vue.zones.$remove(vue.zones[vue.selectedZoneIndex]);
+              vue.onSelectedZone(0);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+      },
+      onShowAddZoneDialog: function() {
+        $('.ui.modal').modal('show');
+      },
+      onAddZone: function() {
+        $('.ui.modal').modal('hide');
+        axios.post(dataPrefix + '/zones',
+          {
+            key: vue.zoneKey,
+            value: vue.zoneValue,
+          })
+          .then(function(response) {
+            let result = response.data;
+            vue.resetMessage();
+            if (result.err) vue.errorMsg = result.err;
+            else {
+              vue.successMsg = 'success'
+              vue.zones.push(result.data);
+              vue.zonekey = '';
+              vue.zoneValue = '';
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+      },
+      resetMessage: function() {
+        vue.errorMsg = '';
+        vue.successMsg = '';
+      }
+    }
+  });
+
+  vue.getZones();
+</script>

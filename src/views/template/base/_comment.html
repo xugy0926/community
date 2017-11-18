@@ -1,0 +1,60 @@
+<div class="ui comments comments-x">
+  <div class="comment" v-for="item in replies">
+    <a class="avatar">
+      <img v-bind:src="item.author.avatar">
+    </a>
+    <% if(isMobile ) { %>
+    <div class="content-x">
+    <% } else { %>
+    <div class="content">
+    <% } %>
+      <div class="ui top attached header">
+        <a>{{ item.author.loginname }}</a> <span class="date">{{ item.updateAtAge }}</span>
+      </div>
+      <div class="ui attached segment">
+        <div class='<%=config.mdType%> reply-content'>
+          {{{ item.htmlContent }}}
+        </div>
+      </div>
+      <div class="ui bottom attached menu">
+        <div class="ui main menu message-actions">
+          <a class="popup icon item"  v-if="item.ups.length > 0" v-on:click="onUpReply(item._id)">
+            <i class="red heart icon"></i>　{{ item.ups.length }}
+          </a>
+          <a class="popup icon item" v-else v-on:click="onUpReply(item._id)">
+            <i class="heart icon"></i>
+          </a>
+          <a class="popup icon item" v-on:click="onReplyReply(item._id, item.author.loginname)"><i class="reply icon"></i></a>
+          <a class="popup icon item" v-if="userId === item.author._id.toString()" v-on:click="onEditReply(item._id, item.content)"><i class="edit icon"></i></a>
+          <a class="popup icon item" v-if="userId === item.author._id.toString()" v-on:click="onDeleteReply(item._id)"><i class="delete icon"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <% if (typeof(currentUser) !== 'undefined' && currentUser) { %>
+  <div class="comment">
+    <a class="avatar">
+      <img src=<%= currentUser.avatar %>>
+    </a>
+    <% if(isMobile ) { %>
+    <div class="content-x">
+    <% } else { %>
+    <div class="content">
+    <% } %>
+      <div class="ui segment">
+        <div class="ui reply form">
+          <div class="field">
+            <textarea class='form-control' rows='4' v-model="content"></textarea>
+          </div>
+          <div class="ui blue labeled submit icon button" v-on:click="onReply"><i class="icon edit"></i> 添加评论 </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <% } else { %>
+  <div class="ui center aligned basic segment">
+    <div class="ui horizontal divider">登录后才能评论</div>
+    <a class="ui red labeled icon button" href="/signin">登录<i class="github icon"></i> </a>
+  </div>
+  <% } %>
+</div>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- partial('base/_head') %>
+<body>
+  <% if(isMobile) { %>
+  <div class="ui fixed inverted main menu">
+    <div class="ui container">
+      <a class="launch icon item top-slider-button"><i class="content icon"></i></a>
+      <div class="item">
+        <a href="#" onClick="javascript :history.back(-1);"><i class="chevron circle left icon"></i></a>
+      </div>
+    </div>
+  </div>
+  <div class="ui sidebar inverted vertical menu slider-x">
+    <%- partial('base/_slider') %>
+  </div>
+  <% } %>
+  <div id="app">
+    <div class="d-none d-lg-inline">
+      <%- partial('base/_menu') %>
+    </div>
+    <% if(isMobile) { %>
+    <div class="ui main container-x">
+    <% } else { %>
+    <div class="ui main container">
+    <% } %>
+    <%- body %>
+    </div>
+    <%- partial('base/_footer') %>
+  </div>
+</body>
+<script>
+$( ".top-slider-button" ).click(function() {
+  $('.ui.sidebar.slider-x').sidebar('toggle');
+});
+</script>
+</html>

@@ -1,0 +1,8 @@
+<% if(currentUser && (currentUser.isAdmin || currentUser.isSupport)) { %>
+<div class="ui simple dropdown item">
+  CMS <i class="dropdown icon"></i>
+  <div class="menu">
+    <%- partial('./_cms_menu_items') %>
+  </div>
+</div>
+<% } %>

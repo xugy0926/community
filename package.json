@@ -1,0 +1,116 @@
+{
+  "name": "community",
+  "author": "xugaoyang <xugaoyang01@gmail.com>",
+  "version": "0.0.1",
+  "private": true,
+  "engines": {
+    "node": ">=8.9.1",
+    "npm": ">=5.5.1"
+  },
+  "scripts": {
+    "prestart": "npm run -s build",
+    "start": "NODE_ENV=production PORT=80 node ./dist/server.js",
+    "dev": "nodemon ./src/server.js --exec \"node -r dotenv/config -r babel-register\"",
+    "clean": "rimraf dist",
+    "build": "npm run clean && mkdir -p dist && babel src -s -D -d dist --ignore src/public && cp -r src/public dist",
+    "test": "jest --watch",
+    "lint": "esw -w src test",
+    "config": "cp src/config/index.default.js src/config/index.pro.js"
+  },
+  "dependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-runtime": "^6.26.0",
+    "bcrypt": "^1.0.3",
+    "body-parser": "~1.17.1",
+    "bytes": "^3.0.0",
+    "connect-busboy": "0.0.2",
+    "connect-mongo": "^1.3.2",
+    "cookie-parser": "~1.4.3",
+    "cors": "^2.8.4",
+    "debug": "~2.6.3",
+    "ejs": "~2.5.6",
+    "ejs-mate": "^2.3.0",
+    "express": "~4.15.2",
+    "express-session": "^1.15.5",
+    "express-useragent": "^1.0.8",
+    "highlight.js": "^9.12.0",
+    "ioredis": "^3.1.4",
+    "jsonfile": "3.0.1",
+    "lodash": "^4.0.0",
+    "log4js": "^2.3.3",
+    "markdown-it": "^8.4.0",
+    "markdown-it-block-image": "0.0.3",
+    "markdown-it-center-text": "^1.0.3",
+    "markdown-it-container": "^2.0.0",
+    "markdown-it-emoji": "^1.4.0",
+    "markdown-it-html5-embed": "^0.4.0",
+    "markdown-it-underline": "^1.0.1",
+    "method-override": "^2.3.10",
+    "moment": "^2.18.1",
+    "mongoose": "^4.11.11",
+    "morgan": "~1.8.1",
+    "multiline": "^1.0.2",
+    "nodemailer": "^4.1.0",
+    "nodemailer-smtp-transport": "^2.7.4",
+    "passport": "^0.4.0",
+    "passport-github": "^1.1.0",
+    "pm2": "^2.7.2",
+    "qn": "^1.3.0",
+    "rimraf": "^2.6.1",
+    "serve-favicon": "~2.4.2",
+    "shelljs": "^0.7.8",
+    "superagent": "^3.6.0",
+    "utility": "^1.12.0",
+    "uuid": "^3.1.0",
+    "validator": "^8.2.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-jest": "^20.0.0",
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-plugin-transform-es2015-destructuring": "^6.23.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-es2016": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-register": "^6.24.1",
+    "dotenv": "^4.0.0",
+    "eslint": "^3.19.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jest": "^20.0.0",
+    "eslint-watch": "^3.1.0",
+    "jest": "^20.0.0",
+    "nodemon": "^1.11.0",
+    "supertest": "^3.0.0"
+  },
+  "eslintConfig": {
+    "plugins": [
+      "import",
+      "promise",
+      "jest"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 2017,
+      "sourceType": "module"
+    },
+    "env": {
+      "node": true,
+      "jest": true
+    },
+    "extends": [
+      "eslint:recommended"
+    ],
+    "rules": {
+      "jest/no-focused-tests": 2,
+      "jest/no-identical-title": 2
+    }
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "globals": {
+      "__DEV__": true
+    }
+  }
+}

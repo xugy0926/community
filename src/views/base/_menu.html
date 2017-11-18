@@ -1,0 +1,23 @@
+<div id="menu" class="ui fixed inverted menu">
+  <div class="ui container">
+    <a href="/" class="header item">
+      小白学编程
+    </a>
+    <a href="/" class="item">首页</a>
+    <%
+    if (typeof(navs) !== 'undefined') {
+      navs.forEach(function(item) {
+    %>
+      <% if (typeof(selectedKey) !== 'undefined' && item.key === selectedKey) { %>
+        <a class="item" href="<%= apiPrefix.page %>/<%- item.href %>"><span><%- item.value %></span></a>
+      <% } else { %>
+      <a class="item" href="<%= apiPrefix.page %>/<%- item.href %>"><span><%- item.value %></span></a>
+      <% } %>
+    <% })} %>
+
+    <div class="right item item-x">
+      <%- partial('../menu/_cms_menu') %>
+      <%- partial('../menu/_user_menu') %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,58 @@
+<div class="ui grid">
+  <div class="sixteen wide mobile sixteen wide tablet sixteen wide computer column">
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        <div class="sixteen wide column">
+          <div class="ui buttons">
+            <button class="ui button" v-if="newest">最新</button>
+            <button class="ui button" v-else v-on:click="onNewest">最新</button>
+            <button class="ui button" v-if="good">精华</button>
+            <button class="ui button" v-else v-on:click="onGood">精华</button>
+          </div>
+          <%- createPanel %>
+        </div>
+        <%- partial('../base/posts') %>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(document).ready(function() {
+    let zoneId = '<%= zoneId %>';
+    let type = '<%= typeof(type) !== "undefined" && type ? type : "newest" %>';
+
+    let lily = new Lily();
+
+    let vm = new Vue({
+      el: '#app',
+      data: Object.assign({good: false}, lily.options()),
+      methods: {
+        onNewest () {
+          this.posts = [];
+          this.good = false;
+          getPosts(this, 1, this.good);
+        },
+        onGood () {
+          this.posts = [];
+          this.good = true;
+          getPosts(this, 1, this.good);
+        }
+      }
+    });
+
+    let scrollButtom = new ScrollButtom();
+    scrollButtom.init(function() {
+      console.log(vm);
+      if ((vm.currentPage < vm.pages) && vm.canLoadData) {
+        vm.canLoadData = false;
+        getPosts(vm, vm.currentPage + 1, vm.good);
+      }
+    });
+
+    function getPosts(vm2, page, good) {
+      lily.getPosts(vm2, zoneId, page, good);
+    }
+
+    getPosts(vm, vm.currentPage, vm.good);
+  });
+</script>

@@ -1,0 +1,30 @@
+<div class="ui">
+  <div class="ui top attached header">
+    <%= title %>
+  </div>
+  <div class='ui attached segment'>
+    <% if (posts && posts.length > 0) { %>
+    <div class="ui relaxed divided list">
+      <% posts.forEach(function(item) { %>
+      <div class="item">
+        <div class="right floated content">
+          <i class="comment outline icon"></i><%= item.replyCount %>
+        </div>
+        <img class="ui avatar image" src="<%= item.author.avatar %>">
+        <div class="content">
+          <a class="header" href="/post/<%= item._id %>"><%= item.title %></a>
+          <div class="description">
+            updated  <%= item.updateAtAgo() %>  by <%= item.author ? item.author.loginname : '未知' %>
+          </div>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+    <% } else { %>
+    无数据
+    <% } %>
+  </div>
+  <div class="ui bottom attached message">
+    <a href="/zone?zoneId=<%= zone._id %>">更多...</a>
+  </div>
+</div>

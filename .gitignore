@@ -57,3 +57,11 @@ typings/
 # dotenv environment variables file
 .env
 
+# dist
+dist
+
+# upload
+upload
+
+# config file
+src/config/index.pro.js

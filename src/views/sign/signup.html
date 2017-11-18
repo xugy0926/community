@@ -1,0 +1,42 @@
+<div class="row justify-content-center">
+  <div class="col-md-4">
+      <%- partial('../_notice') %>
+    <div class="ui three segment">
+      <h1 class="display-3">Hello, world!</h1>
+      <p class="lead">欢迎来到小白学编程社区，</p>
+      <hr class="my-4">
+      <div class="ui form">
+        <div class='field'>
+          <input v-model='loginname' size='30' type='text' value='' placeholder="账号"/>
+        </div>
+
+        <div class='field'>
+          <input v-model='password' size='30' type='password' placeholder="密码"/>
+        </div>
+
+        <div class='field'>
+          <input v-model='rePassword' size='30' type='password' placeholder="重复密码"/>
+        </div>
+
+        <div class='field'>
+          <input v-model='email' size='30' type='text' placeholder="电子邮件"/>
+        </div>
+        <button class='ui primary button' v-on:click="submit">注册</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  var lily = new Lily();
+
+  var vue = new Vue({
+    el: '#app',
+    data: Object.assign({}, lily.options()),
+    methods: {
+      submit() {
+        lily.signup(this);
+      }
+    }
+  });
+
+</script>

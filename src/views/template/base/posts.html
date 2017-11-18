@@ -1,0 +1,16 @@
+<div class='ui red segment'>
+  <div class="ui relaxed divided list">
+    <div class="item" v-for="item in posts">
+      <div class="right floated content">
+        <i class="comment outline icon"></i>{{ item.replyCount }}
+      </div>
+      <img class="ui avatar image" v-bind:src="item.author.avatar">
+      <div class="content">
+        <a class="header" href="/post/{{ item._id }}">{{ item.title }}</a>
+        <div class="description">
+          update {{ item.updateAtAgo }} by {{ item.author.loginname }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

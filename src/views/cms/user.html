@@ -1,0 +1,102 @@
+<div class="ui red segment">
+  <table class="ui celled table">
+    <thead>
+      <tr>
+        <th>姓名</th>
+        <th>邮箱</th>
+        <th>手机</th>
+        <th>激活</th>
+        <th>角色</th>
+        <th>注册时间</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-if="users.length > 0" v-for="(index, item) in users">
+        <td style="width: 80px">
+          <a>{{item.loginname}}</a>
+        </td>
+        <td>
+          <a>{{item.email}}</a>
+        </td>
+        <td>{{ item.mobile }}</td>
+        <td>{{ item.active }}</td>
+        <td>{{ item.role }}</td>
+        <td>{{ item.createAt }}</td>
+        <td>
+          <div class="ui compact menu">
+            <div class="ui simple dropdown item">操作
+              <i class="dropdown icon"></i>
+              <div class="menu">
+                <div class="item"><a v-on:click="onUpdateRole(index, 'A')">管理员</a></div>
+                <div class="item"><a v-on:click="onUpdateRole(index, 'S')">运营</a></div>
+                <div class="item"><a v-on:click="onUpdateRole(index, 'N')">普通用户</a></div>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p v-show="users.length < 1">无数据</p>
+</div>
+<script>
+  let vm = new Vue({
+    el: '#app',
+    data: {
+      pageTitle: '用户列表',
+      users: [],
+      currentPage: 1,
+      pages: 1,
+      canLoadData: true,
+      errorMsg: '',
+      successMsg: ''
+    },
+    methods: {
+      fetchUsers: function(currentPage) {
+        axios.post(dataPrefix + '/user/list',
+          {
+            _csrf: $('#_csrf').val(),
+            currentPage: currentPage
+          })
+          .then(function(response) {
+            vm.canLoadData = true;
+            let result = response.data;
+            result.users.forEach(function(item) {
+              vm.users.push(item)
+            })
+
+            vm.pages = result.pages;
+            vm.currentPage = result.currentPage;
+          })
+          .catch(function(err) {
+            console.log(err);
+          })
+      },
+      onUpdateRole: function(index, role) {
+        axios.post(dataPrefix + '/user/updateRole',
+          {
+            _csrf: $('#_csrf').val(),
+            role: role,
+            userId: vm.users[index]._id
+          })
+          .then(function(response) {
+            vm.users[index].role = role;
+          })
+          .catch(function(err) {
+            console.log(err);
+          })
+      }
+    }
+  });
+
+  var scrollButtom = new ScrollButtom();
+  scrollButtom.init(function() {
+    if (vm.currentPage < vm.pages && vm.canLoadData) {
+      vm.canLoadData = false;
+      vm.fetchUsers(vm.currentPage + 1);
+    }
+  });
+
+  vm.fetchUsers(vm.currentPage);
+</script>

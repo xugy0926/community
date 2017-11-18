@@ -1,0 +1,42 @@
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="ui grid">
+      <div class="sixteen wide column">
+        <%- createPanel %>
+      </div>
+    </div>
+    <%- partial('./posts') %>
+  </div>
+</div>
+<script>
+  $(document).ready(function() {
+    var zoneId = '<%= zoneId %>';
+    var type = '<%= typeof(type) !== "undefined" && type ? type : "newest" %>';
+
+    var lily = new Lily();
+
+    var vm = new Vue({
+      el: '#app',
+      data: Object.assign({}, lily.options()),
+      methods: {
+        onUpPost (id) {
+          lily.upPost(this, id);
+        }
+      }
+    });
+
+    var scrollButtom = new ScrollButtom();
+    scrollButtom.init(function() {
+      if (vm.currentPage < vm.pages && vm.canLoadData) {
+        vm.canLoadData = false;
+        getPosts(vm, vm.currentPage + 1, vm.good);
+      }
+    });
+
+    function getPosts(page, page, good) {
+      lily.getPosts(vm, zoneId, page, good);
+    }
+
+    getPosts(vm.currentPage, 1, false);
+  });
+</script>

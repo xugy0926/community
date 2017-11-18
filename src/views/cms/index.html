@@ -1,0 +1,259 @@
+<div class="ui">
+  <%- partial('../_notice') %>
+  <ul class="ui buttons">
+    <button class="ui button" 
+      v-for="(index, item) in zones" 
+      v-on:click="onSelectedZone(index)">{{ item.value }}
+    </button>
+    <button target="_blank" class="ui button" v-on:click="createPost">添加文章</button>
+  </ul>
+  <div class="ui red segment">
+    <h3 class="ui top attached label">
+      {{ pageTitle }}
+    </h3>
+    <table class="ui celled table">
+      <thead>
+        <tr>
+          <th>作者</th>
+          <th>标题</th>
+          <th>时间</th>
+          <th>状态</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-if="posts.length > 0" v-for="(index, item) in posts">
+          <td>
+            <a href="<%= apiPrefix.page %>/user/{{ item.author._id}}/info">{{item.author.loginname}}</a>
+          </td>
+          <td>
+            <a href='<%= apiPrefix.page %>/post/{{item._id}}?zoneId={{selectedZone._id}}'
+              target="_blank">{{item.title}}</a>
+          </td>
+          <td>{{ item.createAtAgo }}</td>
+          <td class="opts">
+            <a class="active" v-if="item.top"><i class="fa fa-hand-o-up"></i></a>
+            <a v-else><i class="fa fa-hand-o-up"></i></a>
+            <a class="active" v-if="item.good"><i class="fa fa-star-o"></i></a>
+            <a v-else><i class="fa fa-star-o"></i></a>
+            <a class="active" v-if="item.lock"><i class="fa fa-lock"></i></a>
+            <a v-else><i class="fa fa-unlock"></i></a>
+            <a class="active" v-if="item.status"><i class="fa fa-eye"></i></a>
+            <a v-else><i class="fa fa-eye-slash"></i></a>
+          </td>
+          <td>
+            <div class="ui compact menu">
+              <div class="ui simple dropdown item">操作
+                <i class="dropdown icon"></i>
+                <div class="menu">
+                  <div class="item"><a href='<%= apiPrefix.page %>/edit/{{item._id}}'
+                      target="_blank">编辑</a></div>
+                  <div class="item" v-if="item.top"><a v-on:click="onTop(index, false)">取消置顶</a></div>
+                  <div class="item" v-else><a v-on:click="onTop(index, true)">置顶</a></div>
+                  <div class="item" v-if="item.good"><a v-on:click="onGood(index, false)">取消精华</a></div>
+                  <div class="item" v-else><a v-on:click="onGood(index, true)">精华</a></div>
+                  <div class="item" v-if="item.lock"><a v-on:click="onLock(index, false)">取消锁定</a></div>
+                  <div class="item" v-else><a v-on:click="onLock(index, false)">锁定</a></div>
+                  <div class="item" v-on:click="onDelete(index)"><a >删除</a></div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p v-show="posts.length < 1">无数据</p>
+  </div>
+</div>
+<script>
+  var vue = new Vue({
+    el: '#app',
+    data: {
+      pageTitle: '全部',
+      zones: [],
+      selectedZone: '',
+      posts: [],
+      authors: [],
+      currentPage: 1,
+      pages: 1,
+      canLoadData: true,
+      errorMsg: '',
+      successMsg: ''
+    },
+    methods: {
+      getZones: function () {
+        axios.get(dataPrefix + '/zones')
+          .then(function (response) {
+            let result = response.data;
+            if (result.err) vue.errorMsg = result.err;
+            else {
+              result.zones.forEach(function (item) {
+                item.active = false;
+              });
+
+              result.zones[0].active = true;
+
+              vue.zones = result.zones;
+              vue.selectedZone = vue.zones[0];
+            }
+          });
+      },
+      onSelectedZone: function (index) {
+        vue.zones.forEach(function (item) {
+          item.active = false;
+        });
+
+        vue.currentPage = 1;
+        vue.pages = 1;
+
+        vue.zones[index].active = true;
+
+        vue.selectedZone = vue.zones[index];
+        vue.getData(vue.currentPage);
+      },
+      getData: function (nextPage) {
+        if (nextPage > vue.pages) return;
+
+        axios.get(dataPrefix + '/posts',
+          {
+            params: {
+              zoneId: vue.selectedZone._id,
+              currentPage: nextPage, 
+              status: 'all'
+            }
+          })
+          .then(function (response) {
+            let result = response.data;
+            vue.canLoadData = true;
+
+            if (result.err) {
+              vue.errorMsg = result.err;
+              return;
+            }
+
+            vue.authors = result.authors;
+            vue.currentPage = result.currentPage;
+            vue.pages = result.pages;
+            vue.updatePosts(result.posts);
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+      },
+      updatePosts: function (posts) {
+        moment.locale('zh-cn')
+        posts.forEach(function (item) {
+          item.createAtAgo = moment(item.updateAt).fromNow()
+        });
+
+        posts.forEach(function (item) {
+          var index = _.findIndex(vue.authors, function (i) {
+            return i._id === item.authorId
+          })
+
+          if (index >= 0) {
+            item.author = vue.authors[index]
+          }
+        })
+
+        posts.forEach(function (item) {
+          vue.posts.push(item)
+        });
+      },
+      onTop: function (index) {
+        axios.patch(dataPrefix + '/posts/' + vue.posts[index]._id + '/top', { _csrf: $('#_csrf').val() })
+          .then(function (response) {
+            let result = response.data;
+            if (result.err) {
+              vue.errorMsg = result.err;
+            } else {
+              vue.successMsg = result.msg;
+              vue.posts[index].top = !vue.posts[index].top;
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+
+      },
+      onGood: function (index) {
+        axios.patch(dataPrefix + '/posts/' + vue.posts[index]._id + '/good', { _csrf: $('#_csrf').val() })
+          .then(function (response) {
+            let result = response.data;
+            if (result.err) {
+              vue.errorMsg = result.err;
+            } else {
+              vue.successMsg = result.msg;
+              vue.posts[index].good = !vue.posts[index].good;
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      },
+      onLock: function (index) {
+        axios.patch(dataPrefix + '/posts/' + vue.posts[index]._id + '/lock', { _csrf: $('#_csrf').val() })
+          .then(function (response) {
+            let result = response.data;
+            if (result.err) {
+              vue.errorMsg = result.err;
+            } else {
+              vue.successMsg = result.msg;
+              vue.posts[index].lock = !vue.posts[index].lock;
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      },
+      onDelete: function (index) {
+        if (confirm('确定要删除吗？')) {
+          axios.delete(dataPrefix + '/posts/', 
+            { 
+              params: {
+                id: vue.posts[index]._id
+              }
+            })
+            .then(function (response) {
+              let result = response.data;
+              if (result.err) {
+                vue.errorMsg = result.err;
+              } else {
+                vue.posts.$remove(vue.posts[index]);
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+            })
+        }
+      },
+      onReviewed: function (index, postId, status) {
+        axios.post(dataPrefix + '/post/' + postId + '/status', { status: status })
+          .then(function (response) {
+            let result = response.data;
+            if (result.err) {
+              return vue.errorMsg = result.err;
+            }
+            vue.posts[index].status = status;
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+      },
+      createPost: function () {
+        location.href = '/new?zoneId=' + vue.selectedZone._id
+      }
+    }
+  });
+
+  var scrollButtom = new ScrollButtom();
+  scrollButtom.init(function () {
+    if (vue.currentPage < vue.pages && vue.canLoadData) {
+      vue.canLoadData = false;
+      vue.getData(vue.currentPage + 1);
+    }
+  });
+
+  vue.getZones();
+
+</script>

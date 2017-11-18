@@ -1,0 +1,11 @@
+<% if(profile) { %>
+  <div class="ui red segment">
+    <% if(profile.isHtml) { %>
+    <%- profile.guide %>
+    <% } else { %>
+    <div class='<%=config.mdType%>-body'>
+    <%- markdown(profile.guide) %>
+    </div>
+    <% } %>
+  </div>
+<% } %>

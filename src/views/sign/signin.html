@@ -1,0 +1,47 @@
+<div class="row justify-content-center">
+  <div class="col-md-4">
+    <%- partial('../_notice') %>
+    <div class="ui three segment">
+      <h1 class="display-3">Hello, world!</h1>
+      <p class="lead">欢迎来到小白学编程社区，</p>
+      <hr class="my-4">
+      <div class="ui form">
+        <% if(signinValid) { %>
+        <div class="field">
+          <label>账号</label>
+          <input size='30' type='text' v-model="username"/>
+        </div>
+        <div class='field'>
+          <label>密码</label>
+          <input size='30' type='password' v-model="password"/>
+        </div>
+        <input type='hidden' name='_csrf' value='<%= csrf %>'/>
+        <button class='ui primary button' v-on:click="submit">登录</button>
+        <% } %>
+        <a class="ui github button" href="/auth/github">
+          <i class="github icon"></i>
+          GitHub登录
+        </a>
+        <% if(signinValid) { %>
+        <div class="ui container">
+          <a href='<%= apiPrefix.page %>/password/searchFromMail'>通过邮箱找密码?</a>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  let lily = new Lily();
+  var vm = new Vue({
+    el: '#app',
+    data: Object.assign({}, lily.options()),
+    methods: {
+      submit () {
+        lily.signin(this);
+      }
+    }
+  });
+
+</script>
+  

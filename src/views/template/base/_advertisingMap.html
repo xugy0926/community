@@ -1,0 +1,9 @@
+<div class="ui segment">
+  <div class="ui top attached label">宣传图</div>
+  <div class="ui buttons">
+    <button class="ui button" v-on:click="onDeleteImage">删除</button>
+    <div class="or"></div>
+    <button class="ui positive button" v-on:click="onUploadImage">上传</button>
+  </div>
+  <img class="ui centered medium image" v-bind:src="advertisingMap">
+</div>

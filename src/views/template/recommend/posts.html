@@ -1,0 +1,26 @@
+<div class='ui feed'>
+  <div class="event" v-for="item in posts">
+    <div class="label">
+      <img v-bind:src="item.author.avatar">
+    </div>
+    <div class="content">
+      <div class="summary">
+        <a>{{ item.author.loginname }}</a> 推荐
+        <div class="date">
+          {{ item.updateAtAgo }}
+        </div>
+      </div>
+      <div class="extra text">
+        {{ item.description }}
+      </div>
+      <div class="extra text">
+        <a href="{{ item.recommendUrl }}" target="_blank">{{ item.title }}</a>
+      </div>
+      <div class="meta">
+        <a class="like">
+          <i class="like icon" v-on:click="onUpPost(item._id)"></i> {{ item.ups.length }} Likes
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

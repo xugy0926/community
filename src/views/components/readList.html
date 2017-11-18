@@ -1,0 +1,16 @@
+<div class="ui comments" v-for="(index, item) in read.messages">
+  <div class="comment">
+    <div class="content">
+      <div class="metadata">
+        <span class="date">{{item.updateAt}}</span>
+      </div>
+      <div class="text">
+        <span v-if="item.type === 'reply'"><a href="#">{{authors[item.authorId].loginname}}</a> 回复了 <a href="/post/{{item.postId}}">{{posts[item.postId].title}}</a></span>
+        <span v-if="item.type === 'reply2'"><a href="#">{{authors[item.authorId].loginname}}</a> 回复了 <a href="/post/{{item.postId}}">{{posts[item.postId].title}} 的评论</a></span>
+        <span v-if="item.type === 'follow'"><a href="#">{{authors[item.authorId].loginname}}</a> follow 了你</span>
+        <span v-if="item.type === 'at'"><a href="#">{{authors[item.authorId].loginname}}</a> @ 了你</span>
+      </div>
+    </div>
+  </div>
+</div>
+

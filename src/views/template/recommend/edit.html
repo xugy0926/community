@@ -1,0 +1,80 @@
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <input type="hidden" id="zone-object" value="<%= typeof(zone) !== 'undefined' ? JSON.stringify(zone) : '' %>"/>
+    <div class="ui segment">
+      <div class="ui top attached label">{{ pageTitle }}</div>
+      <div class="ui form">
+        <div class="field">
+          <input autofocus type="text" placeholder="推荐的文章标题" v-model="title">
+        </div>
+  
+        <div class="field">
+          <input autofocus type="text" placeholder="推荐的文章链接" v-model="recommendUrl">
+        </div>
+        <div class="field">
+          <textarea v-model="description" placeholder="推荐语"></textarea>
+        </div>
+        <button class='ui button' v-on:click="onPublished">发布</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var zoneObjString = $('#zone-object').val();
+  var zoneObj = zoneObjString ? JSON.parse(zoneObjString) : {};
+  var postId = '<%= postId %>';
+  let lily = new Lily();
+
+  var vm = new Vue({
+    el: '#app',
+    data: Object.assign({
+      zoneObj: {},
+      pageTitle: '编辑',
+    }, lily.options()),
+    methods: {
+      getPost: function() {
+        axios.get(dataPrefix + '/posts/' + vm.postId)
+          .then(function (response) {
+            let result = response.data;
+            console.log(result);
+            if (result.err) {
+              vm.errorMsg = result.err;
+            } else {
+              vm.title = result.data.title || '';
+              vm.description = result.data.description || '';
+              vm.recommendUrl = result.data.recommendUrl || '';
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+      },
+      onPublished: function() {
+        axios.patch(dataPrefix + '/posts/' + vm.postId, {
+          zoneId: vm.zoneObj._id,
+          title: vm.title,
+          recommendUrl: vm.recommendUrl,
+          description: vm.description,
+          status: 'P'})
+          .then(function (response) {
+            let result = response.data;
+            if (result.err) {
+              vue.errorMsg = result.err;
+            } else {
+              location.href = result.url;
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+      },
+    }
+  });
+
+  vm.zoneObj = zoneObj;
+  vm.postId = postId;
+
+  vm.getPost();
+</script>
+  
