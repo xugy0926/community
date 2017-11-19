@@ -120,9 +120,6 @@ export const create = post => {
   data.mdType = post.mdType;
   data.tags = post.tags;
   data.isHtml = post.isHtml;
-  post.audioList.forEach(function(item) {
-    data.audioList.push(item);
-  });
   return data.save();
 };
 
