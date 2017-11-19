@@ -68,18 +68,14 @@
         axios.get(dataPrefix + '/posts/' + vue.postId)
           .then(function (response) {
             let result = response.data;
-            if (result.err) {
-              vue.errorMsg = result.err;
-            } else {
-              vue.post = result.data || {};
-              vue.zoneObj._id = vue.post.zoneId || '';
-              vue.title = vue.post.title || '';
-              vue.advertisingMap = vue.post.advertisingMap || '';
-              vue.tags = vue.post.tags && vue.post.tags !== '' ? vue.post.tags.split(',') : [];
-              vue.isHtml = vue.post.isHtml;
-              editor.codemirror.setValue(vue.post.content || '');
-              updateTags(vue.tags);
-            }
+            vue.post = result.post || {};
+            vue.zoneObj._id = vue.post.zoneId || '';
+            vue.title = vue.post.title || '';
+            vue.advertisingMap = vue.post.advertisingMap || '';
+            vue.tags = vue.post.tags && vue.post.tags !== '' ? vue.post.tags.split(',') : [];
+            vue.isHtml = vue.post.isHtml;
+            editor.codemirror.setValue(vue.post.content || '');
+            updateTags(vue.tags);
           })
           .catch((err) => {
             console.log(err);
@@ -94,7 +90,7 @@
 
         if (editor.codemirror.getValue() === '') {
           vue.errorMsg = '内容为空'
-          return
+          return;
         }
 
         axios.patch(dataPrefix + '/posts/' + vue.postId, {
@@ -106,11 +102,7 @@
           status: status? status : 'D'})
           .then(function (response) {
             let result = response.data;
-            if (result.err) {
-              vue.errorMsg = result.err;
-            } else {
-              location.href = result.url;
-            }
+            location.href = result.url;
           })
           .catch((err) => {
             console.log(err);
@@ -126,11 +118,7 @@
           status: 'P'})
           .then(function (response) {
             let result = response.data;
-            if (result.err) {
-              vue.errorMsg = result.err;
-            } else {
-              location.href = result.url;
-            }
+            location.href = result.url;
           })
           .catch((err) => {
             console.log(err);
