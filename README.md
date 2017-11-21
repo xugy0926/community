@@ -21,7 +21,7 @@ $ cd community
 $ yarn
 ```
 
-3. modify src/config/config.dev.js
+3. Modify src/config/index.dev.js
 
 4. Run dev
 
@@ -41,13 +41,22 @@ $ cd community
 $ yarn
 ```
 
-2. create src/config/config.pro.js
+2. Create src/config/index.pro.js
 
 ```
 $ yarn run config
 ```
 
-3. run production
+3. Modify src/config/index.pro.js
+
+4. Run production
+
+```
+$ yarn run build
+$ NODE_ENV=production PORT=80 pm2 start dist/server.js --name "community"
+```
+
+or
 
 ```
 $make depoly
