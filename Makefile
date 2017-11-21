@@ -7,7 +7,7 @@ depoly:
 update:
 	@git pull
 	@yarn
-	@npm run build
+	@yarn run build
 	@pm2 stop community
 	@pm2 start community
 
