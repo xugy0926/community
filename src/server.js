@@ -100,7 +100,6 @@ app.use(zonesRequired);
 
 app.use((req, res, next) => {
   app.locals.isMobile = req.useragent.isMobile;
-  res.locals.csrf = req.csrfToken ? req.csrfToken() : '';
   next();
 });
 

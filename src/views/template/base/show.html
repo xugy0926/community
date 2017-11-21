@@ -143,7 +143,6 @@
           vm.resetMessage();
           axios.post(dataPrefix + '/replies/',
             {
-              _csrf: $('#_csrf').val(),
               postId: vm.postId,
               content: vm.content || ''
             })
@@ -171,7 +170,6 @@
             if (editedContent) {
               axios.post(dataPrefix + '/replies/',
                 {
-                  _csrf: $('#_csrf').val(),
                   postId: vm.postId,
                   replyId: replyId,
                   content: editedContent})
@@ -199,7 +197,6 @@
             if (editedContent) {
               axios.patch(dataPrefix + '/replies/' + replyId,
                 {
-                  _csrf: $('#_csrf').val(),
                   id: replyId,
                   content: editedContent
                 })

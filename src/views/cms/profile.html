@@ -32,7 +32,6 @@
         if (vm.profile._id) {
           axios.patch(dataPrefix + '/profile/' + vm.profile._id,
             { 
-              _csrf: $('#_csrf').val(), 
               guide: vm.profile.guide, 
               isHtml: vm.profile.isHtml 
             })
@@ -43,7 +42,6 @@
         } else {
           $.post(dataPrefix + '/profile',
             {
-              _csrf: $('#_csrf').val(), 
               guide: vm.profile.guide, 
               isHtml: vm.profile.isHtml 
             })

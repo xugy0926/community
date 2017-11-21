@@ -56,7 +56,6 @@
       fetchUsers: function(currentPage) {
         axios.post(dataPrefix + '/user/list',
           {
-            _csrf: $('#_csrf').val(),
             currentPage: currentPage
           })
           .then(function(response) {
@@ -76,7 +75,6 @@
       onUpdateRole: function(index, role) {
         axios.post(dataPrefix + '/user/updateRole',
           {
-            _csrf: $('#_csrf').val(),
             role: role,
             userId: vm.users[index]._id
           })

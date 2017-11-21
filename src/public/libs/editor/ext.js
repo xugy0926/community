@@ -110,11 +110,10 @@
         this.$uploadTip = this.$upload.find('.tip').hide();
 
         this.file = false;
-        var _csrf = $('[name=_csrf]').val();
 
         this.uploader = WebUploader.create({
             swf: '/public/libs/webuploader/Uploader.swf',
-            server: '/api/v1/data/upload?_csrf=' + _csrf,
+            server: '/api/v1/data/upload',
             pick: this.$uploadBtn[0],
             paste: document.body,
             dnd: this.$upload[0],

@@ -52,11 +52,6 @@
   <% } else { %>
   <title><%= config.name %></title>
   <% } %>
-
-  <% if(typeof(csrf) !== 'undefined') {%>
-  <meta content="_csrf" name="csrf-param">
-  <meta content="<%= csrf %>" name="csrf-token">
-  <% } %>
 </head>
 <script>
   window.pagePrefix = '<%= apiPrefix.page %>';

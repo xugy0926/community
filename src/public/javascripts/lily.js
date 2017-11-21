@@ -55,7 +55,6 @@
   Lily.prototype.signin = function (vm) {
     axios.post(dataPrefix + '/user/signin',
       {
-        _csrf: $('#_csrf').val(),
         loginname: vm.username,
         password: vm.password
       })
@@ -107,7 +106,6 @@
 
     axios.post(dataPrefix + '/user/authSearchPassword',
       {
-        _csrf: $('#_csrf').val(),
         key: vm.key,
         loginname: vm.loginname,
         password: vm.password,
@@ -158,7 +156,6 @@
   Lily.prototype.signup = function (vm) {
     axios.post(dataPrefix + '/user/signup',
       {
-        _csrf: $('#_csrf').val(),
         loginname: vm.loginname,
         password: vm.password,
         rePassword: vm.rePassword,
@@ -181,7 +178,6 @@
     axios.get(dataPrefix + '/posts',
       {
         params: {
-          _csrf: $('#_csrf').val(),
           currentPage: currentPage,
           zoneId: zoneId,
           good: vm.good

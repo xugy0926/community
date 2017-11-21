@@ -45,9 +45,6 @@
         <textarea id='signature' name='signature' size='30' v-model="signature"></textarea>
       </div>
       
-      <% if(typeof(csrf) !== 'undefined') {%>
-      <input type='hidden' name='_csrf' value='<%= csrf %>'>
-      <% } %>
       <button class="ui button" v-on:click="updateUserInfo">更新资料</button>
     </div>
   </div>

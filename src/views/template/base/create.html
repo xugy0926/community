@@ -16,9 +16,6 @@
         </div>
       </div>
       <button class='ui button' v-on:click="onSave">保存草稿</button>
-      <% if(typeof(csrf) !== 'undefined') {%>
-      <input type='hidden' name='_csrf' value='<%= csrf %>'>
-      <% } %>
       <button class='ui button' v-on:click="onPublished">发布</button>
       <button class="ui button" v-on:click="onPreview">预览</button>
       <div class="ui checkbox">

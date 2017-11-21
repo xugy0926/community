@@ -15,7 +15,6 @@
           <label>密码</label>
           <input size='30' type='password' v-model="password"/>
         </div>
-        <input type='hidden' name='_csrf' value='<%= csrf %>'/>
         <button class='ui primary button' v-on:click="submit">登录</button>
         <% } %>
         <a class="ui github button" href="/auth/github">
