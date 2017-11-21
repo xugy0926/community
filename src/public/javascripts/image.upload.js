@@ -36,7 +36,7 @@
       this.file = false;
       this.uploader = window.WebUploader.create({
         swf: '/public/libs/webuploader/Uploader.swf',
-        server: '/api/v1/data/upload?',
+        server: '/api/v1/data/upload',
         pick: this.$uploadBtn[0],
         paste: document.body,
         dnd: this.$upload[0],
