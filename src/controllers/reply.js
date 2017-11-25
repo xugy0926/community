@@ -28,7 +28,7 @@ export const more = async (req, res, next) => {
 
     replyAuthorIds = _.uniq(replyAuthorIds);
     const authors = await UserProxy.findByIds(replyAuthorIds);
-    res.json({ data: { currentPage, replies, authors, pages } });
+    res.json({ currentPage, replies, authors, pages });
   } catch (err) {
     next(err);
   }
@@ -40,13 +40,13 @@ export const post = async (req, res, next) => {
   const replyId = req.body.replyId || '';
   const authorId = req.session.user._id;
 
-  if (content === '' || content.length <= 3) {
-    next(new Error());
+  if (content === '') {
+    next(new Error('不能回复空内容'));
     return;
   }
 
   if (!postId || !authorId) {
-    next(new Error());
+    next(new Error('信息错误'));
     return;
   }
 
@@ -78,7 +78,7 @@ export const post = async (req, res, next) => {
     reply = reply.toObject();
     reply.author = author;
     sendReplyNotify(req.session.user, postAuthor, post, reply);
-    res.json({ data: { reply } });
+    res.json({ reply });
   } catch (err) {
     next(err);
   }

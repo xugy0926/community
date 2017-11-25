@@ -83,12 +83,6 @@
           axios.patch(dataPrefix + '/posts/' + id + '/up')
             .then(function (response) {
               let result = response.data;
-              console.log(result);
-              if (result.error) {
-                vm.errorMsg = result.error;
-                return;
-              }
-
               vm.ups = result.ups.length;
             })
             .catch((err) => {
@@ -106,20 +100,14 @@
             .then(function (response) {
               let result = response.data;
               vm.canLoadData = true;
-
-              if (result.error) {
-                vm.errorMsg = result.error;
-                return;
-              }
-
-              vm.currentPage = result.data.currentPage || 1;
-              vm.pages = result.data.pages || 1;
-              vm.authors = result.data.authors || [];
-              let replies = result.data.replies || [];
+              vm.currentPage = result.currentPage || 1;
+              vm.pages = result.pages || 1;
+              vm.authors = result.authors || [];
+              let replies = result.replies || [];
               vm.updateReplies(replies);
             })
             .catch((err) => {
-              console.log(err);
+              alert(err.response.data.error);
             })
         },
         updateReplies: function(replies) {
@@ -148,18 +136,13 @@
             })
             .then(function (response) {
               let result = response.data;
-              if (result.error) {
-                vm.errorMsg = result.error;
-                return;
-              }
-
               vm.content = '';
-              let newReply = result.data.reply;
+              let newReply = result.reply;
               newReply.htmlContent = md.render(newReply.content);
               vm.replies.push(newReply);
             })
             .catch((err) => {
-              console.log(err);
+              alert(err.response.data.error);
             })
         },
         onReplyReply: function (replyId, loginname) {
@@ -175,17 +158,12 @@
                   content: editedContent})
               .then(function (response) {
                   let result = response.data;
-                  if (result.err) {
-                    vm.errorMsg = result.err;
-                    return;
-                  }
-
                   let newReply = result.data.reply
                   newReply.htmlContent = md.render(newReply.content)
                   vm.replies.push(newReply)
                 })
                 .catch((err) => {
-                  console.log(err);
+                  alert(err.response.data.error);
                 })
             }
           });
@@ -202,11 +180,6 @@
                 })
                 .then(function (response) {
                   let result = response.data;
-                  if (result.error) {
-                    vm.errorMsg = result.error;
-                    return;
-                  }
-
                   let index = _.findIndex(vm.replies, function(reply) {
                     if (reply._id === replyId) return true;
                   });
@@ -215,7 +188,7 @@
                   vm.replies[index].htmlContent = md.render(editedContent);
                 })
                 .catch((err) => {
-                  console.log(err);
+                  alert(err.response.data.error);
                 })
             }
           });
@@ -224,11 +197,6 @@
           axios.delete(dataPrefix + '/replies/' + replyId)
             .then(function (response) {
               let result = response.data;
-              if (result.error) {
-                vm.errorMsg = result.error;
-                return;
-              }
-
               let index = _.findIndex(vm.replies, function(reply) {
                 if (reply._id === replyId) return true;
               });
@@ -236,18 +204,13 @@
               vm.replies.$remove(vm.replies[index]);
             })
             .catch((err) => {
-              console.log(err);
+              alert(err.response.data.error);
             })
         },
         onUpReply: function(replyId) {
           axios.patch(dataPrefix + '/replies/' + replyId + '/up')
             .then(function (response) {
               let result = response.data;
-              if (result.error) {
-                vm.errorMsg = result.error;
-                return;
-              }
-
               let index = _.findIndex(vm.replies, function(reply) {
                 if (reply._id === replyId) return true;
               });
@@ -255,41 +218,28 @@
               vm.replies[index].ups = result.ups;
             })
             .catch((err) => {
-              console.log(err);
+              alert(err.response.data.error);
             })
         },
         onCollectPost: function() {
           axios.patch(dataPrefix + '/posts/' + vm.postId + '/collect')
             .then(function(response) {
               let result = response.data;
-              if (result.error) {
-                vm.errorMsg = result.error;
-                return;
-              }
-
               vm.isCollect = true;
             })
             .catch((err) => {
-              console.log(err);
+              alert(err.response.data.error);
             })
         },
         onDelCollectPost: function() {
           axios.patch(dataPrefix + '/posts/' + vm.postId + '/delCollect')
             .then(function(response) {
               let result = response.data;
-              if (result.error) {
-                vm.errorMsg = result.error;
-                return;
-              }
-
               vm.isCollect = false;
             })
             .catch((err) => {
-              console.log(err);
+              alert(err.response.data.error);
             })
-        },
-        changeToHtml: function() {
-          return
         },
         resetMessage: function() {
           vm.errorMsg = '';
