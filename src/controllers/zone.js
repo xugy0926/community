@@ -23,19 +23,17 @@ export const post = async (req, res, next) => {
   const key = req.body.key || '';
   const value = req.body.value || '';
 
-  const conditions = { $or: [{ key }, { value }] };
-
   try {
     if (key === '' || value === '') {
-      next(new Error());
-      return;
+      return next('内容不能为空');
     }
 
+    const conditions = { $or: [{ key }, { value }] };    
     const doc = await ZoneProxy.findOne(conditions);
     if (doc) {
-      next(new Error());
-      return;
+      return next('内容重复');
     }
+    
     const result = await ZoneProxy.create(key, value);
     res.json({ data: result });
   } catch (err) {

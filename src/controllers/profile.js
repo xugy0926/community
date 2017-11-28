@@ -14,13 +14,10 @@ export const update = async (req, res, next) => {
   const guide = req.body.guide || '';
   const isHtml = req.body.isHtml || false;
 
-  const data = {
-    guide,
-    isHtml
-  };
-
   try {
     const doc = await ProfileProxy.findOneById(id);
+
+    const data = { guide, isHtml };
 
     if (!doc) {
       await ProfileProxy.create(data);

@@ -20,19 +20,14 @@ export const more = async (req, res, next) => {
     const pages = Math.ceil(count / limit);
     const replies = await ReplyProxy.find(conditions, options);
 
-    let replyAuthorIds = [];
-
-    replies.forEach(item => {
-      if (item.authorId) replyAuthorIds.push(item.authorId.toString());
-    });
-
-    replyAuthorIds = _.uniq(replyAuthorIds);
-    const authors = await UserProxy.findByIds(replyAuthorIds);
+    let ids = replies.map(item => item.authorId.toString());
+    ids = _.uniq(ids);
+    const authors = await UserProxy.findByIds(ids);
     res.json({ currentPage, replies, authors, pages });
   } catch (err) {
     next(err);
   }
-}
+};
 
 export const post = async (req, res, next) => {
   const content = validator.trim(String(req.body.content || ''));
@@ -41,13 +36,11 @@ export const post = async (req, res, next) => {
   const authorId = req.session.user._id;
 
   if (content === '') {
-    next(new Error('不能回复空内容'));
-    return;
+    return next('不能回复空内容');
   }
 
   if (!postId || !authorId) {
-    next(new Error('信息错误'));
-    return;
+    return next('信息错误');
   }
 
   let data = {
@@ -60,8 +53,7 @@ export const post = async (req, res, next) => {
   try {
     const post = await PostProxy.findOneById(postId);
     if (!post) {
-      next(new Error());
-      return;
+      return next('找不到文章');
     }
 
     const postAuthor = await UserProxy.findOneById(post.authorId);
@@ -82,7 +74,7 @@ export const post = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}
+};
 
 export const del = async (req, res, next) => {
   const replyId = req.params.id;
@@ -93,8 +85,7 @@ export const del = async (req, res, next) => {
     const reply = await ReplyProxy.findOneById(replyId);
 
     if (reply.authorId.toString() !== userId && !req.session.user.isAdmin) {
-      next(new Error());
-      return;
+      return next(new Error());
     }
 
     await ReplyProxy.update(replyId, {
@@ -106,7 +97,7 @@ export const del = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}
+};
 
 export const update = async (req, res, next) => {
   const replyId = req.params.id;
@@ -114,28 +105,22 @@ export const update = async (req, res, next) => {
   const userId = req.session.user._id.toString();
 
   if (content.trim().length <= 3) {
-    next(new Error());
-    return;
+    return next(new Error());
   }
 
   try {
     const reply = await ReplyProxy.findOneById(replyId);
 
     if (reply.authorId.toString() !== userId && !req.session.user.isAdmin) {
-      next(new Error());
-      return;
+      return next(new Error());
     }
 
-    const data = {
-      content
-    };
-
-    await ReplyProxy.update(replyId, data);
+    await ReplyProxy.update(replyId, { content });
     res.end();
   } catch (err) {
     next(err);
   }
-}
+};
 
 export const up = async (req, res, next) => {
   const replyId = req.params.id;
@@ -148,8 +133,7 @@ export const up = async (req, res, next) => {
     const post = await PostProxy.findOneById(reply.postId);
 
     if (reply.authorId.toString() === userId && !req.session.user.isAdmin) {
-      next(new Error());
-      return;
+      return next(new Error());
     }
 
     const upIndex = reply.ups.indexOf(userId);
@@ -169,7 +153,7 @@ export const up = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}
+};
 
 export const count = async (req, res, next) => {
   const postId = req.params.id;
@@ -179,4 +163,4 @@ export const count = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}
+};

@@ -208,12 +208,7 @@
       },
       onDelete: function (index) {
         if (confirm('确定要删除吗？')) {
-          axios.delete(dataPrefix + '/posts/', 
-            { 
-              params: {
-                id: vue.posts[index]._id
-              }
-            })
+          axios.delete(dataPrefix + '/posts/' + vue.posts[index]._id)
             .then(function (response) {
               let result = response.data;
               if (result.err) {

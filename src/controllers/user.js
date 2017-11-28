@@ -6,7 +6,7 @@ export const one = async (req, res, next) => {
   const userId = req.params.id || '';
 
   if (!userId && req.session.user._id && !userId.equals(req.session.user._id)) {
-    return next(new Error('没权限查看'));
+    return next('没权限查看');
   }
 
   try {
@@ -15,7 +15,7 @@ export const one = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}
+};
 
 export const patch = async (req, res, next) => {
   const weixin = req.body.weixin || '';
@@ -39,39 +39,33 @@ export const patch = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}
+};
 
 export const toggleStar = async (req, res, next) => {
   const userId = req.body.userId;
   const isStar = req.body.isStar;
 
-  const data = {
-    isStar
-  };
-
   try {
-    await UserProxy.upate(userId, data);
+    await UserProxy.upate(userId, { isStar });
     res.end();
   } catch (err) {
     next(err);
   }
-}
+};
 
 export const block = async (req, res, next) => {
   const userId = req.body.userId;
   const action = req.body.action;
 
-  const data = {
-    isBlock: action === 'block'
-  };
-
   try {
-    await UserProxy.update(userId, data);
+    await UserProxy.update(userId, {
+      isBlock: action === 'block'
+    });
     res.end();
   } catch (err) {
     next(err);
   }
-}
+};
 
 export const users = async (req, res, next) => {
   try {
@@ -87,11 +81,11 @@ export const users = async (req, res, next) => {
     const count = await getPages(UserProxy.count, {}, 'users');
     const pages = Math.ceil(count / limit);
     const users = await UserProxy.find({}, options);
-    res.json({ users, pages, currentPage});
+    res.json({ users, pages, currentPage });
   } catch (err) {
     next(err);
   }
-}
+};
 
 export const updateRole = async (req, res, next) => {
   const userId = req.body.userId || '';
@@ -103,4 +97,4 @@ export const updateRole = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}
+};

@@ -15,13 +15,9 @@ async function fetchPosts(conditions, options) {
     const count = await getPages(PostProxy.count, conditions, 'pages');
     const posts = await PostProxy.find(conditions, options);
     const pages = Math.ceil(count / limit);
-
-    const authorIds = [];
-    posts.forEach(item => {
-      if (item.authorId) authorIds.push(item.authorId.toString());
-    });
-
-    const authors = await UserProxy.findByIds(authorIds);
+    let ids = posts.map(item => item.authorId);
+    ids = _.uniq(ids);
+    const authors = await UserProxy.findByIds(ids);
     return Promise.resolve([posts, pages, authors]);
   } catch (err) {
     return Promise.reject(err);
@@ -38,11 +34,9 @@ export const more = async (req, res, next) => {
   );
 
   if (zoneId === '') {
-    next(new Error());
-    return;
+    return next(new Error());
   }
 
-  // 获取菜单查询条件
   const conditions = {};
 
   if (status !== 'all') {
@@ -254,7 +248,7 @@ export const update = async (req, res, next) => {
 };
 
 export const del = async (req, res, next) => {
-  const postId = req.query.id;
+  const postId = req.params.id;
   const isAdmin = req.session.user.isAdmin;
   const currentUserId = req.session.user._id;
 
