@@ -1,11 +1,11 @@
 import validator from 'validator';
 import config from '../config';
-import ids from '../functor/ids';
+import ids from '../functions/ids';
+import { onlyMe } from '../functions/limit';
 import * as at from '../common/at';
 import * as message from '../common/message';
 import getPages from '../common/pages';
 import { sendReplyNotify, sendUpReplyNotify } from '../common/mail';
-import { checkId } from '../common/check';
 import { UserProxy, PostProxy, ReplyProxy } from '../proxy';
 
 export const more = async (req, res, next) => {
@@ -78,16 +78,12 @@ export const del = async (req, res, next) => {
   const userId = req.session.user._id.toString();
 
   try {
-    await checkId(replyId);
     const reply = await ReplyProxy.findOneById(replyId);
-
-    if (reply.authorId.toString() !== userId && !req.session.user.isAdmin) {
-      return next(new Error());
-    }
-
+    onlyMe(req)(reply.authorId)(userId);
     await ReplyProxy.update(replyId, {
       deleted: true
     });
+
     const lastReplyId = await ReplyProxy.getLastReplyIdByPostId(reply.postId);
     await PostProxy.reducePostCount(reply.postId, lastReplyId);
     res.end();
@@ -124,7 +120,6 @@ export const up = async (req, res, next) => {
   const userId = req.session.user._id;
 
   try {
-    await checkId(replyId);
     const reply = await ReplyProxy.findOneById(replyId);
     const author = await UserProxy.findOneById(reply.authorId);
     const post = await PostProxy.findOneById(reply.postId);

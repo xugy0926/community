@@ -17,5 +17,5 @@ const ProfileSchema = new Schema(
 ProfileSchema.plugin(timePlugin);
 ProfileSchema.index({ createAt: -1 });
 
-const ProfileModel = mongoose.model('Profile', ProfileSchema);
-export default ProfileModel;
+const Profile = mongoose.model('Profile', ProfileSchema);
+export default Profile;

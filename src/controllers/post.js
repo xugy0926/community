@@ -1,13 +1,17 @@
 import validator from 'validator';
 import config from '../config';
-import ids from '../functor/ids';
+import ids from '../functions/ids';
+import { onlyMe, withoutMe } from '../functions/limit';
 import * as at from '../common/at';
 import * as tools from '../common/tools';
 import markdown from '../common/markdown';
 import upFile from '../common/upFile';
 import getPages from '../common/pages';
-import { checkId, checkPostOperateLimit } from '../common/check';
-import { UserProxy, PostProxy, PostCollectProxy } from '../proxy';
+import {
+  UserProxy,
+  PostProxy,
+  PostCollectProxy
+} from '../proxy';
 
 async function fetchPosts(conditions, options) {
   try {
@@ -77,7 +81,6 @@ export const userPosts = async (req, res, next) => {
   };
 
   try {
-    await checkId(userId);
     const conditions = { authorId: userId };
     const [posts, pages, authors] = await fetchPosts(conditions, options);
     res.json({ posts, currentPage, pages, authors });
@@ -101,7 +104,6 @@ export const collectPosts = async (req, res, next) => {
   const zones = res.locals.zones;
 
   try {
-    await checkId(userId);
     const count = await getPages(
       PostCollectProxy.count,
       conditions,
@@ -135,7 +137,6 @@ export const one = async (req, res, next) => {
   const postId = req.params.id;
 
   try {
-    await checkId(postId);
     let post = await PostProxy.findFullOneById(postId);
     post.mdContent = markdown(post.linkedContent);
     res.json({ post });
@@ -219,7 +220,7 @@ export const update = async (req, res, next) => {
 
   try {
     const post = await PostProxy.findOneById(postId);
-    await checkPostOperateLimit(post.authorId, isAdmin, currentUserId);
+    onlyMe(req)(post.authorId)(currentUserId);
 
     const data = {
       title,
@@ -251,9 +252,8 @@ export const del = async (req, res, next) => {
   const currentUserId = req.session.user._id;
 
   try {
-    await checkId(postId);
     const post = await PostProxy.findOneById(postId);
-    await checkPostOperateLimit(post.authorId, isAdmin, currentUserId);
+    onlyMe(req)(post.authorId)(currentUserId);
 
     await PostProxy.update(postId, {
       deleted: true
@@ -268,7 +268,6 @@ export const top = async (req, res, next) => {
   const id = req.params.id;
 
   try {
-    await checkId(id);
     const post = await PostProxy.findOneById(id);
 
     await PostProxy.update(id, {
@@ -284,7 +283,6 @@ export const good = async (req, res, next) => {
   const id = req.params.id;
 
   try {
-    await checkId(id);
     const post = await PostProxy.findOneById(id);
 
     await PostProxy.update(id, {
@@ -300,7 +298,6 @@ export const lock = async (req, res, next) => {
   const id = req.params.id;
 
   try {
-    await checkId(id);
     const post = await PostProxy.findOneById(id);
 
     await PostProxy.update(id, {
@@ -317,8 +314,6 @@ export const collect = async (req, res, next) => {
   const userId = req.session.user._id;
 
   try {
-    await checkId(id);
-    await checkId(userId);
     const collect = await PostCollectProxy.findOne(userId, id);
     if (collect) {
       return res.end();
@@ -350,8 +345,6 @@ export const delCollect = async (req, res, next) => {
   const userId = req.session.user._id;
 
   try {
-    await checkId(id);
-    await checkId(userId);
     await PostCollectProxy.remove(userId, id);
 
     const post = await PostProxy.findOneById(id);
@@ -382,9 +375,8 @@ export const status = async (req, res, next) => {
   const currentUserId = req.session.user._id;
 
   try {
-    await checkId(id);
     const post = await PostProxy.findOneById(id);
-    await checkPostOperateLimit(post.authorId, isAdmin, currentUserId);
+    onlyMe(req)(post.authorId)(currentUserId);
 
     await PostProxy.update(id, { status });
     res.end();
@@ -398,11 +390,8 @@ export const up = async (req, res, next) => {
   const userId = req.session.user._id;
 
   try {
-    await checkId(id);
     const post = await PostProxy.findOneById(id);
-    if (post.authorId.toString() === userId && !req.session.user.isAdmin) {
-      throw new Error('不能帮自己点赞');
-    }
+    withoutMe(req)(post.authorId)(userId);
 
     const upIndex = post.ups.indexOf(userId);
 

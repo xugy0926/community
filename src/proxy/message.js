@@ -1,15 +1,15 @@
 import * as UserProxy from './user';
 import * as PostProxy from './post';
 import * as ReplyProxy from './reply';
-import MessageModel from '../models/message';
+import Message from '../models/message';
 
 export const count = (id, hasRead) => {
-  return MessageModel.count({ masterId: id, hasRead: hasRead });
+  return Message.count({ masterId: id, hasRead: hasRead });
 };
 
 export const find = async (conditions, options) => {
   try {
-    const messages = await MessageModel.find(conditions)
+    const messages = await Message.find(conditions)
       .setOptions(options)
       .exec();
 
@@ -43,7 +43,7 @@ export const find = async (conditions, options) => {
 }
 
 export const findOneById = id => {
-  return MessageModel.findOneById(id).exec();
+  return Message.findOneById(id).exec();
 };
 
 export const findByUserId = (userId, hasRead, options) => {
@@ -51,18 +51,18 @@ export const findByUserId = (userId, hasRead, options) => {
 };
 
 export const update = (id, data) => {
-  return MessageModel.findByIdAndUpdate(id, { $set: data }).exec();
+  return Message.findByIdAndUpdate(id, { $set: data }).exec();
 };
 
 export const updateAll = (conditions, data) => {
-  return MessageModel.where(conditions)
+  return Message.where(conditions)
     .setOptions({ multi: true })
     .update({ $set: data })
     .exec();
 };
 
 export const create = ({ type, masterId, authorId, postId, replyId }) => {
-  const doc = new MessageModel();
+  const doc = new Message();
   doc.type = type;
   doc.masterId = masterId;
   doc.authorId = authorId;

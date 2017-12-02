@@ -1,5 +1,5 @@
 import uuid from 'node-uuid';
-import UserModel from '../models/user';
+import User from '../models/user';
 
 const baseFields = 'name loginname email weixin qq avatar role isStar createAt';
 const detailFields =
@@ -7,31 +7,31 @@ const detailFields =
 const authFields = 'name loginname email retrieveKey, retrieveTime';
 
 export const count = (conditions, options) => {
-  return UserModel.count(conditions).setOptions(options);
+  return User.count(conditions).setOptions(options);
 };
 
 export const find = (conditions, options) => {
-  return UserModel.find(conditions)
+  return User.find(conditions)
     .select(baseFields)
     .setOptions(options)
     .exec();
 };
 
 export const findOne = (conditions, options) => {
-  return UserModel.findOne(conditions)
+  return User.findOne(conditions)
     .select(baseFields)
     .setOptions(options)
     .exec();
 };
 
 export const findFullOne = (conditions, options) => {
-  return UserModel.findOne(conditions)
+  return User.findOne(conditions)
     .setOptions(options)
     .exec();
 };
 
 export const findByNames = names => {
-  return UserModel.find({
+  return User.find({
     loginname: { $in: names }
   })
     .select(baseFields)
@@ -39,19 +39,19 @@ export const findByNames = names => {
 };
 
 export const findOneById = id => {
-  return UserModel.findOne({ _id: id })
+  return User.findOne({ _id: id })
     .select(baseFields)
     .exec();
 };
 
 export const findOneDetailById = id => {
-  return UserModel.findOne({ _id: id })
+  return User.findOne({ _id: id })
     .select(detailFields)
     .exec();
 };
 
 export const findOneByName = name => {
-  return UserModel.findOne({
+  return User.findOne({
     loginname: new RegExp(`^${name}$`, 'i')
   })
     .select(baseFields)
@@ -59,7 +59,7 @@ export const findOneByName = name => {
 };
 
 export const findByIds = ids => {
-  return UserModel.find({ _id: { $in: ids } })
+  return User.find({ _id: { $in: ids } })
     .select(baseFields)
     .exec();
 };
@@ -81,11 +81,11 @@ export const increaseScore = (authorId, { postCount, replyCount }) => {
     data.replyCount = 1;
   }
 
-  return UserModel.findByIdAndUpdate(authorId, { $inc: data }).exec();
+  return User.findByIdAndUpdate(authorId, { $inc: data }).exec();
 };
 
 export const create = ({ loginname, passwordHash, email, avatar, active }) => {
-  const user = new UserModel();
+  const user = new User();
   user.name = loginname;
   user.loginname = loginname;
   user.pass = passwordHash;
@@ -105,7 +105,7 @@ export const createGithubUser = ({
   githubAccessToken,
   avatar
 }) => {
-  const user = new UserModel();
+  const user = new User();
   user.loginname = loginname;
   if (email !== 'noemail') {
     user.email = email;
@@ -121,5 +121,5 @@ export const createGithubUser = ({
 };
 
 export const update = (id, data) => {
-  return UserModel.findByIdAndUpdate(id, { $set: data }).exec();
+  return User.findByIdAndUpdate(id, { $set: data }).exec();
 };

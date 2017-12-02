@@ -30,5 +30,5 @@ const MessageSchema = new Schema(
 MessageSchema.plugin(timePlugin);
 MessageSchema.index({ masterId: 1, hasRead: -1, createAt: -1 });
 
-const MessageModel = mongoose.model('Message', MessageSchema);
-export default MessageModel;
+const Message = mongoose.model('Message', MessageSchema);
+export default Message;

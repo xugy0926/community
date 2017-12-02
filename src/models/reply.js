@@ -22,5 +22,5 @@ ReplySchema.plugin(timePlugin);
 ReplySchema.index({ postd: 1 });
 ReplySchema.index({ authorId: 1, createAt: -1 });
 
-const ReplyModel = mongoose.model('Reply', ReplySchema);
-export default ReplyModel;
+const Reply = mongoose.model('Reply', ReplySchema);
+export default Reply;

@@ -2,7 +2,6 @@ import { ZoneProxy } from '../proxy';
 
 export const more = async (req, res, next) => {
   const all = req.body.all || false;
-
   const conditions = { deleted: false };
 
   if (!all) {

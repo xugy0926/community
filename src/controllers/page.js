@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 import markdown from '../common/markdown';
-import { checkId } from '../common/check';
 import suggestGoodPosts from '../components/suggestPostsPanel';
 import createPanel from '../components/createPanel';
 import {
@@ -132,7 +131,6 @@ export const showPostPage = async (req, res, next) => {
     req.session.user && req.session.user._id ? req.session.user._id : '';
 
   try {
-    await checkId(id);
     const post = await PostProxy.findFullOneById(id);
     const zone = await ZoneProxy.findOneById(post.zoneId);
     if (userId) {
@@ -172,7 +170,6 @@ export const editPostPage = async (req, res, next) => {
 export const userPage = async (req, res, next) => {
   const id = req.params.id;
   try {
-    await checkId(id);
     let user = await UserProxy.findOneDetailById(id);
     res.render('user/index', { user });
   } catch (err) {
@@ -184,7 +181,6 @@ export const userPostsPage = async (req, res, next) => {
   const id = req.params.id;
 
   try {
-    await checkId(id);
     let user = await UserProxy.findOneById(id);
     res.render('user/posts', {
       userId: user ? user._id : '',
@@ -199,7 +195,6 @@ export const userCollectPostsPage = async (req, res, next) => {
   const id = req.params.id;
 
   try {
-    await checkId(id);
     let user = await UserProxy.findOneById(id);
     res.render('user/collect_posts', {
       userId: user ? user._id : '',

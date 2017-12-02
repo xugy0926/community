@@ -43,5 +43,5 @@ PostSchema.index({ createAt: -1 });
 PostSchema.index({ top: -1, lastReplyAt: -1 });
 PostSchema.index({ authorId: 1, createAt: -1 });
 
-const PostModel = mongoose.model('Post', PostSchema);
-export default PostModel;
+const Post = mongoose.model('Post', PostSchema);
+export default Post;

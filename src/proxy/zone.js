@@ -1,32 +1,32 @@
-import ZoneModel from '../models/zone';
+import Zone from '../models/zone';
 
 const fields =
   '_id key value enable mustReview audioAttachment weight template icon createText';
 
 export const find = (conditions, options) => {
-  return ZoneModel.find(conditions)
+  return Zone.find(conditions)
     .select(fields)
     .setOptions(options)
     .exec();
 }
 
 export const findOne = (conditions, options) => {
-  return ZoneModel.findOne(conditions)
+  return Zone.findOne(conditions)
     .select(fields)
     .setOptions(options)
     .exec();
 }
 
 export const findOneById = (id) => {
-  return ZoneModel.findOne({ _id: id }).select(fields).exec();
+  return Zone.findOne({ _id: id }).select(fields).exec();
 }
 
 export const update = (id, data) => {
-  return ZoneModel.findByIdAndUpdate(id, { $set: data }).exec();
+  return Zone.findByIdAndUpdate(id, { $set: data }).exec();
 };
 
 export const create = (key, value) => {
-  const doc = new ZoneModel();
+  const doc = new Zone();
   doc.key = key;
   doc.value = value;
   return doc.save();

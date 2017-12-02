@@ -24,5 +24,5 @@ const ZoneSchema = new Schema(
 ZoneSchema.plugin(timePlugin);
 ZoneSchema.index({ createAt: -1 });
 
-const ZoneModel = mongoose.model('Zone', ZoneSchema);
-export default ZoneModel;
+const Zone = mongoose.model('Zone', ZoneSchema);
+export default Zone;

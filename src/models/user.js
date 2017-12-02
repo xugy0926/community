@@ -65,5 +65,5 @@ UserSchema.index({ score: -1 });
 UserSchema.index({ githubId: 1 });
 UserSchema.index({ accessToken: 1 });
 
-const UserModel = mongoose.model('User', UserSchema);
-export default UserModel;
+const User = mongoose.model('User', UserSchema);
+export default User;

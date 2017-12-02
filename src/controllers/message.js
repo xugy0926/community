@@ -1,7 +1,12 @@
 import config from '../config';
-import ids from '../functor/ids';
-import { checkId } from '../common/check';
-import { MessageProxy, UserProxy, PostProxy, ReplyProxy } from '../proxy';
+import ids from '../functions/ids';
+import { onlyMe } from '../functions/limit';
+import {
+  MessageProxy,
+  UserProxy,
+  PostProxy,
+  ReplyProxy
+} from '../proxy';
 
 export const unreadCount = async (req, res, next) => {
   const userId = req.session.user._id;
@@ -12,7 +17,7 @@ export const unreadCount = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}
+};
 
 export const userMessages = async (req, res, next) => {
   const userId = req.session.user._id;
@@ -35,7 +40,7 @@ export const userMessages = async (req, res, next) => {
     const authors = await UserProxy.findByIds(ids('authorId')(messages));
     const posts = await PostProxy.findByIds(ids('postId')(messages));
     const replies = await ReplyProxy.findByIds(ids('replyId')(messages));
-    
+
     res.json({
       messages,
       pages,
@@ -47,36 +52,27 @@ export const userMessages = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}
+};
 
 export const read = async (req, res, next) => {
   const messageId = req.body.messageId;
 
-  const data = {
-    hasRead: true
-  };
-
   try {
-    await checkId(messageId);
-    await MessageProxy.update(messageId, data);
+    await MessageProxy.update(messageId, { hasRead: true });
     res.end();
   } catch (err) {
     next(err);
   }
-}
+};
 
 export const toRead = async (req, res, next) => {
-  const data = {
-    hasRead: true
-  };
-
   try {
     await MessageProxy.updateAll(
       { masterId: req.session.user._id, hasRead: false },
-      data
+      { hasRead: true }
     );
     res.end();
   } catch (err) {
     next(err);
   }
-}
+};

@@ -18,5 +18,5 @@ const PostCollectSchema = new Schema(
 PostCollectSchema.plugin(timePlugin);
 PostCollectSchema.index({ userId: 1, postId: 1 }, { unique: true });
 
-const PostCollectModel = mongoose.model('PostCollect', PostCollectSchema);
-export default PostCollectModel;
+const PostCollect = mongoose.model('PostCollect', PostCollectSchema);
+export default PostCollect;

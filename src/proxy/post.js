@@ -2,7 +2,7 @@ import * as at from '../common/at';
 import * as tools from '../common/tools';
 import * as UserProxy from './user';
 import * as ZoneProxy from './zone';
-import PostModel from '../models/post';
+import Post from '../models/post';
 
 const baseFields = '_id title recommentUrl description';
 
@@ -10,12 +10,12 @@ const fields =
   '_id title description recommendUrl area authorId updateAt good lock top status replyCount ups';
 
 export const count = (conditions, options) => {
-  return PostModel.count(conditions).setOptions(options);
+  return Post.count(conditions).setOptions(options);
 };
 
 export const find = (conditions, options) => {
   conditions.deleted = false;
-  const query = PostModel.find(conditions)
+  const query = Post.find(conditions)
     .select(fields)
     .setOptions(options);
   return query.exec();
@@ -23,19 +23,19 @@ export const find = (conditions, options) => {
 
 export const findOne = (conditions, options) => {
   conditions.deleted = false;
-  return PostModel.findOne(conditions)
+  return Post.findOne(conditions)
     .select(fields)
     .setOptions(options)
     .exec();
 };
 
 export const findOneById = id => {
-  return PostModel.findOne({ _id: id }).exec();
+  return Post.findOne({ _id: id }).exec();
 };
 
 export const findFullOneById = async id => {
   try {
-    let post = await PostModel.findOne({ _id: id }).exec();
+    let post = await Post.findOne({ _id: id }).exec();
     if (!post) return Promise.reject(ResultMsg.DATA_NOT_FOUND);
     post = post.toObject();
     post.linkedContent = at.linkUsers(post.content);
@@ -55,7 +55,7 @@ export const findFullOneById = async id => {
 export const findByIds = ids => {
   if (typeof ids !== 'object') throw new Error(ResultMsg.NOT_OBJECT);
   if (!Array.isArray(ids)) throw new Error(ResultMsg.NOT_ARRAY);
-  const query = PostModel.find({ _id: { $in: ids } }).select(baseFields);
+  const query = Post.find({ _id: { $in: ids } }).select(baseFields);
   return query.exec();
 };
 
@@ -76,8 +76,8 @@ export const updateLastReply = async (postId, replyId) => {
   };
 
   try {
-    await PostModel.findByIdAndUpdate(postId, { data });
-    await PostModel.findByIdAndUpdate(postId, { $inc: data2 });
+    await Post.findByIdAndUpdate(postId, { data });
+    await Post.findByIdAndUpdate(postId, { $inc: data2 });
   } catch (err) {
     return Promise.reject(err);
   }
@@ -97,8 +97,8 @@ export const reducePostCount = async (postId, lastReplyId) => {
   };
 
   try {
-    await PostModel.findByIdAndUpdate(postId, { data });
-    await PostModel.findByIdAndUpdate(postId, { $inc: data2 });
+    await Post.findByIdAndUpdate(postId, { data });
+    await Post.findByIdAndUpdate(postId, { $inc: data2 });
   } catch (err) {
     return Promise.reject(err);
   }
@@ -107,7 +107,7 @@ export const reducePostCount = async (postId, lastReplyId) => {
 };
 
 export const create = post => {
-  const data = new PostModel();
+  const data = new Post();
   data.zoneId = post.zoneId;
   data.title = post.title;
   data.area = post.area;
@@ -127,5 +127,5 @@ export const update = (id, data) => {
   delete data._id;
   delete data.createAt;
   delete data.updateAt;
-  return PostModel.findByIdAndUpdate(id, { $set: data }).exec();
+  return Post.findByIdAndUpdate(id, { $set: data }).exec();
 };
