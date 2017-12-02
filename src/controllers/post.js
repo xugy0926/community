@@ -1,6 +1,6 @@
-import _ from 'lodash';
 import validator from 'validator';
 import config from '../config';
+import ids from '../functor/ids';
 import * as at from '../common/at';
 import * as tools from '../common/tools';
 import markdown from '../common/markdown';
@@ -15,9 +15,7 @@ async function fetchPosts(conditions, options) {
     const count = await getPages(PostProxy.count, conditions, 'pages');
     const posts = await PostProxy.find(conditions, options);
     const pages = Math.ceil(count / limit);
-    let ids = posts.map(item => item.authorId);
-    ids = _.uniq(ids);
-    const authors = await UserProxy.findByIds(ids);
+    const authors = await UserProxy.findByIds(ids('authorId')(posts));
     return Promise.resolve([posts, pages, authors]);
   } catch (err) {
     return Promise.reject(err);
@@ -234,7 +232,7 @@ export const update = async (req, res, next) => {
       advertisingMap,
       recommendUrl,
       isHtml,
-      update_at: new Date()
+      updateAt: new Date()
     };
 
     await PostProxy.update(postId, data);

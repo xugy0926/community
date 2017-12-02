@@ -20,17 +20,17 @@ export const find = async (conditions, options) => {
 
       messages[i] = messages[i].toObject();
 
-      if (messages[i].post_id) {
+      if (messages[i].postId) {
         post = await PostProxy.findOneById(messages[i].postId);
         messages[i].post = post;
       }
 
-      if (messages[i].author_id) {
+      if (messages[i].authorId) {
         author = await UserProxy.findOneById(messages[i].authorId);
         messages[i].author = author;
       }
 
-      if (messages[i].reply_id) {
+      if (messages[i].replyId) {
         reply = await ReplyProxy.findOneById(messages[i].replyId);
         messages[i].reply = reply;
       }

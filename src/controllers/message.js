@@ -1,5 +1,5 @@
-import _ from 'lodash';
 import config from '../config';
+import ids from '../functor/ids';
 import { checkId } from '../common/check';
 import { MessageProxy, UserProxy, PostProxy, ReplyProxy } from '../proxy';
 
@@ -32,35 +32,10 @@ export const userMessages = async (req, res, next) => {
     const messages = await MessageProxy.findByUserId(userId, hasRead, options);
     const count = await MessageProxy.count(userId, hasRead);
     const pages = Math.ceil(count / limit);
-
-    // get authors
-    let authorsIds = [];
-
-    messages.forEach(item => {
-      if (item.authorId) authorsIds.push(item.authorId.toString());
-    });
-
-    authorsIds = _.uniq(authorsIds);
-    const authors = await UserProxy.findByIds(authorsIds);
-
-    // get posts
-    let postsIds = [];
-
-    messages.forEach(item => {
-      if (item.postId) postsIds.push(item.postId.toString());
-    });
-
-    postsIds = _.uniq(postsIds);
-    const posts = await PostProxy.findByIds(postsIds);
-    let replyIds = [];
-
-    messages.forEach(item => {
-      if (item.postId) replyIds.push(item.replyId.toString());
-    });
-
-    replyIds = _.uniq(replyIds);
-    const replies = await ReplyProxy.findByIds(replyIds);
-
+    const authors = await UserProxy.findByIds(ids('authorId')(messages));
+    const posts = await PostProxy.findByIds(ids('postId')(messages));
+    const replies = await ReplyProxy.findByIds(ids('replyId')(messages));
+    
     res.json({
       messages,
       pages,

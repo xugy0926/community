@@ -1,6 +1,6 @@
-import _ from 'lodash';
 import validator from 'validator';
 import config from '../config';
+import ids from '../functor/ids';
 import * as at from '../common/at';
 import * as message from '../common/message';
 import getPages from '../common/pages';
@@ -19,10 +19,7 @@ export const more = async (req, res, next) => {
     const count = await getPages(ReplyProxy.count, conditions, '[reply pages]');
     const pages = Math.ceil(count / limit);
     const replies = await ReplyProxy.find(conditions, options);
-
-    let ids = replies.map(item => item.authorId.toString());
-    ids = _.uniq(ids);
-    const authors = await UserProxy.findByIds(ids);
+    const authors = await UserProxy.findByIds(ids('authorId')(replies));
     res.json({ currentPage, replies, authors, pages });
   } catch (err) {
     next(err);
