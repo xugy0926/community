@@ -66,6 +66,7 @@ $make depoly
 
 ```
 $ git pull
+$ yarn
 $ yarn run build
 $ pm2 stop community
 $ pm2 start community
