@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import validator from 'validator';
 import config from '../config';
 import ids from '../functions/ids';
@@ -98,7 +99,7 @@ export const collectPosts = async (req, res, next) => {
   const options = {
     skip: (currentPage - 1) * limit,
     limit,
-    sort: '-_createAt'
+    sort: '-createAt'
   };
 
   const zones = res.locals.zones;
