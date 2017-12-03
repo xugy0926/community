@@ -1,7 +1,10 @@
+import R from 'ramda';
 import validator from 'validator';
 import utility from 'utility';
 import uuid from 'node-uuid';
 import config from '../config';
+import { isNil, isNotNil } from '../functions/type';
+import account from '../functions/account';
 import * as mail from '../common/mail';
 import * as tools from '../common/tools';
 import * as authMiddleWare from '../middlewares/auth';
@@ -45,7 +48,7 @@ export const signup = async (req, res, next) => {
       $or: [{ loginname }, { email }]
     });
 
-    if (doc) return next(new Error('账号已经存在'));
+    if (isNotNil(doc)) return next(new Error('账号已经存在'));
 
     const passwordHash = tools.bhash(password);
     await UserProxy.create({
@@ -75,23 +78,13 @@ export const signin = async (req, res, next) => {
   const loginname = validator.trim(req.body.loginname || '').toLowerCase();
   const password = validator.trim(req.body.password || '');
 
-  if (!loginname || !password) {
+  if (isNil(loginname) || isNil(password)) {
     return next(new Error('信息不完整'));
   }
 
-  let conditions;
-  if (loginname.indexOf('@') !== -1) {
-    conditions = { email: loginname };
-  } else {
-    conditions = { loginname };
-  }
-
   try {
-    const doc = await UserProxy.findFullOne(conditions);
-    if (!doc) {
-      return next(new Error('账号不存在'));
-    }
-
+    const doc = await UserProxy.findFullOne(account(loginname));
+    if (isNil(doc)) return next(new Error('账号不存在'));
     const isOk = tools.bcompare(password, doc.pass);
     if (!isOk) return next(new Error('密码错误'));
 
@@ -190,7 +183,8 @@ export const authSearchPassword = async (req, res, next) => {
       loginname,
       retrieveKey: key
     });
-    if (!doc) {
+    
+    if (isNil(doc)) {
       return next(new Error(`找不到用户${loginname}`));
     }
 
