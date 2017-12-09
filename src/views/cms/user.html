@@ -38,63 +38,51 @@
       </tr>
     </tbody>
   </table>
+  <button v-show="canLoadData" class="fluid ui button" v-bind:class="{ loading: isLoading }" v-on:click="onLoadData">更多</button>
   <p v-show="users.length < 1">无数据</p>
 </div>
 <script>
-  let vm = new Vue({
-    el: '#app',
+  const lily = new Lily({
     data: {
       pageTitle: '用户列表',
-      users: [],
-      currentPage: 1,
-      pages: 1,
-      canLoadData: true,
-      errorMsg: '',
-      successMsg: ''
+      users: []
     },
     methods: {
-      fetchUsers: function(currentPage) {
+      fetchUsers (currentPage) {
+        this.isLoading = true;
         axios.post(dataPrefix + '/user/list',
           {
             currentPage: currentPage
           })
-          .then(function(response) {
-            vm.canLoadData = true;
-            let result = response.data;
+          .then(this.parse)
+          .then(this.resetLoading)
+          .then(function(result) {
             result.users.forEach(function(item) {
-              vm.users.push(item)
-            })
+              this.users.push(item)
+            }.bind(this))
 
-            vm.pages = result.pages;
-            vm.currentPage = result.currentPage;
-          })
-          .catch(function(err) {
-            console.log(err);
-          })
+            this.pages = result.pages;
+            this.currentPage = result.currentPage;
+            this.canLoadData = result.pages > result.currentPage;
+          }.bind(this))
+          .catch(this.error)
       },
-      onUpdateRole: function(index, role) {
+      onUpdateRole (index, role) {
         axios.post(dataPrefix + '/user/updateRole',
           {
             role: role,
-            userId: vm.users[index]._id
+            userId: this.users[index]._id
           })
           .then(function(response) {
-            vm.users[index].role = role;
-          })
-          .catch(function(err) {
-            console.log(err);
-          })
+            this.users[index].role = role;
+          }.bind(this))
+          .catch(this.error)
+      },
+      onLoadData () {
+        this.fetchUsers(this.currentPage + 1);
       }
     }
   });
 
-  var scrollButtom = new ScrollButtom();
-  scrollButtom.init(function() {
-    if (vm.currentPage < vm.pages && vm.canLoadData) {
-      vm.canLoadData = false;
-      vm.fetchUsers(vm.currentPage + 1);
-    }
-  });
-
-  vm.fetchUsers(vm.currentPage);
+  lily.fetchUsers(1);
 </script>

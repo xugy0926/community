@@ -100,68 +100,34 @@
   </div>
 </div>
 <script>
-  var vue = new Vue({
-    el: '#app',
+  const lily = Lily({
     data: {
-      // zones
-      zones: [],
       selectedZoneIndex: 0,
       zoneKey: '',
-      zoneValue: '',
-      // others
-      errorMsg: '',
-      successMsg: ''
+      zoneValue: ''
     },
     methods: {
-      getZones: function() {
-        axios.get(dataPrefix + '/zones')
-          .then(function(response) {
-            let result = response.data;
-            if (result.err) vue.errorMsg = err;
-            else {
-              result.zones.forEach(function(item) {
-                item.active = false;
-              });
-
-              vue.zones = result.zones;
-              vue.onSelectedZone(0);
-            }
-          })
-          .catch(function(err) {
-            console.log(err);
-          })
-      },
       onSelectedZone: function (index) {
-        vue.selectedZoneIndex = index;
+        this.selectedZoneIndex = index;
       },
       onUpdateZone: function () {
-        axios.patch(dataPrefix + '/zones/' + vue.zones[vue.selectedZoneIndex]._id, vue.zones[vue.selectedZoneIndex])
-          .then(function(response) {
-            let result = reponse.data;
-            vue.resetMessage();
-            if(result.err) vue.errorMsg = result.err;
-            else {
-              vue.successMsg = result.msg;
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-          })
+        axios.patch(dataPrefix + '/zones/' + this.zones[this.selectedZoneIndex]._id, this.zones[this.selectedZoneIndex])
+          .then(this.parse)
+          .then(function(result) {
+            this.resetMessage();
+            this.successMsg = result.msg;
+          }.bind(this))
+          .catch(this.error)
       },
       onDeleteZone: function() {
-        axios.delete(dataPrefix + '/zones/' + vue.zones[vue.selectedZoneIndex]._id)
-          .then(function(response) {
-            let result = response.data;
-            if (result.err) vue.errorMsg = result.err;
-            else {
-              vue.resetMessage();
-              vue.zones.$remove(vue.zones[vue.selectedZoneIndex]);
-              vue.onSelectedZone(0);
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-          })
+        axios.delete(dataPrefix + '/zones/' + this.zones[this.selectedZoneIndex]._id)
+          .then(this.parse)
+          .then(function(result) {
+            this.resetMessage();
+            this.zones.$remove(this.zones[this.selectedZoneIndex]);
+            this.onSelectedZone(0);
+          }.bind(this))
+          .catch(this.error)
       },
       onShowAddZoneDialog: function() {
         $('.ui.modal').modal('show');
@@ -170,30 +136,25 @@
         $('.ui.modal').modal('hide');
         axios.post(dataPrefix + '/zones',
           {
-            key: vue.zoneKey,
-            value: vue.zoneValue,
+            key: this.zoneKey,
+            value: this.zoneValue,
           })
-          .then(function(response) {
-            let result = response.data;
-            vue.resetMessage();
-            if (result.err) vue.errorMsg = result.err;
-            else {
-              vue.successMsg = 'success'
-              vue.zones.push(result.data);
-              vue.zonekey = '';
-              vue.zoneValue = '';
-            }
+          .then(this.parse)
+          .then(function(result) {
+            this.resetMessage();
+            this.successMsg = 'success'
+            this.zones.push(result.data);
+            this.zonekey = '';
+            this.zoneValue = '';
           })
-          .catch((err) => {
-            console.log(err);
-          })
+          .catch(this.error)
       },
       resetMessage: function() {
-        vue.errorMsg = '';
-        vue.successMsg = '';
+        this.errorMsg = '';
+        this.successMsg = '';
       }
     }
   });
 
-  vue.getZones();
+  lily.getZones();
 </script>

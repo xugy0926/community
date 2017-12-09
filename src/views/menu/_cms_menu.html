@@ -1,8 +1,12 @@
 <% if(currentUser && (currentUser.isAdmin || currentUser.isSupport)) { %>
-<div class="ui simple dropdown item">
-  CMS <i class="dropdown icon"></i>
-  <div class="menu">
-    <%- partial('./_cms_menu_items') %>
-  </div>
-</div>
+<ul class="navbar-nav flex-row">
+  <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="cmsMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      CMS
+    </a>
+    <div class="dropdown-menu" aria-labelledby="cmsMenuLink">
+      <%- partial('./_cms_menu_items') %>
+    </div>
+  </li>
+</ul>
 <% } %>

@@ -3,11 +3,7 @@
     <a class="avatar">
       <img v-bind:src="item.author.avatar">
     </a>
-    <% if(isMobile ) { %>
-    <div class="content-x">
-    <% } else { %>
     <div class="content">
-    <% } %>
       <div class="ui top attached header">
         <a>{{ item.author.loginname }}</a> <span class="date">{{ item.updateAtAge }}</span>
       </div>
@@ -36,11 +32,7 @@
     <a class="avatar">
       <img src=<%= currentUser.avatar %>>
     </a>
-    <% if(isMobile ) { %>
-    <div class="content-x">
-    <% } else { %>
     <div class="content">
-    <% } %>
       <div class="ui segment">
         <div class="ui reply form">
           <div class="field">

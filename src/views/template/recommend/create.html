@@ -14,35 +14,27 @@
         <div class="field">
           <textarea v-model="description" placeholder="推荐语"></textarea>
         </div>
-        <button class='ui button' v-on:click="onPublished">发布</button>
+        <button class='ui button' v-on:click="onPublished('P')">发布</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-  var zoneObjString = $('#zone-object').val();
-  var zoneObj = zoneObjString ? JSON.parse(zoneObjString) : {};
-
-  let lily = new Lily();
-
-  var vm = new Vue({
-    el: '#app',
-    data: Object.assign({
-      zoneObj: {},
+  Lily({
+    data: {
       pageTitle: '新建',
-    }, lily.options()),
+    },
     methods: {
-      onPublished: function() {
-        lily.createPost(this, {
-          zoneId: vm.zoneObj._id,
-          title: vm.title,
-          recommendUrl: vm.recommendUrl,
-          description: vm.description,
-          status: 'P'});
+      onPublished: function(status) {
+        status = typeof status !== 'undefined' ? status : 'P';
+        lily.createPost({
+          zoneId,
+          title: this.title,
+          recommendUrl: this.recommendUrl,
+          description: this.description,
+          status});
       }
     }
   });
-
-  vm.zoneObj = zoneObj;
 </script>

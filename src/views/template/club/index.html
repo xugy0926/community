@@ -12,47 +12,36 @@
           <%- createPanel %>
         </div>
         <%- partial('../base/posts') %>
+        <button v-if="canLoadData && posts.length > 0" class="fluid ui button" v-bind:class="{ loading: isLoading }" v-on:click="onLoadData">更多</button>
+        <div v-else></div>
       </div>
     </div>
   </div>
 </div>
 <script>
-  $(document).ready(function() {
-    let zoneId = '<%= zoneId %>';
-    let type = '<%= typeof(type) !== "undefined" && type ? type : "newest" %>';
-
-    let lily = new Lily();
-
-    let vm = new Vue({
-      el: '#app',
-      data: Object.assign({good: false}, lily.options()),
-      methods: {
-        onNewest () {
-          this.posts = [];
-          this.good = false;
-          getPosts(this, 1, this.good);
-        },
-        onGood () {
-          this.posts = [];
-          this.good = true;
-          getPosts(this, 1, this.good);
-        }
+  const lily =  Lily({
+    data: { good: false, url: dataPrefix + '/posts' },
+    methods: {
+      reset() {
+        this.currentPage = 1;
+        this.pages = 1;
+        this.posts = [];
+      },
+      onNewest() {
+        this.good = false;
+        this.reset();
+        this.getPosts(this.url, { zoneId, currentPage: 1, good: this.good });
+      },
+      onGood() {
+        this.good = true;
+        this.reset();
+        this.getPosts(this.url, { zoneId, currentPage: 1, good: this.good });
+      },
+      onLoadData() {
+        this.getPosts(this.url, { zoneId, currentPage: this.currentPage + 1, good: this.good });
       }
-    });
-
-    let scrollButtom = new ScrollButtom();
-    scrollButtom.init(function() {
-      console.log(vm);
-      if ((vm.currentPage < vm.pages) && vm.canLoadData) {
-        vm.canLoadData = false;
-        getPosts(vm, vm.currentPage + 1, vm.good);
-      }
-    });
-
-    function getPosts(vm2, page, good) {
-      lily.getPosts(vm2, zoneId, page, good);
     }
-
-    getPosts(vm, vm.currentPage, vm.good);
   });
+
+  lily.onNewest();
 </script>

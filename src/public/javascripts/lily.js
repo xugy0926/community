@@ -1,294 +1,212 @@
-(function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-  typeof define === 'function' && define.amd ? define(factory) :
-  (global.Lily = factory(global));
-}(this, (function () {
+(function(global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined'
+    ? (module.exports = factory())
+    : typeof define === 'function' && define.amd
+      ? define(factory)
+      : (global.Lily = factory(global));
+})(this, function() {
+  function Lily({ el, data, methods }) {
+    if (!el) el = '#app';
+    if (!data) data = {};
+    if (!methods) methods = {};
 
-  function Lily() {
-  }
+    return new Vue({
+      el: el,
+      data: Object.assign(data, {
+        key: '',
+        loginname: '',
+        username: '',
+        userId: '',
+        password: '',
+        rePassword: '',
+        email: '',
+        weixin: '',
+        qq: '',
+        avatar: '',
+        location: '',
+        signature: '',
+        accessToken: '',
+        oldPassword: '',
+        newPassword: '',
+        zones: [],
+        posts: [],
+        authors: [],
+        currentPage: 1,
+        canLoadData: true,
+        isLoading: false,
+        pages: 1,
+        newest: false,
+        good: false,
+        title: '',
+        content: '',
+        description: '',
+        advertisingMap: '',
+        recommendUrl: '',
+        errorMsg: '',
+        successMsg: ''
+      }),
+      methods: Object.assign(methods, {
+        parse(response) {
+          return response.data;
+        },
+        resetLoading(data) {
+          this.isLoading = false;
+          return data;
+        },
+        error(err) {
+          this.errorMsg = err.response.data.error;
+        },
+        signin() {
+          axios
+            .post(dataPrefix + '/user/signin', {
+              loginname: this.username,
+              password: this.password
+            })
+            .then(this.parse)
+            .then(function(result) {
+              const user = result.user;
+              if (user && user.active) {
+                location.href = pagePrefix + '/';
+              } else {
+                this.errorMsg = result.message;
+              }
+            })
+            .catch(this.error);
+        },
+        signup() {
+          axios
+            .post(dataPrefix + '/user/signup', {
+              loginname: vm.loginname,
+              password: vm.password,
+              rePassword: vm.rePassword,
+              email: vm.email
+            })
+            .then(this.parse)
+            .then(result => {
+              vm.successMsg = result.message;
+            })
+            .catch(this.error);
+        },
+        getUser(id) {
+          axios
+            .get(dataPrefix + '/user/' + id + '/detail')
+            .then(this.parse)
+            .then(function(result) {
+              this.loginname = result.user.loginname;
+              this.weixin = result.user.weixin;
+              this.qq = result.user.qq;
+              this.email = result.user.email;
+              this.avatar = result.user.avatar;
+              this.location = result.user.location;
+              this.signature = result.user.signature;
+              this.accessToken = result.user.accessToken;
+            }.bind(this))
+            .catch(this.error);
+        },
+        updateUserInfo(id) {
+          axios
+            .patch(dataPrefix + '/user/' + id + '/update', {
+              loginname: this.loginname,
+              weixin: this.weixin,
+              qq: this.qq,
+              email: this.email,
+              avatar: this.avatar,
+              location: this.location,
+              signature: this.signature
+            })
+            .then(this.parse)
+            .then(function(result) {
+              this.successMsg = result.msg;
+            }.bind(this))
+            .catch(this.error);
+        },
+        getZones() {
+          axios.get(dataPrefix + '/zones')
+            .then(this.parse)
+            .then(function(result) {
+              result.zones.forEach(function(item) {
+                item.active = false;
+              });
 
-  Lily.prototype.options = function () {
-    return {
-      key: '',
-      loginname: '',
-      username: '',
-      userId: '',
-      password: '',
-      rePassword: '',
-      email: '',
-      weixin: '',
-      qq: '',
-      avatar: '',
-      location: '',
-      signature: '',
-      accessToken: '',
-      posts: [],
-      currentPage: 1,
-      canLoadData: true,
-      pages: 1,
-      newest: false,
-      good: false,
-      title: '',
-      content: '',
-      description: '',
-      advertisingMap: '',
-      recommendUrl: '',
-      errorMsg: '',
-      successMsg: ''
-    }
-  }
+              this.zones = result.zones;
+            }.bind(this))
+            .catch(this.error)
+        },
+        getPosts(url, params) {
+          if (!this.canLoadData) return;
+          this.isLoading = true;
+          this.newest =
+            typeof params.good !== 'undefined' ? !params.good : true;
+          this.good = typeof params.good !== 'undefined' ? params.good : false;
+          axios
+            .get(url, { params })
+            .then(this.parse)
+            .then(this.resetLoading)
+            .then(
+              function(result) {
+                let newPosts = result.posts;
+                let newAuthors = result.authors;
+                // moment.locale('zh-cn');
+                newPosts.forEach(
+                  function(item) {
+                    item.updateAtAgo = moment(item.updateAt).fromNow();
+                    var index = _.findIndex(newAuthors, function(i) {
+                      return i._id === item.authorId;
+                    });
 
-  Lily.prototype.parse = function (response) {
-    return response.data;
-  }
+                    if (index >= 0) {
+                      item.author = newAuthors[index];
+                    }
 
-  Lily.prototype.resetLoad = function (vm) {
-    vm.canLoadData = true;
-  }
+                    this.posts.push(item);
+                  }.bind(this)
+                );
+                this.pages = result.pages;
+                this.currentPage = result.currentPage;
+                this.canLoadData = result.pages > result.currentPage;
+              }.bind(this)
+            )
+            .catch(this.error);
+        },
+        getPost(id) {
+          return axios.get(dataPrefix + '/posts/' + id)
+            .then(function (response) {
+              return response.data;
+            });
+        },
+        createPost(body) {
+          axios
+            .post(dataPrefix + '/posts', body)
+            .then(this.parse)
+            .then(function(result) {
+              location.href = result.url;
+            })
+            .catch(this.error);
+        },
+        savePost(id, body) {
+          axios.patch(dataPrefix + '/posts/' + id, body)
+            .then(this.parse)
+            .then(function (result) {
+              location.href = result.url;
+            })
+            .catch(this.error);
+        },
+        onUpPost(id) {
+          axios
+            .patch(dataPrefix + '/posts/' + id + '/up')
+            .then(this.parse)
+            .then(function(result) {
+              let index = _.findIndex(this.posts, function(post) {
+                if (post._id === id) return true;
+              });
 
-  Lily.prototype.error = function (err, vm) {
-    if (vm) {
-      vm.errorMsg = err.response.data.error;
-    }
-  }
-
-  Lily.prototype.signin = function (vm) {
-    axios.post(dataPrefix + '/user/signin',
-      {
-        loginname: vm.username,
-        password: vm.password
-      })
-      .then(this.parse)
-      .then(function (result) {
-        var user = result.user;
-        if (user && user.active) {
-          location.href =  pagePrefix + '/';
-        } else {
-          console.log(result);
-          vm.errMsg = result.message;
+              this.posts[index].ups = result.ups;
+            }.bind(this))
+            .catch(this.error);
         }
       })
-      .catch(err => this.error(err, vm))
+    });
   }
 
-  Lily.prototype.searchPasswordFromMail = function (vm) {
-    axios.post(dataPrefix + '/user/createSearchPassword',
-      {
-        email: vm.email
-      })
-      .then(this.parse)
-      .then(function (result) {
-        if (vm) {
-          vm.successMsg = result.msg;
-        }
-      })
-      .catch(err => this.error(err, vm));
-  }
-
-  Lily.prototype.resetPassword = function (vm) {
-    if (vm.password !== vm.rePassword) {
-      vm.errorMsg = '两次输入的密码不一致';
-      return;
-    }
-
-    if (vm.password === '' || vm.rePassword === '') {
-      vm.errorMsg = '请输入新密码';
-      return;
-    }
-
-    if (vm.password.length < 6 || vm.rePassword < 6) {
-      vm.errorMsg = '密码太短';
-      return;
-    }
-
-    vm.errorMsg = '';
-    vm.successMsg = '';
-
-    axios.post(dataPrefix + '/user/authSearchPassword',
-      {
-        key: vm.key,
-        loginname: vm.loginname,
-        password: vm.password,
-        rePassword: vm.rePassword
-      })
-      .then(this.parse)
-      .then(function(result) {
-        vm.password = '';
-        vm.rePassword = '';
-        vm.successMsg = result.msg;
-      })
-  }
-
-  Lily.prototype.getUser = function (vm) {
-    axios.get(dataPrefix + '/user/' + vm.userId + '/detail')
-      .then(this.parse)
-      .then(function(result) {
-        vm.loginname =  result.user.loginname;
-        vm.weixin = result.user.weixin;
-        vm.qq = result.user.qq;
-        vm.email = result.user.email;
-        vm.avatar = result.user.avatar;
-        vm.location = result.user.location;
-        vm.signature = result.user.signature;
-        vm.accessToken = result.user.accessToken;
-      })
-      .catch(err => this.error(err, vm))
-  }
-
-  Lily.prototype.updateUser = function (vm) {
-    axios.patch(dataPrefix + '/user/' + vm.userId + '/update',
-      {
-        loginname: vm.loginname,
-        weixin: vm.weixin,
-        qq: vm.qq,
-        email: vm.email,
-        avatar: vm.avatar,
-        location: vm.location,
-        signature: vm.signature
-      })
-      .then(this.parse)
-      .then(function(result) {
-        vm.successMsg = result.msg;
-      })
-      .catch(err => this.error(err, vm))
-  }
-
-  Lily.prototype.signup = function (vm) {
-    axios.post(dataPrefix + '/user/signup',
-      {
-        loginname: vm.loginname,
-        password: vm.password,
-        rePassword: vm.rePassword,
-        email: vm.email
-      })
-      .then(this.parse)
-      .then(result => { vm.successMsg = result.message })
-      .catch(err => this.error(err, vm))
-  }
-
-  Lily.prototype.getPosts = function(
-    vm,
-    zoneId,
-    currentPage,
-    good
-  ) {
-    vm.newest = !good;
-    vm.good = good;
-
-    axios.get(dataPrefix + '/posts',
-      {
-        params: {
-          currentPage: currentPage,
-          zoneId: zoneId,
-          good: vm.good
-        }
-      })
-      .then(this.parse)
-      .then(function (result) {
-        let newPosts = result.posts;
-        let newAuthors = result.authors;
-        // moment.locale('zh-cn');
-        newPosts.forEach(function (item) {
-          item.updateAtAgo = moment(item.updateAt).fromNow();
-          var index = _.findIndex(newAuthors, function(i) {
-            return i._id === item.authorId
-          })
-
-          if (index >= 0) {
-            item.author = newAuthors[index]
-          }
-
-          vm.posts.push(item);
-        })
-
-        vm.pages = result.pages;
-        vm.currentPage = result.currentPage;
-      })
-      .then(() => this.resetLoad(vm))
-      .catch(err => this.error(err, vm))
-  };
-
-  Lily.prototype.getUserPosts = function (
-    vm,
-    currentPage,
-    userId
-  ) {
-    if (currentPage > vm.pages) return;
-
-    axios.get(dataPrefix + '/user/' + userId + '/posts?' + 'currentPage=' + currentPage)
-      .then(this.parse)
-      .then(function (result) {
-        let newPosts = result.posts;
-        let newAuthors = result.authors;
-        // moment.locale('zh-cn');
-        newPosts.forEach(function(item) {
-          item.updateAtAgo = moment(item.updateAt).fromNow();
-          var index = _.findIndex(newAuthors, function(i) {
-            return i._id === item.authorId
-          })
-
-          if (index >= 0) {
-            item.author = newAuthors[index]
-          }
-
-          vm.posts.push(item);
-        })
-
-        vm.pages = result.pages;
-        vm.currentPage = result.currentPage;
-      })
-      .then(() => this.resetLoad(vm))
-      .catch(err => this.error(err, vm))
-  }
-
-  Lily.prototype.getUserCollectPosts = function (
-    vm,
-    currentPage,
-    userId
-  ) {
-    if (currentPage > vm.pages) return;
-
-    axios.get(dataPrefix + '/user/' + userId + '/collectPosts?' + 'currentPage=' + currentPage)
-      .then(this.parse)
-      .then(function(result) {
-        result.posts.forEach(function(item) {
-          item.updateAtAge = moment(item.updateAt).fromNow();
-          vm.posts.push(item);
-        });
-
-        vm.currentPage = currentPage;
-        vm.pages = result.pages;
-      })
-      .then(() => this.resetLoad(vm))
-      .catch(err => this.error(err, vm))
-  }
-
-  Lily.prototype.createPost = function (
-    vm,
-    data
-  ) {
-    axios.post(dataPrefix + '/posts', data)
-      .then(this.parse)
-      .then(function(result) {
-        location.href = result.url;
-      })
-      .catch(this.error);
-  }
-
-  Lily.prototype.upPost = function (
-    vm,
-    id
-  ) {
-    axios.patch(dataPrefix + '/posts/' + id + '/up')
-      .then(this.parse)
-      .then(function(result) {
-        let index = _.findIndex(vm.posts, function(post) {
-          if (post._id === id) return true;
-        });
-
-        vm.posts[index].ups = result.ups;
-      })
-      .catch(err => this.error(err, vm))
-  }
   return Lily;
-})));
+});

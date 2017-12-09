@@ -19,6 +19,7 @@
   <!-- style -->
   <link href="https://cdn.bootcss.com/jqueryui/1.12.1/jquery-ui.min.css" rel="stylesheet">
   <link href="https://cdn.bootcss.com/semantic-ui/2.2.13/semantic.min.css" rel="stylesheet">
+  <link href="/static/libs/bootstrap-4.0.2/css/bootstrap.css" rel="stylesheet">  
   <link href="/static/bootstrap-grid-and-display.css" rel="stylesheet">
   <link href="/static/stylesheets/jquery.atwho.css" rel="stylesheet">
   <link href="/static/stylesheets/common.css" rel="stylesheet">
@@ -32,6 +33,7 @@
   <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://cdn.bootcss.com/jqueryui/1.12.1/jquery-ui.min.js"></script>
   <script src="https://cdn.bootcss.com/popper.js/1.12.5/umd/popper.min.js"></script>
+  <script src="/static/libs/bootstrap-4.0.2/js/bootstrap.min.js"></script>
   <script src="https://cdn.bootcss.com/axios/0.16.2/axios.min.js"></script>
   <script src="/static/libs/vue.js"></script>
   <script src="/static/libs/lodash.compat.js"></script>
@@ -42,7 +44,6 @@
   <script src="/static/libs/markdown-it.js"></script>
   <script src="/static/libs/moment/moment-with-locales.js"></script>
   <script src="/static/libs/tag-it/js/tag-it.js"></script>
-  <script src="/static/javascripts/scroll.buttom.js"></script>
   <script src="/static/javascripts/editor.dialog.js"></script>
   <script src="/static/javascripts/image.upload.js"></script>
   <script src="/static/javascripts/lily.js"></script>
@@ -56,4 +57,5 @@
 <script>
   window.pagePrefix = '<%= apiPrefix.page %>';
   window.dataPrefix = '<%= apiPrefix.data %>';
+  window.zoneId = '<%= typeof zoneId !=="undefined" ? zoneId : "" %>';
 </script>

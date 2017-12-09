@@ -14,58 +14,47 @@
         <div class="field">
           <textarea v-model="description" placeholder="推荐语"></textarea>
         </div>
-        <button class='ui button' v-on:click="onPublished">发布</button>
+        <button class='ui button' v-on:click="onPublished('P')">发布</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-  var zoneObjString = $('#zone-object').val();
-  var zoneObj = zoneObjString ? JSON.parse(zoneObjString) : {};
-  var postId = '<%= postId %>';
-  let lily = new Lily();
-
-  var vm = new Vue({
-    el: '#app',
-    data: Object.assign({
-      zoneObj: {},
+  const postId = '<%= postId %>';
+  const lily = new Lily({
+    data: {
+      url: dataPrefix + '/posts/' + postId,
+      zoneId: '',
       pageTitle: '编辑',
-    }, lily.options()),
+    },
     methods: {
-      getPost: function() {
-        axios.get(dataPrefix + '/posts/' + vm.postId)
-          .then(function (response) {
-            let result = response.data;
-            vm.title = result.post.title || '';
-            vm.description = result.post.description || '';
-            vm.recommendUrl = result.post.recommendUrl || '';
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-      },
-      onPublished: function() {
-        axios.patch(dataPrefix + '/posts/' + vm.postId, {
-          zoneId: vm.zoneObj._id,
-          title: vm.title,
-          recommendUrl: vm.recommendUrl,
-          description: vm.description,
-          status: 'P'})
-          .then(function (response) {
-            let result = response.data;
-            location.href = result.url;
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-      },
+      onPublished (status) {
+        if (this.title === '') {
+          this.errorMsg = '标题为空';
+          return;
+        }
+
+        if (recommendUrl === '') {
+          this.errorMsg = '内容为空'
+          return
+        }
+
+        lily.savePost(postId, {
+          title: this.title,
+          recommendUrl: this.recommendUrl,
+          description: this.description,
+          status: status});
+      }
     }
   });
 
-  vm.zoneObj = zoneObj;
-  vm.postId = postId;
-
-  vm.getPost();
+  lily.getPost(postId)
+    .then(function (result) {
+      this.title = result.post.title || '';
+      this.description = result.post.description || '';
+      this.recommendUrl = result.post.recommendUrl || '';
+    }.bind(lily))
+    .catch(lily.error);
 </script>
   

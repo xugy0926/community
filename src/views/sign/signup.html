@@ -21,22 +21,11 @@
         <div class='field'>
           <input v-model='email' size='30' type='text' placeholder="电子邮件"/>
         </div>
-        <button class='ui primary button' v-on:click="submit">注册</button>
+        <button class='ui primary button' v-on:click="signup">注册</button>
       </div>
     </div>
   </div>
 </div>
 <script>
-  var lily = new Lily();
-
-  var vue = new Vue({
-    el: '#app',
-    data: Object.assign({}, lily.options()),
-    methods: {
-      submit() {
-        lily.signup(this);
-      }
-    }
-  });
-
+  Lily({});
 </script>

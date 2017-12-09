@@ -1,74 +1,72 @@
 <div class="row">
   <div class="col-md-3">
-      <div class="ui card">
-        <div class="image">
-          <img src="<%= user.avatar %>">
+    <div class="ui card">
+      <div class="image">
+        <img src="<%= user.avatar %>">
+      </div>
+      <div class="content">
+        <a class="header">
+          <%= user.loginname %>
+        </a>
+        <div class="meta">
+          <span class="date">
+            <%= user.createAt %>
+          </span>
         </div>
-        <div class="content">
-          <a class="header"><%= user.loginname %></a>
-          <div class="meta">
-            <span class="date"><%= user.createAt %></span>
-          </div>
-          <div class="description">
-              <%= user.signature %>
-          </div>
+        <div class="description">
+          <%= user.signature %>
         </div>
-        <div class="extra content">
-          <a>
-            <i class="book icon"></i>
-            <%= user.postCount %>
-          </a>
-          <a>
-            <i class="reply icon"></i>
-            <%= user.replyCount %>
-          </a>
-        </div>
+      </div>
+      <div class="extra content">
+        <a>
+          <i class="book icon"></i>
+          <%= user.postCount %>
+        </a>
+        <a>
+          <i class="reply icon"></i>
+          <%= user.replyCount %>
+        </a>
+      </div>
     </div>
   </div>
   <div class="col-md-9">
-      <div class="ui pointing secondary menu">
-        <a class="item" v-bind:class="{ active: tab === 'post' }" v-on:click="switchTab('post')">文章</a>
-        <a class="item" v-bind:class="{ active: tab === 'collect' }" v-on:click="switchTab('collect')">收藏</a>
-      </div>
-      <%- partial('../template/base/posts') %>       
+    <div class="ui pointing secondary menu">
+      <a class="item" v-bind:class="{ active: tab === 'post' }" v-on:click="onSwitchTab('post')">文章</a>
+      <a class="item" v-bind:class="{ active: tab === 'collect' }" v-on:click="onSwitchTab('collect')">收藏</a>
+    </div>
+    <%- partial('../template/base/posts') %>
+      <button v-if="canLoadData" class="fluid ui button" v-bind:class="{ loading: isLoading }" v-on:click="onLoadData">更多</button>
+      <div v-else></div>
   </div>
 </div>
 <script type="text/javascript">
-  var lily = new Lily();
-
-  var vm = new Vue({
-    el: '#app',
-    data: Object.assign({
-      tab: 'post'
-    }, lily.options()),
+  const userId = '<%= typeof(user) !== "undefined" ? user._id : "" %>';
+  const lily = Lily({
+    data: {
+      tab: 'post',
+      url: ''
+    },
     methods: {
-      switchTab(key) {
+      onSwitchTab(key) {
         this.tab = key;
         this.posts = [];
         this.currentPage = 1;
         this.pages = 1;
-        fetchData(vm.currentPage);
+        this.canLoadData = true;
+        if (key === 'post') {
+          this.url = dataPrefix + '/user/' + userId + '/posts';
+        } else {
+          this.url = dataPrefix + '/user/' + userId + '/collectPosts';
+        }
+
+        this.getPosts(this.url, { currentPage: this.currentPage });
+      },
+      onLoadData() {
+        this.getPosts(this.url, { currentPage: this.currentPage + 1 });
       }
     }
   });
 
-  vm.userId = '<%= typeof(user) !== "undefined" ? user._id : "" %>';
-
-  fetchData(vm.currentPage);
-
-  var scrollButtom = new ScrollButtom();
-  scrollButtom.init(function() {
-    if (vm.currentPage < vm.pages && vm.canLoadData) {
-      vm.canLoadData = false;
-      fetchData(vm.currentPage + 1);
-    }
-  });
-
-  function fetchData(page) {
-    if (vm.tab === 'post') {
-      lily.getUserPosts(vm, page, vm.userId);
-    } else {
-      lily.getUserCollectPosts(vm, page, vm.userId);
-    }
-  }
+  lily.url = dataPrefix + '/user/' + userId + '/posts';
+  lily.getPosts(lily.url, { currentPage: lily.currentPage });
 </script>

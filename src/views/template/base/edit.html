@@ -14,8 +14,8 @@
         <textarea class='form-control editor' name='t_content' rows='20' placeholder='支持 Markdown 语法'></textarea>
       </div>
     </div>
-    <button class='ui button' v-on:click="onSave">保存草稿</button>
-    <button class='ui button' v-on:click="onPublished">发布</button>
+    <button class='ui button' v-on:click="onPublished('D')">保存草稿</button>
+    <button class='ui button' v-on:click="onPublished('P')">发布</button>
     <button class="ui button" v-on:click="onPreview">预览</button>
     <div class="ui checkbox">
       <input type="checkbox" id="checkbox" v-model="isHtml">
@@ -30,9 +30,7 @@
 <!-- markdown editor -->
 <%- partial('../../includes/editor') %>
 <script>
-  var zoneObjString = $('#zone-object').val();
-  var zoneObj = zoneObjString ? JSON.parse(zoneObjString) : {};
-  var sampleTags = [];
+  let sampleTags = [];
 
   $('#postTags').tagit({
       availableTags: sampleTags,
@@ -40,109 +38,63 @@
       itemName: 'item',
       fieldName: 'tags'
   });
-  var postId = $('#post-id').val();
+  const postId = $('#post-id').val();
 
-  var editor = new Editor();
+  const editor = new Editor();
   editor.render($('.editor')[0]);
 
-  var vue = new Vue({
-    el: '#app',
+  const lily = Lily({
     data: {
-      zoneObj: {},
-      postId: '',
+      zoneId: '',
       title: '',
       advertisingMap: '',
       pageTitle: '编辑',
       post: '',
-      isHtml: false,
-      errorMsg: '',
-      successMsg: '',
-      currentPage: 0,
-      pages: 0,
+      isHtml: false
     },
     methods: {
-      getPost: function() {
-        axios.get(dataPrefix + '/posts/' + vue.postId)
-          .then(function (response) {
-            let result = response.data;
-            vue.post = result.post || {};
-            vue.zoneObj._id = vue.post.zoneId || '';
-            vue.title = vue.post.title || '';
-            vue.advertisingMap = vue.post.advertisingMap || '';
-            vue.tags = vue.post.tags && vue.post.tags !== '' ? vue.post.tags.split(',') : [];
-            vue.isHtml = vue.post.isHtml;
-            editor.codemirror.setValue(vue.post.content || '');
-            updateTags(vue.tags);
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-      },
-      onSave: function(status) {
-        vue.errorMsg = ''
-        if (vue.title === '') {
-          vue.errorMsg = '标题为空';
+      onPublished (status) {
+        status = typeof status !== 'undefined' ? status : 'P';
+        if (this.title === '') {
+          this.errorMsg = '标题为空';
           return;
         }
 
         if (editor.codemirror.getValue() === '') {
-          vue.errorMsg = '内容为空'
-          return;
+          this.errorMsg = '内容为空'
+          return
         }
-
-        axios.patch(dataPrefix + '/posts/' + vue.postId, {
-          title: vue.title,
-          advertisingMap: vue.advertisingMap,
+        
+        this.savePost(postId, {
+          title: this.title,
+          advertisingMap: this.advertisingMap,
           content: editor.codemirror.getValue(),
           tags: getTags(),
-          isHtml: vue.isHtml,
-          status: status? status : 'D'})
-          .then(function (response) {
-            let result = response.data;
-            location.href = result.url;
-          })
-          .catch((err) => {
-            console.log(err);
-          })
+          isHtml: this.isHtml,
+          status});
       },
-      onPublished: function() {
-        axios.patch(dataPrefix + '/posts/' + vue.postId, {
-          zoneId: vue.zoneObj._id,
-          title: vue.title,
-          advertisingMap: vue.advertisingMap,
-          content: editor.codemirror.getValue(),
-          tags: getTags(),
-          status: 'P'})
-          .then(function (response) {
-            let result = response.data;
-            location.href = result.url;
-          })
-          .catch((err) => {
-            console.log(err);
-          })
+      onPreview () {
+        const md = new markdownit();
+        $('div#preview-content').empty();
+        $('div#preview-content').append(md.render(editor.codemirror.getValue()));
+        $('.ui.preview.modal').modal('show');
       },
-      onPreview: function() {
-        var md = new markdownit()
-        $('div#preview-content').empty()
-        $('div#preview-content').append(md.render(editor.codemirror.getValue()))
-        $('.ui.preview.modal').modal('show')
-      },
-      onUploadImage: function() {
-        var imageUpload = new ImageUpload();
+      onUploadImage () {
+        const imageUpload = new ImageUpload();
         imageUpload.bind(uploadImageCallback);
       },
-      onDeleteImage: function() {
-        vue.advertisingMap = '';
+      onDeleteImage () {
+        this.advertisingMap = '';
       }
     }
   });
 
   function uploadImageCallback(url) {
-    vue.advertisingMap = url;
+    this.advertisingMap = url;
   }
 
   function getTags() {
-    var tags = [];
+    let tags = [];
     $("input[name='tags']").each(function(index,item) {
       tags.push($(this).val())
     });
@@ -154,7 +106,15 @@
     tags.forEach(item => {$("#postTags").tagit("createTag", item)})
   }
 
-  vue.postId = postId;
-  vue.pageTitle = '编辑';
-  vue.getPost();
+  lily.getPost(postId)
+    .then(function (result) {
+      this.post = result.post || {};
+      this.title = this.post.title || '';
+      this.advertisingMap = this.post.advertisingMap || '';
+      this.tags = this.post.tags && this.post.tags !== '' ? this.post.tags.split(',') : [];
+      this.isHtml = this.post.isHtml;
+      editor.codemirror.setValue(this.post.content || '');
+      updateTags(this.tags);
+    }.bind(lily))
+    .catch(lily.error);
 </script>

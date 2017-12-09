@@ -1,23 +1,34 @@
-<div id="menu" class="ui fixed inverted menu">
-  <div class="ui container">
-    <a href="/" class="header item">
-      小白学编程
-    </a>
-    <a href="/" class="item">首页</a>
-    <%
-    if (typeof(navs) !== 'undefined') {
-      navs.forEach(function(item) {
-    %>
-      <% if (typeof(selectedKey) !== 'undefined' && item.key === selectedKey) { %>
-        <a class="item" href="<%= apiPrefix.page %>/<%- item.href %>"><span><%- item.value %></span></a>
-      <% } else { %>
-      <a class="item" href="<%= apiPrefix.page %>/<%- item.href %>"><span><%- item.value %></span></a>
-      <% } %>
-    <% })} %>
 
-    <div class="right item item-x">
-      <%- partial('../menu/_cms_menu') %>
-      <%- partial('../menu/_user_menu') %>
+<div id="menu" class="navbar nav-bar-x navbar-expand-lg fixed-top navbar-light bg-light">
+  <div class="container">
+    <a class="navbar-brand" href="#">小白学编程</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="/">首页 <span class="sr-only">(current)</span></a>
+        </li>  
+        <%
+        if (typeof(navs) !== 'undefined') {
+          navs.forEach(function(item) {
+        %>
+          <% if (typeof(selectedKey) !== 'undefined' && item.key === selectedKey) { %>
+          <li class="nav-item">
+            <a class="nav-link" href="<%= apiPrefix.page %>/<%- item.href %>"><%- item.value %></a>
+          </li>
+          <% } else { %>
+          <li class="nav-item">
+            <a class="nav-link" href="<%= apiPrefix.page %>/<%- item.href %>"><%- item.value %></a>
+          </li>
+          <% } %>
+        <% })} %>
+        </li>
+      </ul>
+      <%- partial('menu/_cms_menu') %>        
+      <%- partial('menu/_user_menu') %>        
     </div>
   </div>
 </div>

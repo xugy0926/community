@@ -15,8 +15,8 @@
           <textarea class='form-control editor' name='t_content' rows='20' placeholder='支持 Markdown 语法'></textarea>
         </div>
       </div>
-      <button class='ui button' v-on:click="onSave">保存草稿</button>
-      <button class='ui button' v-on:click="onPublished">发布</button>
+      <button class='ui button' v-on:click="onPublished('D')">保存草稿</button>
+      <button class='ui button' v-on:click="onPublished('P')">发布</button>
       <button class="ui button" v-on:click="onPreview">预览</button>
       <div class="ui checkbox">
         <input type="checkbox" id="checkbox" v-model="isHtml">
@@ -31,9 +31,6 @@
 <!-- markdown editor -->
 <%- partial('../../includes/editor') %>
 <script>
-  var zoneObjString = $('#zone-object').val();
-  var zoneObj = zoneObjString ? JSON.parse(zoneObjString) : {};
-
   var sampleTags = [];
 
   $('#postTags').tagit({
@@ -43,94 +40,57 @@
       fieldName: 'tags'
   });
 
-  var editor = new Editor();
+  const editor = new Editor();
   editor.render($('.editor')[0]);
 
-  var vue = new Vue({
-    el: '#app',
+  Lily({
     data: {
-      zoneObj: {},
       title: '',
       advertisingMap: '',
       pageTitle: '新建',
       post: '',
-      isHtml: false,
-      errorMsg: '',
-      successMsg: '',
-      currentPage: 0,
-      pages: 0,
-
+      isHtml: false
     },
     methods: {
-      onSave: function(status) {
-        vue.errorMsg = ''
-        if (vue.title === '') {
-          vue.errorMsg = '标题为空';
+      onPublished (status) {
+        status = typeof status !== 'undefined' ? status : 'P';
+        if (this.title === '') {
+          this.errorMsg = '标题为空';
           return;
         }
 
         if (editor.codemirror.getValue() === '') {
-          vue.errorMsg = '内容为空'
+          this.errorMsg = '内容为空'
           return
         }
 
-        axios.post(dataPrefix + '/posts', {
-          zoneId: vue.zoneObj._id,
-          title: vue.title,
-          advertisingMap: vue.advertisingMap,
+        this.createPost({
+          zoneId,
+          title: this.title,
+          advertisingMap: this.advertisingMap,
           content: editor.codemirror.getValue(),
           tags: getTags(),
-          isHtml: vue.isHtml,
-          status: 'D'})
-          .then(function (response) {
-            let result = response.data;
-            if (result.err) {
-              vue.errorMsg = result.err;
-            } else {
-              location.href = result.url;
-            }
-          })
-          .catch(function(err) {
-            console.log(err);
-          })
+          isHtml: this.isHtml,
+          status});
       },
-      onPublished: function() {
-        axios.post(dataPrefix + '/posts', {
-          zoneId: vue.zoneObj._id,
-          title: vue.title,
-          advertisingMap: vue.advertisingMap,
-          content: editor.codemirror.getValue(),
-          tags: getTags(),
-          status: 'P'})
-          .then(function (response) {
-              if (response.data.err) {
-                vue.errorMsg = response.data.err;
-              } else {
-                location.href = response.data.url;
-              }
-          })
-          .catch(function(err) {
-            console.log(err);
-          })
-      },
-      onPreview: function() {
+      onPreview () {
         var md = new markdownit();
         $('div#preview-content').empty();
         $('div#preview-content').append(md.render(editor.codemirror.getValue()));
         $('.ui.preview.modal').modal('show');
       },
-      onUploadImage: function() {
+      onUploadImage () {
         var imageUpload = new ImageUpload();
         imageUpload.bind(uploadImageCallback);
       },
-      onDeleteImage: function() {
-        vue.advertisingMap = '';
+      onDeleteImage () {
+        this.advertisingMap = '';
       }
     }
   });
 
   function uploadImageCallback(url) {
-    vue.advertisingMap = url;
+    this.advertisingMap = url;
   }
 
   function getTags() {
@@ -145,6 +105,4 @@
   function updateTags(tags) {
     tags.forEach(item => {$("#postTags").tagit("createTag", item)})
   }
-
-  vue.zoneObj = zoneObj;
 </script>

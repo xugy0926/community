@@ -15,7 +15,7 @@
           <label>密码</label>
           <input size='30' type='password' v-model="password"/>
         </div>
-        <button class='ui primary button' v-on:click="submit">登录</button>
+        <button class='ui primary button' v-on:click="signin">登录</button>
         <% } %>
         <a class="ui github button" href="/auth/github">
           <i class="github icon"></i>
@@ -31,16 +31,6 @@
   </div>
 </div>
 <script>
-  let lily = new Lily();
-  var vm = new Vue({
-    el: '#app',
-    data: Object.assign({}, lily.options()),
-    methods: {
-      submit () {
-        lily.signin(this);
-      }
-    }
-  });
-
+  Lily({});
 </script>
   

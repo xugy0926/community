@@ -17,7 +17,7 @@
       <div class="field">
         <label>头像</label>
         <div>
-        <button class="ui button" v-on:click="uploadAvatar">上传头像</button>
+        <button class="ui button" v-on:click="onUploadAvatar">上传头像</button>
         </div>
       </div>
 
@@ -45,30 +45,26 @@
         <textarea id='signature' name='signature' size='30' v-model="signature"></textarea>
       </div>
       
-      <button class="ui button" v-on:click="updateUserInfo">更新资料</button>
+      <button class="ui button" v-on:click="onUpdateUserInfo">更新资料</button>
     </div>
   </div>
 </div>
 
 <script type="text/javascript">
-  var userId = '<%= typeof(userId) !== "undefined" && userId ? userId : ""%>';
-  var lily = new Lily({pagePrefix, dataPrefix});
-  var vm = new Vue({
-    el: '#app',
-    data: Object.assign({}, lily.options()),
+  const userId = '<%= typeof(userId) !== "undefined" && userId ? userId : ""%>';
+  const lily = Lily({
     methods: {
-      uploadAvatar() {
-        var imageUpload = new ImageUpload();
+      onUploadAvatar() {
+        const imageUpload = new ImageUpload();
         imageUpload.bind(function(url) {
-          vm.avatar = uri;
-        });
+          this.avatar = uri;
+        }.bind(this));
       },
-      updateUserInfo() {
-        lily.updateUser(vm);
+      onUpdateUserInfo() {
+        this.updateUserInfo(userId);
       }
     }
   });
 
-  vm.userId = userId;
-  lily.getUser(vm);
+  lily.getUser(userId);
 </script>

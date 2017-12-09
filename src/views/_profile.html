@@ -3,7 +3,7 @@
     <% if(profile.isHtml) { %>
     <%- profile.guide %>
     <% } else { %>
-    <div class='<%=config.mdType%>-body'>
+    <div class='ui <%=config.mdType%>-body'>
     <%- markdown(profile.guide) %>
     </div>
     <% } %>

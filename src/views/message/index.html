@@ -12,41 +12,39 @@
         </a>
       </div>
       <%- partial('components/unReadList') %>
+      <button v-show="unRead.canLoadData && unRead.messages.length > 0" class="fluid ui button" v-bind:class="{ loading: unRead.isLoading }" v-on:click="onLoadData">更多</button>
     </div>
     <div class="ui bottom attached tab segment" data-tab="second">
       <%- partial('components/readList') %>
+      <button v-show="read.canLoadData && read.messages.length > 0" class="fluid ui button" v-bind:class="{ loading: read.isLoading }" v-on:click="onLoadData">更多</button>
     </div>
   </div>
 </div>
 <script>
   $('.menu .item').tab();
-  var vm = new Vue({
-    el: '#app',
+  const lily = Lily({
     data: {
-      errorMsg: '',
-      successMsg: '',
-      posts: {},
-      authors: {},
-      replies: {},
       currentType: 'unRead',
       read: {
         type: 'read',
         messages: [],
         currentPage: 1,
-        pages: 1
+        pages: 1,
+        canLoadData: true,
+        isLoading: false
       },
       unRead: {
         type: 'unRead',
         messages: [],
         currentPage: 1,
-        pages: 1
-      },
-      canLoadData: true
+        pages: 1,
+        canLoadData: true,
+        isLoading: false
+      }
     },
     methods: {
       switchTab (type) {
-        vm.canLoadData = true;
-        vm.currentType = type;
+        this.currentType = type;
       },
       toRead() {
         axios.patch(dataPrefix + '/message/toRead')
@@ -57,61 +55,63 @@
       getData (type, nextPage) {
         axios.post(dataPrefix + '/message/data', {type: type, currentPage: nextPage})
           .then(function(response) {
-            let result = response.data;
-            vm.canLoadData = true
-            result.messages.forEach( function(item){
+            if (this.currentType === 'unRead') {
+              this.unRead.isLoading = false;
+            } else {
+              this.read.isLoading = false;
+            }
+
+            return response.data;
+          }.bind(this))
+          .then(function(result) {
+            result.messages.forEach(function(item){
               if (item.hasRead) {
-                vm.read.messages.push(item);
-                vm.read.currentPage = nextPage;
-                vm.read.pages = result.pages;
+                this.read.messages.push(item);
+                this.read.currentPage = result.currentPage;
+                this.read.pages = result.pages;
+                this.read.canLoadData = this.read.pages > this.read.currentPage;
               } else {
-                vm.unRead.messages.push(item);
-                vm.unRead.currentPage = nextPage;
-                vm.unRead.pages = result.pages;
+                this.unRead.messages.push(item);
+                this.unRead.currentPage = result.currentPage;
+                this.unRead.pages = result.pages;
+                this.unRead.canLoadData = this.unRead.pages > this.unRead.currentPage;
               }
-            });
+            }.bind(this));
 
             result.posts.forEach(function(item) {
-              vm.posts[item._id] = item;
-            });
+              this.posts[item._id] = item;
+            }.bind(this));
+
             result.authors.forEach(function(item) {
-              vm.authors[item._id] = item;
-            });
-            result.replies.forEach(function(item) {
-              vm.replies[item._id] = item;
-            });
-          })
-          .catch(function(err) {
-            console.log(err);
-          })
+              this.authors[item._id] = item;
+            }.bind(this));
+
+          }.bind(this))
+          .catch(this.error);
       },
       onSetRead (index, id) {
         axios.post(dataPrefix + '/message/read', {messageId: id})
           .then(function(response) {
-            vm.unRead.messages[index].hasRead = true
-          })
-          .catch(function(err) {
-            console.log(err);
-          });
+            this.unRead.messages[index].hasRead = true
+          }.bind(this))
+          .catch(this.error);
+      },
+      onLoadData () {
+        if (this.currentType === 'unRead') {
+          if (this.unRead.canLoadData) {
+            this.unRead.isLoading = true;
+            this.getData(this.unRead.type, this.unRead.currentPage + 1);
+          }
+        } else {
+          if (this.read.canLoadData) {
+            this.read.isLoading = true;
+            this.getData(this.read.type, this.read.currentPage + 1);
+          }
+        }        
       }
     }
   })
 
-  vm.getData(vm.unRead.type, vm.unRead.currentPage);
-  vm.getData(vm.read.type, vm.read.currentPage);
-
-  var scrollButtom = new ScrollButtom();
-  scrollButtom.init(function() {
-    if (vm.currentType === 'unRead') {
-      if (vm.unRead.currentPage < vm.unRead.pages && vm.canLoadData) {
-        vm.canLoadData = false;
-        vm.getData(vm.unRead.type, vm.unRead.currentPage + 1);
-      }
-    } else {
-      if (vm.read.currentPage < vm.read.pages && vm.canLoadData) {
-        vm.canLoadData = false;
-        vm.getData(vm.read.type, vm.read.currentPage + 1);
-      }
-    }
-  });
+  lily.getData(lily.unRead.type, lily.unRead.currentPage);
+  lily.getData(lily.read.type, lily.read.currentPage);
 </script>

@@ -6,37 +6,21 @@
       </div>
     </div>
     <%- partial('./posts') %>
+    <button v-if="canLoadData && posts.length > 0" class="fluid ui button" v-bind:class="{ loading: isLoading }" v-on:click="onLoadData">更多</button>
+    <div v-else></div>
   </div>
 </div>
 <script>
-  $(document).ready(function() {
-    var zoneId = '<%= zoneId %>';
-    var type = '<%= typeof(type) !== "undefined" && type ? type : "newest" %>';
-
-    var lily = new Lily();
-
-    var vm = new Vue({
-      el: '#app',
-      data: Object.assign({}, lily.options()),
-      methods: {
-        onUpPost (id) {
-          lily.upPost(this, id);
-        }
+  const lily = new Lily({
+    data: {
+      url: dataPrefix + '/posts'
+    },
+    methods: {
+      onLoadData() {
+        this.getPosts(this.url, { zoneId, currentPage: this.currentPage + 1 });
       }
-    });
-
-    var scrollButtom = new ScrollButtom();
-    scrollButtom.init(function() {
-      if (vm.currentPage < vm.pages && vm.canLoadData) {
-        vm.canLoadData = false;
-        getPosts(vm, vm.currentPage + 1, vm.good);
-      }
-    });
-
-    function getPosts(page, page, good) {
-      lily.getPosts(vm, zoneId, page, good);
     }
-
-    getPosts(vm.currentPage, 1, false);
   });
+
+  lily.getPosts(lily.url, { zoneId, currentPage: 1 });
 </script>

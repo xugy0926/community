@@ -62,193 +62,125 @@
         </tr>
       </tbody>
     </table>
+    <button v-show="canLoadData && posts.length > 0" class="fluid ui button" v-bind:class="{ loading: isLoading }" v-on:click="onLoadData">更多</button>
     <p v-show="posts.length < 1">无数据</p>
   </div>
 </div>
 <script>
-  var vue = new Vue({
-    el: '#app',
+  const lily = Lily({
     data: {
       pageTitle: '全部',
-      zones: [],
-      selectedZone: '',
-      posts: [],
-      authors: [],
-      currentPage: 1,
-      pages: 1,
-      canLoadData: true,
-      errorMsg: '',
-      successMsg: ''
+      selectedZone: ''
     },
     methods: {
-      getZones: function () {
-        axios.get(dataPrefix + '/zones')
-          .then(function (response) {
-            let result = response.data;
-            if (result.err) vue.errorMsg = result.err;
-            else {
-              result.zones.forEach(function (item) {
-                item.active = false;
-              });
-
-              result.zones[0].active = true;
-
-              vue.zones = result.zones;
-              vue.selectedZone = vue.zones[0];
-            }
-          });
-      },
-      onSelectedZone: function (index) {
-        vue.zones.forEach(function (item) {
+      onSelectedZone (index) {
+        this.zones.forEach(function (item) {
           item.active = false;
         });
 
-        vue.currentPage = 1;
-        vue.pages = 1;
-
-        vue.zones[index].active = true;
-
-        vue.selectedZone = vue.zones[index];
-        vue.getData(vue.currentPage);
+        this.posts = [];
+        this.currentPage = 1;
+        this.pages = 1;
+        this.zones[index].active = true;
+        this.selectedZone = this.zones[index];
+        this.getData(this.currentPage);
       },
-      getData: function (nextPage) {
-        if (nextPage > vue.pages) return;
+      getData (nextPage) {
+        if (nextPage > this.pages) return;
+        this.isLoading = true;
 
         axios.get(dataPrefix + '/posts',
           {
             params: {
-              zoneId: vue.selectedZone._id,
+              zoneId: this.selectedZone._id,
               currentPage: nextPage, 
               status: 'all'
             }
           })
-          .then(function (response) {
-            let result = response.data;
-            vue.canLoadData = true;
-
-            if (result.err) {
-              vue.errorMsg = result.err;
-              return;
-            }
-
-            vue.authors = result.authors;
-            vue.currentPage = result.currentPage;
-            vue.pages = result.pages;
-            vue.updatePosts(result.posts);
-          })
-          .catch((err) => {
-            console.log(err);
-          })
+          .then(this.parse)
+          .then(this.resetLoading)
+          .then(function (result) {
+            this.authors = result.authors;
+            this.currentPage = result.currentPage;
+            this.pages = result.pages;
+            this.canLoadData = this.pages > this.currentPage;
+            this.updatePosts(result.posts);
+          }.bind(this))
+          .catch(this.error)
       },
-      updatePosts: function (posts) {
+      updatePosts (posts) {
         moment.locale('zh-cn')
         posts.forEach(function (item) {
           item.createAtAgo = moment(item.updateAt).fromNow()
         });
 
         posts.forEach(function (item) {
-          var index = _.findIndex(vue.authors, function (i) {
+          var index = _.findIndex(this.authors, function (i) {
             return i._id === item.authorId
           })
 
           if (index >= 0) {
-            item.author = vue.authors[index]
+            item.author = this.authors[index]
           }
-        })
+        }.bind(this))
 
         posts.forEach(function (item) {
-          vue.posts.push(item)
-        });
+          this.posts.push(item)
+        }.bind(this));
       },
-      onTop: function (index) {
-        axios.patch(dataPrefix + '/posts/' + vue.posts[index]._id + '/top', {})
+      onTop (index) {
+        axios.patch(dataPrefix + '/posts/' + this.posts[index]._id + '/top', {})
+          .then(this.parse)
+          .then(function (result) {
+            this.successMsg = result.msg;
+            this.posts[index].top = !this.posts[index].top;
+          }.bind(this))
+          .catch(this.error)
+      },
+      onGood (index) {
+        axios.patch(dataPrefix + '/posts/' + this.posts[index]._id + '/good', {})
+          .then(this.parse)
           .then(function (response) {
-            let result = response.data;
-            if (result.err) {
-              vue.errorMsg = result.err;
-            } else {
-              vue.successMsg = result.msg;
-              vue.posts[index].top = !vue.posts[index].top;
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-
+            this.successMsg = result.msg;
+            this.posts[index].good = !this.posts[index].good;
+          }.bind(this))
+          .catch(this.error)
       },
-      onGood: function (index) {
-        axios.patch(dataPrefix + '/posts/' + vue.posts[index]._id + '/good', {})
-          .then(function (response) {
-            let result = response.data;
-            if (result.err) {
-              vue.errorMsg = result.err;
-            } else {
-              vue.successMsg = result.msg;
-              vue.posts[index].good = !vue.posts[index].good;
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+      onLock (index) {
+        axios.patch(dataPrefix + '/posts/' + this.posts[index]._id + '/lock', {})
+          .then(this.parse)
+          .then(function (result) {
+            this.successMsg = result.msg;
+            this.posts[index].lock = !this.posts[index].lock;
+          }.bind(this))
+          .catch(this.error)
       },
-      onLock: function (index) {
-        axios.patch(dataPrefix + '/posts/' + vue.posts[index]._id + '/lock', {})
-          .then(function (response) {
-            let result = response.data;
-            if (result.err) {
-              vue.errorMsg = result.err;
-            } else {
-              vue.successMsg = result.msg;
-              vue.posts[index].lock = !vue.posts[index].lock;
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      },
-      onDelete: function (index) {
+      onDelete (index) {
         if (confirm('确定要删除吗？')) {
-          axios.delete(dataPrefix + '/posts/' + vue.posts[index]._id)
-            .then(function (response) {
-              let result = response.data;
-              if (result.err) {
-                vue.errorMsg = result.err;
-              } else {
-                vue.posts.$remove(vue.posts[index]);
-              }
-            })
-            .catch((err) => {
-              console.log(err);
-            })
+          axios.delete(dataPrefix + '/posts/' + this.posts[index]._id)
+            .then(this.parse)
+            .then(function (result) {
+              this.posts.$remove(this.posts[index]);
+            }.bind(this))
+            .catch(this.error)
         }
       },
-      onReviewed: function (index, postId, status) {
+      onReviewed (index, postId, status) {
         axios.post(dataPrefix + '/post/' + postId + '/status', { status: status })
-          .then(function (response) {
-            let result = response.data;
-            if (result.err) {
-              return vue.errorMsg = result.err;
-            }
-            vue.posts[index].status = status;
-          })
-          .catch((err) => {
-            console.log(err);
-          })
+          .then(this.parse)
+          .then(function (result) {
+            this.posts[index].status = status;
+          }.bind(this))
+          .catch(this.error)
       },
-      createPost: function () {
-        location.href = '/new?zoneId=' + vue.selectedZone._id
+      createPost () {
+        location.href = '/new?zoneId=' + this.selectedZone._id
+      },
+      onLoadData() {
+        this.getData(this.currentPage + 1);
       }
     }
   });
 
-  var scrollButtom = new ScrollButtom();
-  scrollButtom.init(function () {
-    if (vue.currentPage < vue.pages && vue.canLoadData) {
-      vue.canLoadData = false;
-      vue.getData(vue.currentPage + 1);
-    }
-  });
-
-  vue.getZones();
-
+  lily.getZones();
 </script>

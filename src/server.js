@@ -98,11 +98,6 @@ app.use(authUser);
 app.use(zoneRequired);
 app.use(zonesRequired);
 
-app.use((req, res, next) => {
-  app.locals.isMobile = req.useragent.isMobile;
-  next();
-});
-
 app.use(config.apiPrefix.page, pageRouter);
 app.use(config.apiPrefix.data, dataRouter);
 app.use(page404);
