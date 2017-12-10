@@ -6,6 +6,11 @@
 - Node.js v8.9.1 or newer
 - pm2 package
 
+#### Data storage
+
+- mongodb
+- redis
+
 #### Quick Start
 
 1. Get the latest version
@@ -22,6 +27,12 @@ $ yarn
 ```
 
 3. Modify src/config/index.dev.js
+
+The three most important configurations
+
+- mongodb
+- redis
+- github，获取 github 登录用的信息请参考 https://github.com/settings/developers
 
 4. Run dev
 

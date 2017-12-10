@@ -22,7 +22,6 @@
         axios.get(dataPrefix + '/profile')
           .then(this.parse)
           .then(function(result) {
-            console.log(result);
             this.profile = result.profile;
           }.bind(this))
           .catch(this.error);
