@@ -22,6 +22,7 @@
   </li>
 </ul>
 <% } else { %>
+<ul class="navbar-nav flex-row">
   <li class="nav-item">
     <a class="nav-link" href="<%= apiPrefix.page %>/signin">登录</a>
   </li>
@@ -30,6 +31,7 @@
     <a class="nav-link" href="<%= apiPrefix.page %>/signup">注册</a>
   </li>
   <% } %>
+</ul>
 <% } %>
 <script type="text/javascript">
   new Vue({

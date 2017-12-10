@@ -46,7 +46,6 @@
   const lily = Lily({
     data: {
       zoneId: '',
-      title: '',
       advertisingMap: '',
       pageTitle: '编辑',
       post: '',
@@ -64,7 +63,7 @@
           this.errorMsg = '内容为空'
           return
         }
-        
+
         this.savePost(postId, {
           title: this.title,
           advertisingMap: this.advertisingMap,

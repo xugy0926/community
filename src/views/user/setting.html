@@ -55,7 +55,7 @@
   const lily = Lily({
     methods: {
       onUploadAvatar() {
-        const imageUpload = new ImageUpload();
+        const imageUpload = new ImageUpload(window);
         imageUpload.bind(function(url) {
           this.avatar = uri;
         }.bind(this));

@@ -4,12 +4,10 @@
       <div class="ui comments comments-x">
         <h1 class="ui header"><%= post.title %></h1>
         <div class="comment">
-          <a class="avatar">
-            <img src=<%= post.author.avatar %>>
-          </a>
           <div class="content">
             <div class="ui top attached header">
-                <a href="<%= apiPrefix.page %>/user/<%= post.author._id %>/info"><%= post.author.loginname %></a> <span class="date"><%= post.updateAt %></span>
+              <img src="<%= post.author.avatar %>" />
+              <a href="<%= apiPrefix.page %>/user/<%= post.author._id %>/info"><%= post.author.loginname %></a> <span class="date"><%= post.updateAt %></span>
             </div>
             <div class="ui attached segment">
               <div class='reply-content'>
@@ -54,29 +52,20 @@
 </div>
 <script src="http://vjs.zencdn.net/5.19.1/video.js"></script>
 <script>
+  const userId = '<%= typeof(currentUser) !== "undefined" && currentUser ? currentUser._id : "" %>';
+  const postId = '<%= typeof(post) !== "undefined" && post ? post._id : "" %>';
+
   const md = new markdownit();
   const lily = Lily({
     data: {
-      userId: '<%= typeof(currentUser) !== "undefined" && currentUser ? currentUser._id : "" %>',
-      postId: '<%= typeof(post) !== "undefined" && post ? post._id : "" %>',
       isCollect: <%= typeof(post) !== "undefined" && post ? post.isCollect : false %>,
       ups: <%= typeof(post) !== "undefined" && post ? post.ups.length : 0 %>,
-      replies: [],
-      content: '',
       statusKey: '<%= typeof(post) !== "undefined" && post ? post.status : "saved" %>',
       statusValue: '已保存',
       isReviewing: false,
       isReviewed: false
     },
     methods: {
-      onUpPost (id) {
-        axios.patch(dataPrefix + '/posts/' + id + '/up')
-          .then(this.parse)
-          .then(function (result) {
-            this.ups = result.ups.length;
-          }.bind(this))
-          .catch(this.error)
-      },
       getReplies (nextPage) {
         axios.get(dataPrefix + '/replies',
           {
@@ -139,16 +128,17 @@
               {
                 postId: this.postId,
                 replyId: replyId,
-                content: editedContent})
-            .then(this.parse)
-            .then(function (response) {
-                let newReply = result.data.reply
-                newReply.htmlContent = md.render(newReply.content)
-                this.replies.push(newReply)
-              }.bind(this))
-              .catch(this.error)
+                content: editedContent
+              })
+              .then(this.parse)
+              .then(function (result) {
+                  let newReply = result.reply
+                  newReply.htmlContent = md.render(newReply.content)
+                  this.replies.push(newReply)
+                }.bind(this))
+                .catch(this.error)
           }
-        });
+        }.bind(this));
       },
       onEditReply (replyId, content) {
         let editorDialog = new EditorDialog();
@@ -171,7 +161,7 @@
               }.bind(this))
               .catch(this.error)
           }
-        });
+        }.bind(this));
       },
       onDeleteReply (replyId) {
         axios.delete(dataPrefix + '/replies/' + replyId)
@@ -221,5 +211,7 @@
     }
   });
 
+  lily.userId = userId;
+  lily.postId = postId;
   lily.getReplies(lily.currentPage);
 </script>

@@ -31,12 +31,14 @@
         zones: [],
         posts: [],
         authors: [],
+        replies: [],
         currentPage: 1,
         canLoadData: true,
         isLoading: false,
         pages: 1,
         newest: false,
         good: false,
+        postId: '',
         title: '',
         content: '',
         description: '',
@@ -120,8 +122,10 @@
             }.bind(this))
             .catch(this.error);
         },
-        getZones() {
-          axios.get(dataPrefix + '/zones')
+        getZones(params) {
+          axios.get(dataPrefix + '/zones', {
+            params
+          })
             .then(this.parse)
             .then(function(result) {
               result.zones.forEach(function(item) {
@@ -195,12 +199,16 @@
           axios
             .patch(dataPrefix + '/posts/' + id + '/up')
             .then(this.parse)
-            .then(function(result) {
-              let index = _.findIndex(this.posts, function(post) {
-                if (post._id === id) return true;
-              });
-
-              this.posts[index].ups = result.ups;
+            .then(function (result) {
+              if (this.posts.length > 0) {
+                let index = _.findIndex(this.posts, function(post) {
+                  if (post._id === id) return true;
+                });
+  
+                this.posts[index].ups = result.ups;
+              } else {
+                this.ups = result.ups.length;
+              }
             }.bind(this))
             .catch(this.error);
         }

@@ -16,7 +16,7 @@ export const indexPage = async (req, res, next) => {
 
   try {
     if (zones.length < 1) {
-      return next(new Error('还没有创建板块'));
+      return res.redirect('/cms/zone');
     }
 
     const profile = await ProfileProxy.findOne();
@@ -140,7 +140,7 @@ export const showPostPage = async (req, res, next) => {
     }
 
     let page = 'template/' + zone.template + '/show';
-    res.render(page, { post });
+    res.render(page, { post, zoneId: zone._id });
   } catch (err) {
     next(err);
   }
@@ -150,7 +150,7 @@ export const createPostPage = async (req, res, next) => {
   try {
     const zone = await ZoneProxy.findOneById(req.query.zoneId);
     let page = 'template/' + zone.template + '/create';
-    res.render(page);
+    res.render(page, {zoneId: zone._id});
   } catch (err) {
     next(err);
   }
@@ -161,7 +161,7 @@ export const editPostPage = async (req, res, next) => {
     const postId = req.params.id;
     const zone = await ZoneProxy.findOneById(req.query.zoneId);
     let page = 'template/' + zone.template + '/edit';
-    res.render(page, { postId });
+    res.render(page, { postId, zoneId: zone._id });
   } catch (err) {
     next(err);
   }

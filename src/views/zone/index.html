@@ -146,7 +146,7 @@
             this.zones.push(result.data);
             this.zonekey = '';
             this.zoneValue = '';
-          })
+          }.bind(this))
           .catch(this.error)
       },
       resetMessage: function() {
@@ -156,5 +156,5 @@
     }
   });
 
-  lily.getZones();
+  lily.getZones({all: true});
 </script>

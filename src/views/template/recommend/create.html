@@ -28,7 +28,7 @@
     methods: {
       onPublished: function(status) {
         status = typeof status !== 'undefined' ? status : 'P';
-        lily.createPost({
+        this.createPost({
           zoneId,
           title: this.title,
           recommendUrl: this.recommendUrl,

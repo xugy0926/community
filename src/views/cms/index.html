@@ -5,7 +5,6 @@
       v-for="(index, item) in zones" 
       v-on:click="onSelectedZone(index)">{{ item.value }}
     </button>
-    <button target="_blank" class="ui button" v-on:click="createPost">添加文章</button>
   </ul>
   <div class="ui red segment">
     <h3 class="ui top attached label">
@@ -172,9 +171,6 @@
             this.posts[index].status = status;
           }.bind(this))
           .catch(this.error)
-      },
-      createPost () {
-        location.href = '/new?zoneId=' + this.selectedZone._id
       },
       onLoadData() {
         this.getData(this.currentPage + 1);

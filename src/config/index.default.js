@@ -30,7 +30,7 @@ module.exports = {
 
   apiPrefix: {
     page: '',
-    data: '/api/v1/data',
+    data: '/api/v1',
   },
 
   mdType: 'chinese-article',
@@ -41,7 +41,7 @@ module.exports = {
   signupValid: true,
 
   admin: {
-    loginName: 'admin',
+    loginname: 'admin',
     password: '123456',
     email: 'test@mail.com',
     avatar: 'https://avatar.com/image'

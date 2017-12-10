@@ -1,10 +1,8 @@
 <div class="ui comments comments-x">
   <div class="comment" v-for="item in replies">
-    <a class="avatar">
-      <img v-bind:src="item.author.avatar">
-    </a>
     <div class="content">
       <div class="ui top attached header">
+        <img v-bind:src="item.author.avatar" />
         <a>{{ item.author.loginname }}</a> <span class="date">{{ item.updateAtAge }}</span>
       </div>
       <div class="ui attached segment">
@@ -29,11 +27,11 @@
   </div>
   <% if (typeof(currentUser) !== 'undefined' && currentUser) { %>
   <div class="comment">
-    <a class="avatar">
-      <img src=<%= currentUser.avatar %>>
-    </a>
     <div class="content">
-      <div class="ui segment">
+      <div class="ui top attached header">
+        <img src="<%= currentUser.avatar %>" />
+      </div>
+      <div class="ui attached segment">
         <div class="ui reply form">
           <div class="field">
             <textarea class='form-control' rows='4' v-model="content"></textarea>

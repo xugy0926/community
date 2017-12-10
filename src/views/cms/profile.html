@@ -22,6 +22,7 @@
         axios.get(dataPrefix + '/profile')
           .then(this.parse)
           .then(function(result) {
+            console.log(result);
             this.profile = result.profile;
           }.bind(this))
           .catch(this.error);
@@ -41,8 +42,8 @@
         } else {
           axios.post(dataPrefix + '/profile',
             {
-              guide: vm.profile.guide, 
-              isHtml: vm.profile.isHtml 
+              guide: this.profile.guide, 
+              isHtml: this.profile.isHtml 
             })
             .then(this.parse)
             .then(function(result) {
