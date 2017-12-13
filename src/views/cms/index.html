@@ -108,21 +108,13 @@
           .catch(this.error)
       },
       updatePosts (posts) {
-        moment.locale('zh-cn')
         posts.forEach(function (item) {
           item.createAtAgo = dateFns.distanceInWordsToNow(item.updateAt);
         });
 
         posts.forEach(function (item) {
-          var index = _.findIndex(this.authors, function (i) {
-            return i._id === item.authorId
-          })
-
-          if (index >= 0) {
-            item.author = this.authors[index]
-          }
+          item.author = R.find(R.propEq('_id', item.authorId), this.authors);
         }.bind(this))
-
         posts.forEach(function (item) {
           this.posts.push(item)
         }.bind(this));
