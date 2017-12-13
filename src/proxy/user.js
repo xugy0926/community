@@ -1,3 +1,4 @@
+import R from 'ramda';
 import uuid from 'node-uuid';
 import User from '../models/user';
 
@@ -64,25 +65,12 @@ export const findByIds = ids => {
     .exec();
 };
 
-export const increaseScore = (authorId, { postCount, replyCount }) => {
-  if (typeof authorId !== 'string' && typeof authorId !== 'object')
-    throw new Error(ResultMsg.NO_ID);
-  postCount = !postCount ? 0 : postCount;
-  replyCount = !replyCount ? 0 : replyCount;
-
+export const incCount = R.curry((authorId, prop) => {
   const data = {};
-  if (postCount != 0) {
-    data.score = 5;
-    data.postCount = 1;
-  }
-
-  if (replyCount != 0) {
-    data.score = 5;
-    data.replyCount = 1;
-  }
-
+  data[prop] = 1;
+  data.score = 5;
   return User.findByIdAndUpdate(authorId, { $inc: data }).exec();
-};
+});
 
 export const create = ({ loginname, passwordHash, email, avatar, active }) => {
   const user = new User();

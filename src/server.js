@@ -20,13 +20,13 @@ import pageRouter from './pageRouter';
 import dataRouter from './dataRouter';
 import markdown from './common/markdown';
 import { authUser } from './middlewares/auth';
-import { zoneRequired, zonesRequired } from './middlewares/zone';
+import zone from './middlewares/zone';
+import githubAuth from './middlewares/githubAuth';
 import errorHandler from './middlewares/errorHandler';
 import page404 from './middlewares/404';
 import db from './models/index';
 
 const debug = require('debug')('community:app');
-const GitHubStrategy = require('passport-github').Strategy;
 const MongoStore = new connectMongodb(session);
 const app = express();
 
@@ -75,28 +75,9 @@ app.use(
   })
 );
 
-app.use(passport.initialize());
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
-passport.deserializeUser(function(user, done) {
-  done(null, user);
-});
-passport.use(
-  new GitHubStrategy(config.github, function(
-    accessToken,
-    refreshToken,
-    profile,
-    done
-  ) {
-    profile.accessToken = accessToken;
-    done(null, profile);
-  })
-);
-
+app.use(githubAuth());
 app.use(authUser);
-app.use(zoneRequired);
-app.use(zonesRequired);
+app.use(zone);
 
 app.use(config.apiPrefix.page, pageRouter);
 app.use(config.apiPrefix.data, dataRouter);

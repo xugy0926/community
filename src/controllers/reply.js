@@ -1,7 +1,7 @@
 import validator from 'validator';
 import config from '../config';
 import ids from '../functions/ids';
-import { onlyMe } from '../functions/limit';
+import { onlyMe, withoutMe } from '../functions/limit';
 import * as at from '../common/at';
 import * as message from '../common/message';
 import getPages from '../common/pages';
@@ -61,9 +61,7 @@ export const post = async (req, res, next) => {
     at.sendMessageToMentionUsers(content, postId, authorId, reply._id);
     await message.sendReplyMessage(post.authorId, authorId, postId, reply._id);
 
-    const author = await UserProxy.increaseScore(authorId, {
-      replyCount: 1
-    });
+    const author = await UserProxy.incCount(authorId)('replyCount');
     reply = reply.toObject();
     reply.author = author;
     sendReplyNotify(req.session.user, postAuthor, post, reply);
@@ -103,11 +101,7 @@ export const update = async (req, res, next) => {
 
   try {
     const reply = await ReplyProxy.findOneById(replyId);
-
-    if (reply.authorId.toString() !== userId && !req.session.user.isAdmin) {
-      return next(new Error());
-    }
-
+    onlyMe(req)(reply.authorId)(userId);
     await ReplyProxy.update(replyId, { content });
     res.end();
   } catch (err) {
@@ -124,9 +118,7 @@ export const up = async (req, res, next) => {
     const author = await UserProxy.findOneById(reply.authorId);
     const post = await PostProxy.findOneById(reply.postId);
 
-    if (reply.authorId.toString() === userId && !req.session.user.isAdmin) {
-      return next(new Error());
-    }
+    withoutMe(req)(reply.authorId)(userId);
 
     const upIndex = reply.ups.indexOf(userId);
 

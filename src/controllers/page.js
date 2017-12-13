@@ -34,14 +34,14 @@ export const indexPage = async (req, res, next) => {
 
 export const zonePage = async (req, res, next) => {
   try {
-    const zone = await ZoneProxy.findOneById(req.query.zoneId);
+    const zone = res.locals.zone;
     const html = await createPanel(zone);
     let page = 'template/' + zone.template + '/index';
     res.render(page, {
       selectedKey: zone.key,
       zoneKey: zone.key,
       template: zone.template,
-      zoneId: req.query.zoneId,
+      zoneId: zone._id,
       type: req.query.type,
       createPanel: html
     });
@@ -148,7 +148,7 @@ export const showPostPage = async (req, res, next) => {
 
 export const createPostPage = async (req, res, next) => {
   try {
-    const zone = await ZoneProxy.findOneById(req.query.zoneId);
+    const zone = res.locals.zone;
     let page = 'template/' + zone.template + '/create';
     res.render(page, {zoneId: zone._id});
   } catch (err) {
@@ -159,7 +159,7 @@ export const createPostPage = async (req, res, next) => {
 export const editPostPage = async (req, res, next) => {
   try {
     const postId = req.params.id;
-    const zone = await ZoneProxy.findOneById(req.query.zoneId);
+    const zone = res.locals.zone;
     let page = 'template/' + zone.template + '/edit';
     res.render(page, { postId, zoneId: zone._id });
   } catch (err) {

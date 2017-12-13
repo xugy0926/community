@@ -36,7 +36,7 @@ export const findOneById = id => {
 export const findFullOneById = async id => {
   try {
     let post = await Post.findOne({ _id: id }).exec();
-    if (!post) return Promise.reject(ResultMsg.DATA_NOT_FOUND);
+    if (!post) return Promise.reject('no post.');
     post = post.toObject();
     post.linkedContent = at.linkUsers(post.content);
     post.createAt = tools.formatDate(post.createAt);

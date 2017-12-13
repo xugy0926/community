@@ -28,17 +28,12 @@ async function fetchPosts(conditions, options) {
 }
 
 export const more = async (req, res, next) => {
-  const zoneId = req.query.zoneId || '';
   const currentPage = parseInt(req.query.currentPage, 10) || 1;
   const status = req.query.status || 'P';
   const authorId = req.query.authorId || '';
   let good = validator.toBoolean(
     typeof req.query.good !== 'undefined' ? req.query.good : 'false'
   );
-
-  if (zoneId === '') {
-    return next(new Error());
-  }
 
   const conditions = {};
 
@@ -54,7 +49,7 @@ export const more = async (req, res, next) => {
     conditions.authorId = authorId;
   }
 
-  conditions.zoneId = zoneId;
+  conditions.zoneId = res.locals.zone._id;
 
   const limit = config.postListCount;
   const options = {
@@ -147,7 +142,6 @@ export const one = async (req, res, next) => {
 };
 
 export const post = async (req, res, next) => {
-  const zoneId = req.body.zoneId || '';
   const title = req.body.title || '';
   const area = req.body.area || '';
   const description = req.body.description || '';
@@ -169,7 +163,7 @@ export const post = async (req, res, next) => {
   }
 
   const data = {
-    zoneId,
+    zoneId: res.locals.zone._id,
     title,
     description,
     content,
@@ -185,7 +179,7 @@ export const post = async (req, res, next) => {
 
   try {
     const post = await PostProxy.create(data);
-    await UserProxy.increaseScore(post.authorId, { postCount: 1 });
+    await UserProxy.incCount(post.authorId)('postCount');
     at.sendMessageToMentionUsers(content, post._id, authorId);
     res.json({
       url: `${config.apiPrefix.page}/post/${post._id}`
