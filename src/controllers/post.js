@@ -3,23 +3,17 @@ import validator from 'validator';
 import config from '../config';
 import ids from '../functions/ids';
 import { onlyMe, withoutMe } from '../functions/limit';
+import getObjById from '../functions/getObjById';
 import * as at from '../common/at';
-import * as tools from '../common/tools';
 import markdown from '../common/markdown';
 import upFile from '../common/upFile';
 import getPages from '../common/pages';
-import {
-  UserProxy,
-  PostProxy,
-  PostCollectProxy
-} from '../proxy';
+import { UserProxy, PostProxy, PostCollectProxy } from '../proxy';
 
 async function fetchPosts(conditions, options) {
   try {
-    const limit = config.postListCount;
-    const count = await getPages(PostProxy.count, conditions, 'pages');
+    const pages = await getPages(PostProxy.count)('pages')(conditions);
     const posts = await PostProxy.find(conditions, options);
-    const pages = Math.ceil(count / limit);
     const authors = await UserProxy.findByIds(ids('authorId')(posts));
     return Promise.resolve([posts, pages, authors]);
   } catch (err) {
@@ -88,9 +82,8 @@ export const userPosts = async (req, res, next) => {
 export const collectPosts = async (req, res, next) => {
   const userId = req.params.id || '';
   const currentPage = req.body.currentPage || 1;
-
-  const conditions = { userId };
   const limit = config.postListCount;
+  const conditions = { userId };
   const options = {
     skip: (currentPage - 1) * limit,
     limit,
@@ -100,12 +93,9 @@ export const collectPosts = async (req, res, next) => {
   const zones = res.locals.zones;
 
   try {
-    const count = await getPages(
-      PostCollectProxy.count,
-      conditions,
+    const pages = await getPages(PostCollectProxy.count)(
       `${userId}collect_posts_pages`
-    );
-    const pages = Math.ceil(count / limit);
+    )(conditions);
     const postIds = await PostCollectProxy.find(conditions, options);
     const posts = [];
     for (let i = postIds.length - 1; i >= 0; i--) {
@@ -113,13 +103,7 @@ export const collectPosts = async (req, res, next) => {
       const author = await UserProxy.findOneById(post.authorId);
       post = post.toObject();
       post.author = author;
-
-      let index = _.findIndex(zones, function(zone) {
-        return zone._id.toString() === post.zoneId.toString();
-      });
-
-      post.zoneKey = zones[index].key;
-      post.zoneIcon = zones[index].icon;
+      post.zone = getObjById(post.zoneId.toString())(zones);
       posts.push(post);
     }
 
@@ -129,16 +113,15 @@ export const collectPosts = async (req, res, next) => {
   }
 };
 
-export const one = async (req, res, next) => {
+export const one = (req, res, next) => {
   const postId = req.params.id;
 
-  try {
-    let post = await PostProxy.findFullOneById(postId);
-    post.mdContent = markdown(post.linkedContent);
-    res.json({ post });
-  } catch (err) {
-    next(err);
-  }
+  PostProxy.findFullOneById(postId)
+    .then(post => {
+      post.mdContent = markdown(post.linkedContent);
+      res.json({ post });
+    })
+    .catch(next);
 };
 
 export const post = async (req, res, next) => {
@@ -393,7 +376,6 @@ export const up = async (req, res, next) => {
     let data = {};
     if (upIndex < 0) {
       post.ups.push(userId);
-      // sendUpPostNotify(req.session.user, author, post, reply);
     } else {
       post.ups.splice(upIndex, 1);
     }

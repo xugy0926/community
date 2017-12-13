@@ -1,12 +1,12 @@
+import bcrypt from 'bcrypt';
 import { UserProxy } from '../proxy';
-import { bhash } from '../common/tools';
 import { admin } from '../config';
 
 async function createAdmin() {
   try {
     const user = await UserProxy.findOne({ loginname: admin.loginname });
     if (!user) {
-      const passwordHash = bhash(admin.password);
+      const passwordHash = bcrypt.hash(admin.password);
       await UserProxy.create({
         loginname: admin.loginname,
         passwordHash: passwordHash,

@@ -150,10 +150,9 @@
               function(result) {
                 let newPosts = result.posts;
                 let newAuthors = result.authors;
-                // moment.locale('zh-cn');
                 newPosts.forEach(
                   function(item) {
-                    item.updateAtAgo = moment(item.updateAt).fromNow();
+                    item.updateAtAgo = dateFns.distanceInWordsToNow(item.updateAt);
                     var index = _.findIndex(newAuthors, function(i) {
                       return i._id === item.authorId;
                     });

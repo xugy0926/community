@@ -1,5 +1,4 @@
 import validator from 'validator';
-import config from '../config';
 import ids from '../functions/ids';
 import { onlyMe, withoutMe } from '../functions/limit';
 import * as at from '../common/at';
@@ -12,12 +11,10 @@ export const more = async (req, res, next) => {
   const postId = req.query.postId;
   const currentPage = parseInt(req.body.currentPage, 10) || 1;
   const conditions = { postId, deleted: false };
-  const limit = config.replyListCount;
   const options = { skip: (currentPage - 1) * limit, limit, sort: 'createAt' };
 
   try {
-    const count = await getPages(ReplyProxy.count, conditions, '[reply pages]');
-    const pages = Math.ceil(count / limit);
+    const pages = await getPages(ReplyProxy.count)('[reply pages]')(conditions);
     const replies = await ReplyProxy.find(conditions, options);
     const authors = await UserProxy.findByIds(ids('authorId')(replies));
     res.json({ currentPage, replies, authors, pages });

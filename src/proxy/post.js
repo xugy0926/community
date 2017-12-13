@@ -1,9 +1,8 @@
 import * as at from '../common/at';
-import * as tools from '../common/tools';
 import * as UserProxy from './user';
 import * as ZoneProxy from './zone';
 import Post from '../models/post';
-
+const distanceInWordsToNow = require('date-fns/distance_in_words_to_now')
 const baseFields = '_id title recommentUrl description';
 
 const fields =
@@ -39,8 +38,8 @@ export const findFullOneById = async id => {
     if (!post) return Promise.reject('no post.');
     post = post.toObject();
     post.linkedContent = at.linkUsers(post.content);
-    post.createAt = tools.formatDate(post.createAt);
-    post.updateAt = tools.formatDate(post.updateAt);
+    post.createAt = distanceInWordsToNow(post.createAt);
+    post.updateAt = distanceInWordsToNow(post.updateAt);
     const author = await UserProxy.findOneById(post.authorId);
     post.author = author;
     const zone = await ZoneProxy.findOneById(post.zoneId);

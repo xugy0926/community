@@ -110,7 +110,7 @@
       updatePosts (posts) {
         moment.locale('zh-cn')
         posts.forEach(function (item) {
-          item.createAtAgo = moment(item.updateAt).fromNow()
+          item.createAtAgo = dateFns.distanceInWordsToNow(item.updateAt);
         });
 
         posts.forEach(function (item) {

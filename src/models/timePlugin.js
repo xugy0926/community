@@ -1,11 +1,11 @@
-import * as tools from '../common/tools';
+const distanceInWordsToNow = require('date-fns/distance_in_words_to_now')
 
 export default function(schema) {
   schema.methods.createAtAgo = function() {
-    return tools.formatDate(this.createAt, true);
+    return distanceInWordsToNow(this.createAt);
   };
 
   schema.methods.updateAtAgo = function() {
-    return tools.formatDate(this.updateAt, true);
+    return distanceInWordsToNow(this.updateAt);
   };
 }

@@ -1,19 +1,25 @@
-import Redis from 'ioredis';
+import bluebird from 'bluebird';
+import redis from 'redis';
 import logger from './logger';
-import { redis } from '../config'
+import { redis as redisConfig } from '../config'
 
-const client = new Redis({
-  port: redis.port,
-  host: redis.host,
-  db: redis.db,
-  password: redis.password,
+bluebird.promisifyAll(redis.RedisClient.prototype);
+bluebird.promisifyAll(redis.Multi.prototype);
+
+const client = redis.createClient({
+  port: redisConfig.port,
+  host: redisConfig.host,
+  db: redisConfig.db,
+  password: redisConfig.password,
 });
 
+client.on('ready', () => {
+  logger.info('connect to redis.');
+})
+
 client.on('error', err => {
-  if (err) {
-    logger.error('connect to redis error, check your redis config', err);
-    process.exit(1);
-  }
+  logger.error('connect to redis error, check your redis config', err);
+  process.exit(1);
 });
 
 export default client;

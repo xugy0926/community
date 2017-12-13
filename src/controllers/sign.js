@@ -1,4 +1,5 @@
 import R from 'ramda';
+import bcrypt from 'bcrypt';
 import validator from 'validator';
 import utility from 'utility';
 import uuid from 'node-uuid';
@@ -6,7 +7,6 @@ import config from '../config';
 import { isNil, isNotNil } from '../functions/type';
 import account from '../functions/account';
 import * as mail from '../common/mail';
-import * as tools from '../common/tools';
 import * as authMiddleWare from '../middlewares/auth';
 import { UserProxy } from '../proxy';
 
@@ -30,7 +30,7 @@ export const signup = async (req, res, next) => {
   if (loginname.length < 5) {
     return next(new Error('用户名至少需要5个字符'));
   }
-  if (!tools.validateId(loginname)) {
+  if (!R.test(/^[a-zA-Z0-9\-_]+$/i)(loginname)) {
     return next(new Error('用户名不合法'));
   }
   if (!validator.isEmail(email)) {
@@ -50,7 +50,7 @@ export const signup = async (req, res, next) => {
 
     if (isNotNil(doc)) return next(new Error('账号已经存在'));
 
-    const passwordHash = tools.bhash(password);
+    const passwordHash = bcrypt.hash(password);
     await UserProxy.create({
       loginname,
       passwordHash,
@@ -85,7 +85,7 @@ export const signin = async (req, res, next) => {
   try {
     const doc = await UserProxy.findFullOne(account(loginname));
     if (isNil(doc)) return next(new Error('账号不存在'));
-    const isOk = tools.bcompare(password, doc.pass);
+    const isOk = bcrypt.compare(password, doc.pass);
     if (!isOk) return next(new Error('密码错误'));
 
     doc.pass = '';
@@ -198,7 +198,7 @@ export const authSearchPassword = async (req, res, next) => {
     const data = {
       retrieveTime: '',
       retrieveKey: '',
-      pass: tools.bhash(password),
+      pass: bcrypt.hash(password),
       active: true
     };
 
@@ -220,13 +220,13 @@ export const updateResetPassword = async (req, res, next) => {
 
   try {
     const doc = await UserProxy.findFullOne({ _id: userId });
-    const isOk = tools.bcompare(oldPassword, doc.pass);
+    const isOk = bcrypt.compare(oldPassword, doc.pass);
     if (!isOk) {
       return next(new Error('老密码不对'));
     }
 
     const data = {
-      pass: tools.bhash(newPassword),
+      pass: bcrypt.hash(newPassword),
       active: true
     };
 

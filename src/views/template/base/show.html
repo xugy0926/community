@@ -98,7 +98,7 @@
         }.bind(this))
 
         replies.forEach( function(item){
-          item.updateAtAge = moment(item.updateAt).fromNow();
+          item.updateAtAge = dateFns.distanceInWordsToNow(item.updateAt);
           this.replies.push(item);
         }.bind(this));
       },

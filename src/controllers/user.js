@@ -78,8 +78,7 @@ export const users = async (req, res, next) => {
       sort: '-createAt'
     };
 
-    const count = await getPages(UserProxy.count, {}, 'users');
-    const pages = Math.ceil(count / limit);
+    const pages = await getPages(UserProxy.count)('users')({});
     const users = await UserProxy.find({}, options);
     res.json({ users, pages, currentPage });
   } catch (err) {

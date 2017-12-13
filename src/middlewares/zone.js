@@ -3,7 +3,7 @@ import { ZoneProxy } from '../proxy';
 import getObjById from '../functions/getObjById';
 
 export default (req, res, next) => {
-  const buildHref = R.map(function(item) {
+  const buildhref = R.map(function(item) {
     item = item.toObject();
     item.href = `zone?zoneId=${item._id}`;
     item._id = item._id.toString();
@@ -11,7 +11,7 @@ export default (req, res, next) => {
   });
 
   ZoneProxy.find({ deleted: false, enable: true })
-    .then(buildHref)
+    .then(buildhref)
     .then(zones => {
       res.locals.zones = zones;
       res.locals.navs = zones;
