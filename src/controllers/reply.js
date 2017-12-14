@@ -6,19 +6,22 @@ import * as message from '../common/message';
 import getPages from '../common/pages';
 import config from '../config';
 import { sendReplyNotify, sendUpReplyNotify } from '../common/mail';
-import { UserProxy, PostProxy, ReplyProxy } from '../proxy';
+import * as db from '../data/db';
+import Post from '../data/models/post';
+import Reply from '../data/models/reply';
+import User from '../data/models/user';
 
 export const more = async (req, res, next) => {
   const postId = req.query.postId;
   const currentPage = parseInt(req.body.currentPage, 10) || 1;
   const conditions = { postId, deleted: false };
   const limit = config.postListCount;
-  const options = { skip: (currentPage - 1) * limit, limit, sort: 'createAt' };
+  const options = { skip: (currentPage - 1) * limit, limit, sort: '_createAt' };
 
   try {
-    const pages = await getPages(ReplyProxy.count)('[reply pages]')(conditions);
-    const replies = await ReplyProxy.find(conditions, options);
-    const authors = await UserProxy.findByIds(ids('authorId')(replies));
+    const pages = await getPages(db.count(Reply))('[reply pages]')(conditions);
+    const replies = await db.find(Reply)(conditions, options);
+    const authors = await db.find(User)({_id: { $in: ids('authorId')(replies) }});
     res.json({ currentPage, replies, authors, pages });
   } catch (err) {
     next(err);
@@ -31,8 +34,8 @@ export const post = async (req, res, next) => {
   const replyId = req.body.replyId || '';
   const authorId = req.session.user._id;
 
-  if (content === '') {
-    return next('不能回复空内容');
+  if (content.trim().length <= 2) {
+    return next('最少两个字以上!');
   }
 
   if (!postId || !authorId) {
@@ -41,26 +44,28 @@ export const post = async (req, res, next) => {
 
   let data = {
     authorId,
-    replyId,
     postId,
     content
   };
 
+  if (replyId) {
+    data.replyId = replyId;
+  }
+
   try {
-    const post = await PostProxy.findOneById(postId);
+    const post = await db.findOneById(Post)(postId);
     if (!post) {
       return next('找不到文章');
     }
 
-    const postAuthor = await UserProxy.findOneById(post.authorId);
+    const postAuthor = await db.findOneById(User)(post.authorId);
 
-    let reply = await ReplyProxy.create(data);
-    await PostProxy.updateLastReply(postId, reply._id);
+    let reply = await db.create(Reply)(data);
 
     at.sendMessageToMentionUsers(content, postId, authorId, reply._id);
     await message.sendReplyMessage(post.authorId, authorId, postId, reply._id);
 
-    const author = await UserProxy.incCount(authorId)('replyCount');
+    const author = await db.incById(User)(authorId)({ 'replyCount': 1, 'score': 5 });
     reply = reply.toObject();
     reply.author = author;
     sendReplyNotify(req.session.user, postAuthor, post, reply);
@@ -75,14 +80,14 @@ export const del = async (req, res, next) => {
   const userId = req.session.user._id.toString();
 
   try {
-    const reply = await ReplyProxy.findOneById(replyId);
+    const reply = await db.findOneById(Reply)(replyId);
     onlyMe(req)(reply.authorId)(userId);
-    await ReplyProxy.update(replyId, {
+    await db.updateById(Reply)(replyId)({
       deleted: true
     });
 
-    const lastReplyId = await ReplyProxy.getLastReplyIdByPostId(reply.postId);
-    await PostProxy.reducePostCount(reply.postId, lastReplyId);
+    await db.incById(User)(userId)({ 'replyCount': -1, 'score': -5 });
+
     res.end();
   } catch (err) {
     next(err);
@@ -94,14 +99,14 @@ export const update = async (req, res, next) => {
   const content = req.body.content;
   const userId = req.session.user._id.toString();
 
-  if (content.trim().length <= 3) {
-    return next(new Error());
+  if (content.trim().length <= 2) {
+    return next('最少两个字以上!');
   }
 
   try {
-    const reply = await ReplyProxy.findOneById(replyId);
+    const reply = await db.findOneById(Reply)(replyId);
     onlyMe(req)(reply.authorId)(userId);
-    await ReplyProxy.update(replyId, { content });
+    await db.updateById(Reply)(replyId)({ content });
     res.end();
   } catch (err) {
     next(err);
@@ -113,9 +118,9 @@ export const up = async (req, res, next) => {
   const userId = req.session.user._id;
 
   try {
-    const reply = await ReplyProxy.findOneById(replyId);
-    const author = await UserProxy.findOneById(reply.authorId);
-    const post = await PostProxy.findOneById(reply.postId);
+    const reply = await db.findOneById(Reply)(replyId);
+    const author = await db.findOneById(User)(reply.authorId);
+    const post = await db.findOneById(Post)(reply.postId);
 
     withoutMe(req)(reply.authorId)(userId);
 
@@ -131,7 +136,7 @@ export const up = async (req, res, next) => {
 
     data.ups = reply.ups;
 
-    await ReplyProxy.update(replyId, data);
+    await db.updateById(Reply)(replyId)(data);
     res.json({ ups: data.ups });
   } catch (err) {
     next(err);
@@ -141,7 +146,7 @@ export const up = async (req, res, next) => {
 export const count = async (req, res, next) => {
   const postId = req.params.id;
   try {
-    let count = await ReplyProxy.count({ postId }, {});
+    let count = await db.count(Reply)({ postId }, {});
     res.json({ count });
   } catch (err) {
     next(err);

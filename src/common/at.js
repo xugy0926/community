@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import logger from './logger';
-import { UserProxy } from '../proxy';
+import * as db from '../data/db';
+import User from '../data/models/user';
 import * as Message from './message';
 
 export const fetchUsers = (text) => {
@@ -53,7 +54,7 @@ export const sendMessageToMentionUsers = async (content, postId, authorId, reply
   }
 
   try {
-    let users = await UserProxy.findByNames(names);
+    let users = await db.find(User)({ loginname: { $in: names } }, {});
     if (users && users.length > 0) {
       users = users.filter(user => {
         if (!user) return false;

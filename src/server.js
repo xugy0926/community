@@ -24,7 +24,7 @@ import zone from './middlewares/zone';
 import githubAuth from './middlewares/githubAuth';
 import errorHandler from './middlewares/errorHandler';
 import page404 from './middlewares/404';
-import db from './models/index';
+import db from './data/index';
 
 const debug = require('debug')('community:app');
 const MongoStore = new connectMongodb(session);
@@ -85,7 +85,7 @@ app.use(page404);
 app.use(errorHandler);
 
 db().then(() => {
-    require('./init');
+    require('./data/init');
     app.listen(config.port, () => {
       debug(`The server is running at http://localhost:${config.port}/`);
     });

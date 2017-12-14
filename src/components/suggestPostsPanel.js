@@ -2,21 +2,23 @@ import _ from 'lodash';
 import path from 'path';
 import ejs from 'ejs';
 import { readFileSync } from 'fs';
-import { UserProxy, PostProxy } from '../proxy';
+import * as db from '../data/db';
+import User from '../data/models/user';
+import Post from '../data/models/post';
 
 export default async function(zone) {
   if (!zone) throw new Error('zone is null');
 
   const conditions = { zoneId: zone._id, good: false };
-  const options = { limit: 10, sort: '-createAt' };
-  const posts = await PostProxy.find(conditions, options);
+  const options = { limit: 10, sort: '_createAt' };
+  const posts = await db.find(Post)(conditions, options);
 
   const authorIds = [];
   posts.forEach(item => {
     if (item.authorId) authorIds.push(item.authorId.toString());
   });
 
-  const authors = await UserProxy.findByIds(authorIds);
+  const authors = await db.find(User)({ _id: { $in: authorIds } }, {});
   posts.forEach(item => {
     item.toObject();
     const index = _.findIndex(

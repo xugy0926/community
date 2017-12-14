@@ -1,6 +1,7 @@
-import { ZoneProxy } from '../proxy';
+import * as db from '../data/db';
+import Zone from '../data/models/zone';
 
-export const more = async (req, res, next) => {
+export const more = (req, res, next) => {
   const all = req.query.all || false;
   const conditions = { deleted: false };
 
@@ -8,15 +9,13 @@ export const more = async (req, res, next) => {
     conditions.enable = true;
   }
 
-  const opt = { sort: '-weight' };
+  const options = { sort: '-weight' };
 
-  try {
-    const zones = await ZoneProxy.find(conditions, opt);
-    res.json({ zones });
-  } catch (err) {
-    next(err);
-  }
-}
+  db
+    .find(Zone)(conditions, options)
+    .then(zones => res.json({ zones }))
+    .catch(next);
+};
 
 export const post = async (req, res, next) => {
   const key = req.body.key || '';
@@ -27,31 +26,28 @@ export const post = async (req, res, next) => {
       return next('内容不能为空');
     }
 
-    const conditions = { $or: [{ key }, { value }] };    
-    const doc = await ZoneProxy.findOne(conditions);
+    const conditions = { $or: [{ key }, { value }] };
+    const doc = await db.findOne(Zone)(conditions, {});
     if (doc) {
       return next('内容重复');
     }
-    
-    const result = await ZoneProxy.create(key, value);
+
+    const result = await db.create(Zone)({ key, value });
     res.json({ data: result });
   } catch (err) {
     next(err);
   }
-}
+};
 
-export const del = async (req, res, next) => {
+export const del = (req, res, next) => {
   const zoneId = req.params.id;
+  db
+    .updateById(Zone)(zoneId)({ deleted: true })
+    .then(() => res.end())
+    .catch(next);
+};
 
-  try {
-    await ZoneProxy.update(zoneId, { deleted: true });
-    res.end();
-  } catch (err) {
-    next(err);
-  }
-}
-
-export const update = async (req, res, next) => {
+export const update = (req, res, next) => {
   const zoneId = req.params.id;
   const enable = req.body.enable || false;
   const key = req.body.key || '';
@@ -75,10 +71,8 @@ export const update = async (req, res, next) => {
     audioAttachment
   };
 
-  try {
-    await ZoneProxy.update(zoneId, data);
-    res.end();
-  } catch (err) {
-    next(err);
-  }
-}
+  db
+    .updateById(Zone)(zoneId)(data)
+    .then(() => res.end())
+    .catch(next);
+};

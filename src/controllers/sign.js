@@ -8,7 +8,12 @@ import { isNil, isNotNil } from '../functions/type';
 import account from '../functions/account';
 import * as mail from '../common/mail';
 import * as authMiddleWare from '../middlewares/auth';
-import { UserProxy } from '../proxy';
+import * as db from '../data/db';
+import User from '../data/models/user';
+
+const findOne = db.findOne(User)(R.__, {});
+const updateById = db.updateById(User);
+const create = db.create(User);
 
 export const accesstoken = async (req, res) => {
   authMiddleWare.genSession(req.user, res);
@@ -40,22 +45,19 @@ export const signup = async (req, res, next) => {
     return next(new Error('两次密码输入不一致'));
   }
 
-  const active = false;
-  // END 验证信息的正确性
-
   try {
-    const doc = await UserProxy.findOne({
+    const doc = await findOne({
       $or: [{ loginname }, { email }]
     });
 
     if (isNotNil(doc)) return next(new Error('账号已经存在'));
 
     const passwordHash = bcrypt.hash(password);
-    await UserProxy.create({
+    await create({
       loginname,
       passwordHash,
       email,
-      active
+      accessToken: uuid.v4()
     });
 
     mail.sendActiveMail(
@@ -83,7 +85,7 @@ export const signin = async (req, res, next) => {
   }
 
   try {
-    const doc = await UserProxy.findFullOne(account(loginname));
+    const doc = await findOne(account(loginname));
     if (isNil(doc)) return next(new Error('账号不存在'));
     const isOk = bcrypt.compare(password, doc.pass);
     if (!isOk) return next(new Error('密码错误'));
@@ -122,7 +124,7 @@ export const activeAccount = async (req, res, next) => {
   const loginname = validator.trim(req.query.name || '');
 
   try {
-    const doc = await UserProxy.findFullOne({ loginname });
+    const doc = await findOne({ loginname });
     if (!doc) return next(new Error('data not found'));
 
     const key2 = utility.md5(doc.email + doc.pass + config.sessionSecret);
@@ -138,7 +140,7 @@ export const activeAccount = async (req, res, next) => {
       active: true
     };
 
-    await UserProxy.update(doc._id, data);
+    await updateById(doc._id)(data);
     res.end('激活成功');
   } catch (err) {
     next(err);
@@ -152,7 +154,7 @@ export const createSearchPassword = async (req, res, next) => {
   }
 
   try {
-    const doc = await UserProxy.findFullOne({ email });
+    const doc = await findOne({ email });
     if (!doc) return next(new Error('data not found'));
 
     const data = {
@@ -160,7 +162,7 @@ export const createSearchPassword = async (req, res, next) => {
       retrieveTime: new Date().getTime()
     };
 
-    await UserProxy.update(doc._id, data);
+    await updateById(doc._id)(data);
     mail.sendResetPassMail(email, data.retrieveKey, doc.loginname);
     res.json({ msg: '我们已给您填写的电子邮箱发送了一封邮件，请在24小时内点击里面的链接来重置密码。' });
   } catch (err) {
@@ -179,7 +181,7 @@ export const authSearchPassword = async (req, res, next) => {
   }
 
   try {
-    const doc = await UserProxy.findFullOne({
+    const doc = await findOne({
       loginname,
       retrieveKey: key
     });
@@ -202,7 +204,7 @@ export const authSearchPassword = async (req, res, next) => {
       active: true
     };
 
-    await UserProxy.update(doc._id, data);
+    await updateById(doc._id)(data);
     res.end();
   } catch (err) {
     next(err);
@@ -219,7 +221,7 @@ export const updateResetPassword = async (req, res, next) => {
   }
 
   try {
-    const doc = await UserProxy.findFullOne({ _id: userId });
+    const doc = await findOne({ _id: userId });
     const isOk = bcrypt.compare(oldPassword, doc.pass);
     if (!isOk) {
       return next(new Error('老密码不对'));
@@ -230,7 +232,7 @@ export const updateResetPassword = async (req, res, next) => {
       active: true
     };
 
-    await UserProxy.update(userId, data);
+    await updateById(userId)(data);
     res.end();
   } catch (err) {
     next(err);
@@ -248,15 +250,17 @@ export const github = async (req, res, next) => {
   }
 
   try {
-    let user = await UserProxy.findOne({ githubId: profile.id });
+    let user = await findOne({ githubId: profile.id });
 
     if (!user) {
-      user = await UserProxy.createGithubUser({
+      user = await create({
         loginname: profile.username,
         email: email,
         githubId: profile.id,
         githubAccessToken: profile.accessToken,
-        avatar: photo
+        avatar: photo,
+        active: true,
+        accessToken: uuid.v4()
       });
     } else {
       user.loginname = profile.username;

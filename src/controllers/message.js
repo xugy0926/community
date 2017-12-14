@@ -1,18 +1,24 @@
 import config from '../config';
 import ids from '../functions/ids';
 import { onlyMe } from '../functions/limit';
-import { MessageProxy, UserProxy, PostProxy, ReplyProxy } from '../proxy';
+import * as db from '../data/db';
+import Post from '../data/models/post';
+import User from '../data/models/user';
+import Message from '../data/models/message';
+import Reply from '../data/models/reply';
 
 export const unreadCount = async (req, res, next) => {
-  const userId = req.session.user._id;
+  const masterId = req.session.user._id;
+  const hasRead = false;
 
-  MessageProxy.count(userId, false)
+  db
+    .count(Message)(masterId, hasRead)
     .then(count => res.json({ count }))
     .catch(next);
 };
 
 export const userMessages = async (req, res, next) => {
-  const userId = req.session.user._id;
+  const masterId = req.session.user._id;
   const currentPage = parseInt(req.body.currentPage, 10) || 1;
   const type = req.body.type || 'unRead';
 
@@ -26,13 +32,19 @@ export const userMessages = async (req, res, next) => {
   const hasRead = type !== 'unRead';
 
   try {
-    const messages = await MessageProxy.findByUserId(userId, hasRead, options);
-    const pages = await MessageProxy.count(userId, hasRead).then(count =>
-      Math.ceil(count / limit)
-    );
-    const authors = await UserProxy.findByIds(ids('authorId')(messages));
-    const posts = await PostProxy.findByIds(ids('postId')(messages));
-    const replies = await ReplyProxy.findByIds(ids('replyId')(messages));
+    const messages = await db.find(Message)({ masterId, hasRead })(options);
+    const pages = await db
+      .count(Message)({ masterId, hasRead }, {})
+      .then(count => Math.ceil(count / limit));
+    const authors = await db.find(User)({
+      _id: { $in: ids('authorId')(messages) }
+    })({});
+    const posts = await db.find(Post)({
+      _id: { $in: ids('postId')(messages) }
+    })({});
+    const replies = await db.find(Reply)({
+      _id: { $in: ids('replyId')(messages) }
+    })({});
 
     res.json({
       messages,
@@ -49,16 +61,17 @@ export const userMessages = async (req, res, next) => {
 
 export const read = (req, res, next) => {
   const messageId = req.body.messageId;
-  MessageProxy.update(messageId, { hasRead: true })
+  db
+    .updateById(Message)(messageId)({ hasRead: true })
     .then(() => res.end())
     .catch(next);
 };
 
 export const toRead = (req, res, next) => {
-  MessageProxy.updateAll(
-    { masterId: req.session.user._id, hasRead: false },
-    { hasRead: true }
-  )
+  db
+    .update(Message)({ masterId: req.session.user._id, hasRead: false })({
+      hasRead: true
+    })
     .then(() => res.end())
     .catch(next);
 };

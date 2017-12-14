@@ -1,5 +1,6 @@
 import R from 'ramda';
-import { ZoneProxy } from '../proxy';
+import * as db from '../data/db';
+import Zone from '../data/models/zone';
 import getObjById from '../functions/getObjById';
 
 export default (req, res, next) => {
@@ -10,7 +11,7 @@ export default (req, res, next) => {
     return item;
   });
 
-  ZoneProxy.find({ deleted: false, enable: true })
+  db.find(Zone)({ deleted: false, enable: true }, {})
     .then(buildhref)
     .then(zones => {
       res.locals.zones = zones;

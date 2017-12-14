@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import timePlugin from './timePlugin';
 import base from './base'
-import * as CONSTANTS from '../common/constants';
+import * as CONSTANTS from '../../common/constants';
 
 const Schema = mongoose.Schema;
 

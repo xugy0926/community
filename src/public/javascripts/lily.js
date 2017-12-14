@@ -56,7 +56,8 @@
           return data;
         },
         error(err) {
-          this.errorMsg = err.response.data.error;
+          this.errorMsg = err.response ? err.response.data.error : err;
+          alert(this.errorMsg);
         },
         signin() {
           axios
@@ -156,8 +157,7 @@
             .then(
               function(result) {
                 let newPosts = result.posts;
-              let newAuthors = result.authors;
-              console.log(newAuthors);
+                let newAuthors = result.authors;
                 newPosts.forEach(
                   function (item) {
                     item.updateAtAgo = dateFns.distanceInWordsToNow(

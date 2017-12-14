@@ -1,5 +1,7 @@
 import config from '../config';
-import { UserProxy, MessageProxy } from '../proxy';
+import * as db from '../data/db';
+import User from '../data/models/user';
+import Message from '../data/models/message';
 import { ADMIN_ID } from '../common/constants';
 
 export const adminRequired = (req, res, next) => {
@@ -90,7 +92,7 @@ export const authUser = (req, res, next) => {
       user.isNormal = true;
     }
 
-    MessageProxy.count(user._id, false).then(count => {
+    db.count(Message)({ masterId: user._id, hasRead: false }, {}).then(count => {
       res.locals.count = count;
       req.session.user = user;
       res.locals.currentUser = user;
@@ -102,7 +104,7 @@ export const authUser = (req, res, next) => {
       const auth = authToken.split('$$$$');
       const userId = auth[0];
       if (userId) {
-        UserProxy.findOneById(userId)
+        db.findOneById(User)(userId)
           .then(user => {
             if (user) {
               user = user.toObject();
@@ -114,7 +116,7 @@ export const authUser = (req, res, next) => {
                 user.isNormal = true;
               }
 
-              MessageProxy.count(user._id, false).then(count => {
+              db.count(Message)({ masterId: user._id, hasRead: false }, {}).then(count => {
                 res.locals.count = count;
                 req.session.user = user;
                 res.locals.currentUser = user;

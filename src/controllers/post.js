@@ -9,13 +9,19 @@ import * as at from '../common/at';
 import markdown from '../common/markdown';
 import upFile from '../common/upFile';
 import getPages from '../common/pages';
-import { UserProxy, PostProxy, PostCollectProxy } from '../proxy';
+import * as db from '../data/db';
+import * as transaction from '../data/transaction';
+import Post from '../data/models/post';
+import User from '../data/models/user';
+import PostCollect from '../data/models/postCollect';
 
 async function fetchPosts(conditions, options) {
   try {
-    const pages = await getPages(PostProxy.count)('pages')(conditions);
-    const posts = await PostProxy.find(conditions, options);
-    const authors = await UserProxy.findByIds(ids('authorId')(posts));
+    const pages = await getPages(db.count(Post))('pages')(conditions);
+    const posts = await db.find(Post)(conditions, options);
+    const authors = await db.find(User)({
+      _id: { $in: ids('authorId')(posts) }
+    })({});
     return Promise.resolve([posts, pages, authors]);
   } catch (err) {
     return Promise.reject(err);
@@ -88,18 +94,18 @@ export const collectPosts = async (req, res, next) => {
   const options = {
     skip: (currentPage - 1) * limit,
     limit,
-    sort: '-createAt'
+    sort: 'createAt'
   };
 
   try {
-    const pages = await getPages(PostCollectProxy.count)(
+    const pages = await getPages(db.count(PostCollect))(
       `${userId}collect_posts_pages`
     )(conditions);
-    const collects = await PostCollectProxy.find(conditions, options);
+    const collects = await db.find(PostCollect)(conditions)(options);
     const postIds = R.map(R.prop('postId'))(collects);
-    const posts = await PostProxy.findByIds(postIds);
+    const posts = await db.find(Post)({ _id: { $in: postIds } });
     const authorIds = R.map(R.prop('authorId'))(posts);
-    const authors = await UserProxy.findByIds(authorIds);
+    const authors = await db.find(User)({ _id: { $in: authorIds }});
     res.json({ posts, pages, currentPage, authors });
   } catch (err) {
     next(err);
@@ -109,7 +115,7 @@ export const collectPosts = async (req, res, next) => {
 export const one = (req, res, next) => {
   const postId = req.params.id;
 
-  PostProxy.findFullOneById(postId)
+  transaction.fullPost(postId)
     .then(post => {
       post.mdContent = markdown(post.linkedContent);
       res.json({ post });
@@ -154,8 +160,8 @@ export const post = async (req, res, next) => {
   };
 
   try {
-    const post = await PostProxy.create(data);
-    await UserProxy.incCount(post.authorId)('postCount');
+    const post = await db.create(Post)(data);
+    await db.incById(User)(post.authorId)({ 'postCount': 1 });
     at.sendMessageToMentionUsers(content, post._id, authorId);
     res.json({
       url: `${config.apiPrefix.page}/post/${post._id}`
@@ -190,7 +196,7 @@ export const update = async (req, res, next) => {
   const currentUserId = req.session.user._id;
 
   try {
-    const post = await PostProxy.findOneById(postId);
+    const post = await db.findOneById(Post)(postId);
     onlyMe(req)(post.authorId)(currentUserId);
 
     const data = {
@@ -207,7 +213,7 @@ export const update = async (req, res, next) => {
       updateAt: new Date()
     };
 
-    await PostProxy.update(postId, data);
+    await db.update(Post)(postId)(data);
     at.sendMessageToMentionUsers(content, postId, req.session.user._id);
     res.json({
       url: `${config.apiPrefix.page}/post/${post._id}`
@@ -218,15 +224,15 @@ export const update = async (req, res, next) => {
 };
 
 export const del = async (req, res, next) => {
-  const postId = req.params.id;
+  const id = req.params.id;
   const isAdmin = req.session.user.isAdmin;
   const currentUserId = req.session.user._id;
 
   try {
-    const post = await PostProxy.findOneById(postId);
+    const post = await db.findOneById(Post)(id);
     onlyMe(req)(post.authorId)(currentUserId);
 
-    await PostProxy.update(postId, {
+    await db.updateById(Post)(id)({
       deleted: true
     });
     res.end();
@@ -239,9 +245,8 @@ export const top = async (req, res, next) => {
   const id = req.params.id;
 
   try {
-    const post = await PostProxy.findOneById(id);
-
-    await PostProxy.update(id, {
+    const post = await db.findOneById(Post)(id);
+    await db.updateById(Post)(id)({
       top: !post.top
     });
     res.end();
@@ -254,9 +259,9 @@ export const good = async (req, res, next) => {
   const id = req.params.id;
 
   try {
-    const post = await PostProxy.findOneById(id);
+    const post = await db.findOneById(Post)(id);
 
-    await PostProxy.update(id, {
+    await db.updateById(Post)(id)({
       good: !post.good
     });
     res.end();
@@ -269,9 +274,9 @@ export const lock = async (req, res, next) => {
   const id = req.params.id;
 
   try {
-    const post = await PostProxy.findOneById(id);
+    const post = await db.findOneById(Post)(id);
 
-    await PostProxy.update(id, {
+    await db.updateById(Post)(id)({
       lock: !post.lock
     });
     res.end();
@@ -281,27 +286,27 @@ export const lock = async (req, res, next) => {
 };
 
 export const collect = async (req, res, next) => {
-  const id = req.params.id;
+  const postId = req.params.id;
   const userId = req.session.user._id;
 
   try {
-    const collect = await PostCollectProxy.findOne(userId, id);
+    const collect = await db.findOne(PostCollect)(userId, postId);
     if (collect) {
       return res.end();
     }
-    await PostCollectProxy.create(userId, id);
-    
-    const post = await PostProxy.findOneById(id);
+    await db.create(PostCollect)(userId, postId);
+
+    const post = await db.findOneById(Post)(postId);
     if (!post) {
       return next(new Error('此话题不存在'));
     }
 
-    await PostProxy.update(id, {
+    await db.updateById(Post)(postId)({
       collectCount: post.collectCount + 1
     });
-    const user = await UserProxy.findOneDetailById(userId);
-    await UserProxy.update(userId, {
-      collectPostCount: user.collectPostCount + 1
+
+    await db.incById(User)(userId)({
+      collectPostCount: 1
     });
     req.session.user.collectPostCount += 1;
     res.end();
@@ -311,23 +316,21 @@ export const collect = async (req, res, next) => {
 };
 
 export const delCollect = async (req, res, next) => {
-  const id = req.params.id;
+  const postId = req.params.id;
   const userId = req.session.user._id;
 
   try {
-    await PostCollectProxy.remove(userId, id);
-
-    const post = await PostProxy.findOneById(id);
+    const post = await db.findOneById(Post)(postId);
     if (!post) {
       return next(new Error('此话题不存在'));
     }
-    await PostCollectProxy.create(userId, id);
-    await PostProxy.update(id, {
+    await db.remove(PostCollect)({ userId, postId });
+    await db.updateById(Post)(postId)({
       collectCount: post.collectCount - 1
     });
-    const user = await UserProxy.findOneDetailById(userId);
-    await UserProxy.update(userId, {
-      collectPostCount: user.collectPostCount - 1
+
+    await db.incById(User)(userId)({
+      collectPostCount: -1
     });
 
     req.session.user.collectPostCount -= 1;
@@ -344,10 +347,10 @@ export const status = async (req, res, next) => {
   const currentUserId = req.session.user._id;
 
   try {
-    const post = await PostProxy.findOneById(id);
+    const post = await db.findOneById(Post)(id);
     onlyMe(req)(post.authorId)(currentUserId);
 
-    await PostProxy.update(id, { status });
+    await db.updateById(Post)(id)({ status });
     res.end();
   } catch (err) {
     next(err);
@@ -359,7 +362,7 @@ export const up = async (req, res, next) => {
   const userId = req.session.user._id;
 
   try {
-    const post = await PostProxy.findOneById(id);
+    const post = await db.findOneById(Post)(id);
     withoutMe(req)(post.authorId)(userId);
 
     const upIndex = post.ups.indexOf(userId);
@@ -373,7 +376,7 @@ export const up = async (req, res, next) => {
 
     data.ups = post.ups;
 
-    await PostProxy.update(id, data);
+    await db.updateById(Post)(id)(data);
     res.json({ ups: data.ups });
   } catch (err) {
     next(err);

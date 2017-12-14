@@ -3,13 +3,13 @@ import path from 'path';
 import markdown from '../common/markdown';
 import suggestGoodPosts from '../components/suggestPostsPanel';
 import createPanel from '../components/createPanel';
-import {
-  ProfileProxy,
-  ZoneProxy,
-  UserProxy,
-  PostCollectProxy,
-  PostProxy
-} from '../proxy';
+import * as db from '../data/db';
+import * as transaction from '../data/transaction';
+import Zone from '../data/models/zone';
+import Post from '../data/models/post';
+import User from '../data/models/user';
+import PostCollect from '../data/models/postCollect';
+import Profile from '../data/models/profile';
 
 export const indexPage = async (req, res, next) => {
   const zones = res.locals.zones || [];
@@ -19,7 +19,7 @@ export const indexPage = async (req, res, next) => {
       return res.redirect('/cms/zone');
     }
 
-    const profile = await ProfileProxy.findOne();
+    const profile = await db.findOne(Profile)({}, {});
     const html = await suggestGoodPosts(zones[0]);
     res.render('index', {
       selectedKey: 'home',
@@ -92,7 +92,7 @@ export const inputSearchPasswordPage = async (req, res, next) => {
   const loginname = req.query.loginname || '';
 
   try {
-    let user = await UserProxy.findOne({ loginname, retrieveKey: key });
+    let user = await db.findOne(User)({ loginname, retrieveKey: key }, {});
     if (user) {
       res.render('sign/inputSearchPassword', { key, loginname });
     } else {
@@ -121,16 +121,15 @@ export const allMessagePage = (req, res) => {
 };
 
 export const showPostPage = async (req, res, next) => {
-  const id = req.params.id;
+  const postId = req.params.id;
   const userId =
     req.session.user && req.session.user._id ? req.session.user._id : '';
 
   try {
-    const post = await PostProxy.findFullOneById(id);
-    const zone = await ZoneProxy.findOneById(post.zoneId);
+    const post = await transaction.fullPost(postId);
+    const zone = await db.findOneById(Zone)(post.zoneId);
     if (userId) {
-      const collect = await PostCollectProxy.findOne(userId, id);
-
+      const collect = await db.findOne(PostCollect)({ userId, postId });
       post.isCollect = collect ? true : false;
     }
 
@@ -165,7 +164,7 @@ export const editPostPage = async (req, res, next) => {
 export const userPage = async (req, res, next) => {
   const id = req.params.id;
   try {
-    let user = await UserProxy.findOneDetailById(id);
+    let user = await db.findOneById(User)(id);
     res.render('user/index', { user });
   } catch (err) {
     next(err);
@@ -176,7 +175,7 @@ export const userPostsPage = async (req, res, next) => {
   const id = req.params.id;
 
   try {
-    let user = await UserProxy.findOneById(id);
+    let user = await db.findOneById(User)(id);
     res.render('user/posts', {
       userId: user ? user._id : '',
       userName: user ? user.loginname : ''
@@ -190,7 +189,7 @@ export const userCollectPostsPage = async (req, res, next) => {
   const id = req.params.id;
 
   try {
-    let user = await UserProxy.findOneById(id);
+    let user = await db.findOneById(User)(id);
     res.render('user/collect_posts', {
       userId: user ? user._id : '',
       userName: user ? user.loginname : ''

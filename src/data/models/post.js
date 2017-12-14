@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import base from './base';
 import timePlugin from './timePlugin';
-import config from '../config';
+import config from '../../config';
 
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;

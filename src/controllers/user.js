@@ -1,6 +1,7 @@
 import config from '../config';
 import getPages from '../common/pages';
-import { UserProxy } from '../proxy';
+import * as db from '../data/db';
+import User from '../data/models/user';
 
 export const one = async (req, res, next) => {
   const userId = req.params.id || '';
@@ -10,7 +11,7 @@ export const one = async (req, res, next) => {
   }
 
   try {
-    const user = await UserProxy.findOneDetailById(userId);
+    const user = await db.findOneById(User)(userId);
     res.json({ user });
   } catch (err) {
     next(err);
@@ -33,7 +34,7 @@ export const patch = async (req, res, next) => {
   };
 
   try {
-    const doc = await UserProxy.update(req.session.user._id, data);
+    const doc = await db.updateById(User)(req.session.user._id)(data);
     req.session.user = doc.toObject({ virtual: true });
     res.end();
   } catch (err) {
@@ -46,7 +47,7 @@ export const toggleStar = async (req, res, next) => {
   const isStar = req.body.isStar;
 
   try {
-    await UserProxy.upate(userId, { isStar });
+    await db.updateById(User)(userId)({ isStar });
     res.end();
   } catch (err) {
     next(err);
@@ -58,7 +59,7 @@ export const block = async (req, res, next) => {
   const action = req.body.action;
 
   try {
-    await UserProxy.update(userId, {
+    await db.updateById(User)(userId)({
       isBlock: action === 'block'
     });
     res.end();
@@ -78,8 +79,8 @@ export const users = async (req, res, next) => {
       sort: '-createAt'
     };
 
-    const pages = await getPages(UserProxy.count)('users')({});
-    const users = await UserProxy.find({}, options);
+    const pages = await getPages(db.count(User))('users')({});
+    const users = await db.find(User)({}, options);
     res.json({ users, pages, currentPage });
   } catch (err) {
     next(err);
@@ -91,7 +92,7 @@ export const updateRole = async (req, res, next) => {
   const role = req.body.role || 'N';
 
   try {
-    await UserProxy.update(userId, { role });
+    await db.updateById(User)(userId)({ role });
     res.end();
   } catch (err) {
     next(err);

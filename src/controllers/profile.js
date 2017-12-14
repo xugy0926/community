@@ -1,8 +1,9 @@
-import { ProfileProxy } from '../proxy';
+import * as db from '../data/db';
+import Profile from '../data/models/profile';
 
 export const one = async (req, res, next) => {
   try {
-    const profile = await ProfileProxy.findOne();
+    const profile = await db.findOne(Profile)({}, {});
     res.json({ profile });
   } catch (err) {
     next(err);
@@ -15,14 +16,14 @@ export const update = async (req, res, next) => {
   const isHtml = req.body.isHtml || false;
 
   try {
-    const doc = await ProfileProxy.findOneById(id);
+    const doc = await db.findOneById(Profile)(id);
 
     const data = { guide, isHtml };
 
     if (!doc) {
-      await ProfileProxy.create(data);
+      await db.create(Profile)(data);
     } else {
-      await ProfileProxy.update(id, data);
+      await db.updateById(Profile)(id)(data);
     }
 
     res.end();
@@ -31,14 +32,12 @@ export const update = async (req, res, next) => {
   }
 };
 
-export const create = async (req, res, next) => {
+export const create = (req, res, next) => {
   const guide = req.body.guide || '';
   const isHtml = req.body.isHtml || false;
 
-  try {
-    const profile = await ProfileProxy.create(guide, isHtml);
-    res.json({ profile });
-  } catch (err) {
-    next(err);
-  }
+  db
+    .create(Profile)({ guide, isHtml })
+    .then(profile => res.json({ profile }))
+    .catch(next);
 };
