@@ -4,6 +4,7 @@ import { onlyMe, withoutMe } from '../functions/limit';
 import * as at from '../common/at';
 import * as message from '../common/message';
 import getPages from '../common/pages';
+import config from '../config';
 import { sendReplyNotify, sendUpReplyNotify } from '../common/mail';
 import { UserProxy, PostProxy, ReplyProxy } from '../proxy';
 
@@ -11,6 +12,7 @@ export const more = async (req, res, next) => {
   const postId = req.query.postId;
   const currentPage = parseInt(req.body.currentPage, 10) || 1;
   const conditions = { postId, deleted: false };
+  const limit = config.postListCount;
   const options = { skip: (currentPage - 1) * limit, limit, sort: 'createAt' };
 
   try {

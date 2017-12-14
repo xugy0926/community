@@ -3,7 +3,7 @@ import * as UserProxy from './user';
 import * as ZoneProxy from './zone';
 import Post from '../models/post';
 const distanceInWordsToNow = require('date-fns/distance_in_words_to_now')
-const baseFields = '_id title recommentUrl description';
+const baseFields = '_id title recommentUrl description authorId';
 
 const fields =
   '_id title description recommendUrl area authorId updateAt good lock top status replyCount ups';

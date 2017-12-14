@@ -1,22 +1,14 @@
 import config from '../config';
 import ids from '../functions/ids';
 import { onlyMe } from '../functions/limit';
-import {
-  MessageProxy,
-  UserProxy,
-  PostProxy,
-  ReplyProxy
-} from '../proxy';
+import { MessageProxy, UserProxy, PostProxy, ReplyProxy } from '../proxy';
 
 export const unreadCount = async (req, res, next) => {
   const userId = req.session.user._id;
 
-  try {
-    const count = await MessageProxy.count(userId, false);
-    res.json({ count });
-  } catch (err) {
-    next(err);
-  }
+  MessageProxy.count(userId, false)
+    .then(count => res.json({ count }))
+    .catch(next);
 };
 
 export const userMessages = async (req, res, next) => {
@@ -35,8 +27,9 @@ export const userMessages = async (req, res, next) => {
 
   try {
     const messages = await MessageProxy.findByUserId(userId, hasRead, options);
-    const count = await MessageProxy.count(userId, hasRead);
-    const pages = Math.ceil(count / limit);
+    const pages = await MessageProxy.count(userId, hasRead).then(count =>
+      Math.ceil(count / limit)
+    );
     const authors = await UserProxy.findByIds(ids('authorId')(messages));
     const posts = await PostProxy.findByIds(ids('postId')(messages));
     const replies = await ReplyProxy.findByIds(ids('replyId')(messages));
@@ -54,25 +47,18 @@ export const userMessages = async (req, res, next) => {
   }
 };
 
-export const read = async (req, res, next) => {
+export const read = (req, res, next) => {
   const messageId = req.body.messageId;
-
-  try {
-    await MessageProxy.update(messageId, { hasRead: true });
-    res.end();
-  } catch (err) {
-    next(err);
-  }
+  MessageProxy.update(messageId, { hasRead: true })
+    .then(() => res.end())
+    .catch(next);
 };
 
-export const toRead = async (req, res, next) => {
-  try {
-    await MessageProxy.updateAll(
-      { masterId: req.session.user._id, hasRead: false },
-      { hasRead: true }
-    );
-    res.end();
-  } catch (err) {
-    next(err);
-  }
+export const toRead = (req, res, next) => {
+  MessageProxy.updateAll(
+    { masterId: req.session.user._id, hasRead: false },
+    { hasRead: true }
+  )
+    .then(() => res.end())
+    .catch(next);
 };

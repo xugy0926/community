@@ -83,11 +83,6 @@ export const signinPage = (req, res) => {
   res.render('sign/signin');
 };
 
-export const signinPage2 = (req, res) => {
-  req.session.loginReferer = req.headers.referer;
-  res.render('sign/signin2');
-};
-
 export const searchPasswordFromMailPage = (req, res) => {
   res.render('sign/searchPasswordFromMail');
 };

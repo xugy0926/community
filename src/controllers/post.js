@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import R from 'ramda';
 import validator from 'validator';
 import config from '../config';
 import ids from '../functions/ids';
@@ -90,24 +91,16 @@ export const collectPosts = async (req, res, next) => {
     sort: '-createAt'
   };
 
-  const zones = res.locals.zones;
-
   try {
     const pages = await getPages(PostCollectProxy.count)(
       `${userId}collect_posts_pages`
     )(conditions);
-    const postIds = await PostCollectProxy.find(conditions, options);
-    const posts = [];
-    for (let i = postIds.length - 1; i >= 0; i--) {
-      let post = await PostProxy.findOneById(postIds[i].postId);
-      const author = await UserProxy.findOneById(post.authorId);
-      post = post.toObject();
-      post.author = author;
-      post.zone = getObjById(post.zoneId.toString())(zones);
-      posts.push(post);
-    }
-
-    res.json({ posts: posts, pages, currentPage });
+    const collects = await PostCollectProxy.find(conditions, options);
+    const postIds = R.map(R.prop('postId'))(collects);
+    const posts = await PostProxy.findByIds(postIds);
+    const authorIds = R.map(R.prop('authorId'))(posts);
+    const authors = await UserProxy.findByIds(authorIds);
+    res.json({ posts, pages, currentPage, authors });
   } catch (err) {
     next(err);
   }
@@ -296,19 +289,18 @@ export const collect = async (req, res, next) => {
     if (collect) {
       return res.end();
     }
-
+    await PostCollectProxy.create(userId, id);
+    
     const post = await PostProxy.findOneById(id);
     if (!post) {
       return next(new Error('此话题不存在'));
     }
 
     await PostProxy.update(id, {
-      collect_count: post.collectCount + 1
+      collectCount: post.collectCount + 1
     });
-    await PostCollectProxy.create(userId, id);
-    const user = await UserProxy.findOneById(userId);
-
-    await PostProxy.update(id, {
+    const user = await UserProxy.findOneDetailById(userId);
+    await UserProxy.update(userId, {
       collectPostCount: user.collectPostCount + 1
     });
     req.session.user.collectPostCount += 1;
@@ -329,13 +321,12 @@ export const delCollect = async (req, res, next) => {
     if (!post) {
       return next(new Error('此话题不存在'));
     }
-
+    await PostCollectProxy.create(userId, id);
     await PostProxy.update(id, {
-      collect_count: post.collectCount - 1
+      collectCount: post.collectCount - 1
     });
-
-    const user = await UserProxy.findOneById(userId);
-    await PostProxy.update(id, {
+    const user = await UserProxy.findOneDetailById(userId);
+    await UserProxy.update(userId, {
       collectPostCount: user.collectPostCount - 1
     });
 

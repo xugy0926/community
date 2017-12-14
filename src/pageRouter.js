@@ -14,7 +14,6 @@ router.get('/', page.indexPage);
 
 router.get('/signup', page.signupPage);
 router.get('/signin', page.signinPage);
-router.get('/signin2', page.signinPage2);
 
 router.get('/password/searchFromMail', page.searchPasswordFromMailPage);
 router.get('/password/inputFromMail', page.inputSearchPasswordPage);

@@ -25,7 +25,7 @@ export const findOneById = id => {
 export const findByTopicId = id => {
   return Reply.find({ postId: id, deleted: false })
     .setOptions({
-      sort: 'create_at'
+      sort: '-createAt'
     })
     .query.exec();
 };

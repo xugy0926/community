@@ -4,7 +4,7 @@ import User from '../models/user';
 
 const baseFields = 'name loginname email weixin qq avatar role isStar createAt';
 const detailFields =
-  'name loginname weixin qq avatar accessToken role email url profileImageUrl location signature profile isStar postCount replyCount createAt';
+  'name loginname weixin qq avatar accessToken role email url profileImageUrl location signature profile isStar postCount replyCount collectPostCount createAt';
 const authFields = 'name loginname email retrieveKey, retrieveTime';
 
 export const count = (conditions, options) => {
