@@ -56,9 +56,9 @@
     methods: {
       onUploadAvatar() {
         const imageUpload = new ImageUpload(window);
-        imageUpload.bind(function(url) {
+        imageUpload.bind((url) => {
           this.avatar = uri;
-        }.bind(this));
+        });
       },
       onUpdateUserInfo() {
         this.updateUserInfo(userId);

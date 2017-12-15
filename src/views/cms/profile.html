@@ -21,9 +21,9 @@
       getProfile () {
         axios.get(dataPrefix + '/profile')
           .then(this.parse)
-          .then(function(result) {
+          .then((result) => {
             this.profile = result.profile;
-          }.bind(this))
+          })
           .catch(this.error);
       },
       onUpdate () {
@@ -34,9 +34,9 @@
               isHtml: this.profile.isHtml 
             })
             .then(this.parse)
-            .then(function(result) {
+            .then((result) => {
               this.successMsg = '更新成功';
-            }.bind(this))
+            })
             .catch(this.error);
         } else {
           axios.post(dataPrefix + '/profile',
@@ -45,10 +45,10 @@
               isHtml: this.profile.isHtml 
             })
             .then(this.parse)
-            .then(function(result) {
+            .then((result) => {
               this.profile = result.profile;
               this.successMsg = '创建成功';
-            }.bind(this))
+            })
             .catch(this.error);
         }
       }

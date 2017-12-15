@@ -1,5 +1,5 @@
 import validator from 'validator';
-import ids from '../functions/ids';
+import props from '../functions/props';
 import { onlyMe, withoutMe } from '../functions/limit';
 import * as at from '../common/at';
 import * as message from '../common/message';
@@ -19,9 +19,12 @@ export const more = async (req, res, next) => {
   const options = { skip: (currentPage - 1) * limit, limit, sort: '_createAt' };
 
   try {
-    const pages = await getPages(db.count(Reply))('[reply pages]')(conditions);
-    const replies = await db.find(Reply)(conditions, options);
-    const authors = await db.find(User)({_id: { $in: ids('authorId')(replies) }});
+    const pages = await getPages(db.count(Reply))('reply-post')(conditions);
+    const replies = await db.find(Reply)(conditions)(options);
+    const authors = await db.find(User)(
+      { _id: { $in: props('authorId')(replies) } },
+      {}
+    );
     res.json({ currentPage, replies, authors, pages });
   } catch (err) {
     next(err);
@@ -65,7 +68,10 @@ export const post = async (req, res, next) => {
     at.sendMessageToMentionUsers(content, postId, authorId, reply._id);
     await message.sendReplyMessage(post.authorId, authorId, postId, reply._id);
 
-    const author = await db.incById(User)(authorId)({ 'replyCount': 1, 'score': 5 });
+    const author = await db.incById(User)(authorId)({
+      replyCount: 1,
+      score: 5
+    });
     reply = reply.toObject();
     reply.author = author;
     sendReplyNotify(req.session.user, postAuthor, post, reply);
@@ -86,7 +92,7 @@ export const del = async (req, res, next) => {
       deleted: true
     });
 
-    await db.incById(User)(userId)({ 'replyCount': -1, 'score': -5 });
+    await db.incById(User)(userId)({ replyCount: -1, score: -5 });
 
     res.end();
   } catch (err) {

@@ -129,7 +129,7 @@ export const showPostPage = async (req, res, next) => {
     const post = await transaction.fullPost(postId);
     const zone = await db.findOneById(Zone)(post.zoneId);
     if (userId) {
-      const collect = await db.findOne(PostCollect)({ userId, postId });
+      const collect = await db.findOne(PostCollect)({ userId, postId }, {});
       post.isCollect = collect ? true : false;
     }
 

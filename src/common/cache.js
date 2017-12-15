@@ -1,5 +1,4 @@
 import redis from './redis';
-import logger from './logger';
 
 export function get(key) {
   return redis.getAsync(key);

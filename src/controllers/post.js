@@ -1,10 +1,9 @@
-import _ from 'lodash';
 import R from 'ramda';
 import validator from 'validator';
 import config from '../config';
-import ids from '../functions/ids';
 import { onlyMe, withoutMe } from '../functions/limit';
-import getObjById from '../functions/getObjById';
+import conditionsIds from '../functions/conditionsIds';
+import props from '../functions/props';
 import * as at from '../common/at';
 import markdown from '../common/markdown';
 import upFile from '../common/upFile';
@@ -18,10 +17,8 @@ import PostCollect from '../data/models/postCollect';
 async function fetchPosts(conditions, options) {
   try {
     const pages = await getPages(db.count(Post))('pages')(conditions);
-    const posts = await db.find(Post)(conditions, options);
-    const authors = await db.find(User)({
-      _id: { $in: ids('authorId')(posts) }
-    })({});
+    const posts = await db.find(Post)(conditions)(options);
+    const authors = await db.find(User)(conditionsIds(props('authorId')(posts)))({});
     return Promise.resolve([posts, pages, authors]);
   } catch (err) {
     return Promise.reject(err);
@@ -94,7 +91,7 @@ export const collectPosts = async (req, res, next) => {
   const options = {
     skip: (currentPage - 1) * limit,
     limit,
-    sort: 'createAt'
+    sort: '-createAt'
   };
 
   try {
@@ -102,10 +99,8 @@ export const collectPosts = async (req, res, next) => {
       `${userId}collect_posts_pages`
     )(conditions);
     const collects = await db.find(PostCollect)(conditions)(options);
-    const postIds = R.map(R.prop('postId'))(collects);
-    const posts = await db.find(Post)({ _id: { $in: postIds } });
-    const authorIds = R.map(R.prop('authorId'))(posts);
-    const authors = await db.find(User)({ _id: { $in: authorIds }});
+    const posts = await db.find(Post)(conditionsIds(props('postId')(collects)))({});
+    const authors = await db.find(User)(conditionsIds(props('authorId')(posts)))({});
     res.json({ posts, pages, currentPage, authors });
   } catch (err) {
     next(err);
@@ -115,7 +110,8 @@ export const collectPosts = async (req, res, next) => {
 export const one = (req, res, next) => {
   const postId = req.params.id;
 
-  transaction.fullPost(postId)
+  transaction
+    .fullPost(postId)
     .then(post => {
       post.mdContent = markdown(post.linkedContent);
       res.json({ post });
@@ -161,7 +157,7 @@ export const post = async (req, res, next) => {
 
   try {
     const post = await db.create(Post)(data);
-    await db.incById(User)(post.authorId)({ 'postCount': 1 });
+    await db.incById(User)(post.authorId)({ postCount: 1 });
     at.sendMessageToMentionUsers(content, post._id, authorId);
     res.json({
       url: `${config.apiPrefix.page}/post/${post._id}`
@@ -290,11 +286,11 @@ export const collect = async (req, res, next) => {
   const userId = req.session.user._id;
 
   try {
-    const collect = await db.findOne(PostCollect)(userId, postId);
+    const collect = await db.findOne(PostCollect)({ userId, postId }, {});
     if (collect) {
       return res.end();
     }
-    await db.create(PostCollect)(userId, postId);
+    await db.create(PostCollect)({ userId, postId });
 
     const post = await db.findOneById(Post)(postId);
     if (!post) {

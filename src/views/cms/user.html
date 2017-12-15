@@ -56,15 +56,15 @@
           })
           .then(this.parse)
           .then(this.resetLoading)
-          .then(function(result) {
-            result.users.forEach(function(item) {
+          .then((result) => {
+            result.users.forEach((item) => {
               this.users.push(item)
-            }.bind(this))
+            })
 
             this.pages = result.pages;
             this.currentPage = result.currentPage;
             this.canLoadData = result.pages > result.currentPage;
-          }.bind(this))
+          })
           .catch(this.error)
       },
       onUpdateRole (index, role) {
@@ -73,9 +73,9 @@
             role: role,
             userId: this.users[index]._id
           })
-          .then(function(response) {
+          .then(() => {
             this.users[index].role = role;
-          }.bind(this))
+          })
           .catch(this.error)
       },
       onLoadData () {

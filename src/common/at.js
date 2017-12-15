@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import R from 'ramda';
 import logger from './logger';
 import * as db from '../data/db';
 import User from '../data/models/user';
@@ -32,7 +32,7 @@ export const fetchUsers = (text) => {
       names.push(s);
     }
   }
-  names = _.uniq(names);
+  names = R.uniq(names);
   return names;
 }
 
@@ -54,7 +54,7 @@ export const sendMessageToMentionUsers = async (content, postId, authorId, reply
   }
 
   try {
-    let users = await db.find(User)({ loginname: { $in: names } }, {});
+    let users = await db.find(User)({ loginname: { $in: names } })({});
     if (users && users.length > 0) {
       users = users.filter(user => {
         if (!user) return false;

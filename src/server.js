@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import bodyParser from 'body-parser';
 import bytes from 'bytes';
 import cookieParser from 'cookie-parser';
@@ -37,7 +36,6 @@ app.engine('html', ejsMate);
 app.locals._layoutFile = 'layout.html';
 
 app.locals = Object.assign(app.locals, {
-  _,
   config: config,
   apiPrefix: config.apiPrefix,
   markdown,

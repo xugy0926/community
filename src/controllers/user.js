@@ -80,7 +80,7 @@ export const users = async (req, res, next) => {
     };
 
     const pages = await getPages(db.count(User))('users')({});
-    const users = await db.find(User)({}, options);
+    const users = await db.find(User)({})(options);
     res.json({ users, pages, currentPage });
   } catch (err) {
     next(err);

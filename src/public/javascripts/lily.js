@@ -48,6 +48,10 @@
         successMsg: ''
       }),
       methods: Object.assign(methods, {
+        resetMessage() {
+          this.errorMsg = '';
+          this.successMsg = '';
+        },
         parse(response) {
           return response.data;
         },
@@ -94,18 +98,16 @@
           axios
             .get(dataPrefix + '/user/' + id + '/detail')
             .then(this.parse)
-            .then(
-              function(result) {
-                this.loginname = result.user.loginname;
-                this.weixin = result.user.weixin;
-                this.qq = result.user.qq;
-                this.email = result.user.email;
-                this.avatar = result.user.avatar;
-                this.location = result.user.location;
-                this.signature = result.user.signature;
-                this.accessToken = result.user.accessToken;
-              }.bind(this)
-            )
+            .then(result => {
+              this.loginname = result.user.loginname;
+              this.weixin = result.user.weixin;
+              this.qq = result.user.qq;
+              this.email = result.user.email;
+              this.avatar = result.user.avatar;
+              this.location = result.user.location;
+              this.signature = result.user.signature;
+              this.accessToken = result.user.accessToken;
+            })
             .catch(this.error);
         },
         updateUserInfo(id) {
@@ -120,11 +122,9 @@
               signature: this.signature
             })
             .then(this.parse)
-            .then(
-              function(result) {
-                this.successMsg = result.msg;
-              }.bind(this)
-            )
+            .then(result => {
+              this.successMsg = result.msg;
+            })
             .catch(this.error);
         },
         getZones(params) {
@@ -133,15 +133,13 @@
               params
             })
             .then(this.parse)
-            .then(
-              function(result) {
-                result.zones.forEach(function(item) {
-                  item.active = false;
-                });
+            .then(result => {
+              result.zones.forEach(function(item) {
+                item.active = false;
+              });
 
-                this.zones = result.zones;
-              }.bind(this)
-            )
+              this.zones = result.zones;
+            })
             .catch(this.error);
         },
         getPosts(url, params) {
@@ -154,27 +152,21 @@
             .get(url, { params })
             .then(this.parse)
             .then(this.resetLoading)
-            .then(
-              function(result) {
-                let newPosts = result.posts;
-                let newAuthors = result.authors;
-                newPosts.forEach(
-                  function (item) {
-                    item.updateAtAgo = dateFns.distanceInWordsToNow(
-                      item.updateAt
-                    );
-                    item.author = R.find(
-                      R.propEq('_id', item.authorId),
-                      newAuthors
-                    );
-                    this.posts.push(item);
-                  }.bind(this)
+            .then(result => {
+              let newPosts = result.posts;
+              let newAuthors = result.authors;
+              newPosts.forEach(item => {
+                item.updateAtAgo = dateFns.distanceInWordsToNow(item.updateAt);
+                item.author = R.find(
+                  R.propEq('_id', item.authorId),
+                  newAuthors
                 );
-                this.pages = result.pages;
-                this.currentPage = result.currentPage;
-                this.canLoadData = result.pages > result.currentPage;
-              }.bind(this)
-            )
+                this.posts.push(item);
+              });
+              this.pages = result.pages;
+              this.currentPage = result.currentPage;
+              this.canLoadData = result.pages > result.currentPage;
+            })
             .catch(this.error);
         },
         getPost(id) {
@@ -206,19 +198,14 @@
           axios
             .patch(dataPrefix + '/posts/' + id + '/up')
             .then(this.parse)
-            .then(
-              function(result) {
-                if (this.posts.length > 0) {
-                  let index = _.findIndex(this.posts, function(post) {
-                    if (post._id === id) return true;
-                  });
-
-                  this.posts[index].ups = result.ups;
-                } else {
-                  this.ups = result.ups.length;
-                }
-              }.bind(this)
-            )
+            .then(result => {
+              if (this.posts.length > 0) {
+                const idx = R.findIndex(R.propEq('_id', id))(this.posts);
+                this.posts[idx].ups = result.ups;
+              } else {
+                this.ups = result.ups.length;
+              }
+            })
             .catch(this.error);
         }
       })

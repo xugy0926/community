@@ -1,5 +1,7 @@
+import R from 'ramda';
 import config from '../config';
-import ids from '../functions/ids';
+import props from '../functions/props';
+import conditionsIds from '../functions/conditionsIds';
 import { onlyMe } from '../functions/limit';
 import * as db from '../data/db';
 import Post from '../data/models/post';
@@ -7,7 +9,10 @@ import User from '../data/models/user';
 import Message from '../data/models/message';
 import Reply from '../data/models/reply';
 
-export const unreadCount = async (req, res, next) => {
+const limit = config.postListCount;
+const pagesCount = R.divide(R.__, limit);
+
+export const unreadCount = (req, res, next) => {
   const masterId = req.session.user._id;
   const hasRead = false;
 
@@ -22,29 +27,26 @@ export const userMessages = async (req, res, next) => {
   const currentPage = parseInt(req.body.currentPage, 10) || 1;
   const type = req.body.type || 'unRead';
 
-  const limit = config.postListCount;
+
   const options = {
     skip: (currentPage - 1) * limit,
     limit,
-    sort: '-top -updateAt'
+    sort: '-updateAt'
   };
 
   const hasRead = type !== 'unRead';
 
   try {
     const messages = await db.find(Message)({ masterId, hasRead })(options);
+
+    const find = db.find(R.__)(R.__, {});
+
     const pages = await db
       .count(Message)({ masterId, hasRead }, {})
-      .then(count => Math.ceil(count / limit));
-    const authors = await db.find(User)({
-      _id: { $in: ids('authorId')(messages) }
-    })({});
-    const posts = await db.find(Post)({
-      _id: { $in: ids('postId')(messages) }
-    })({});
-    const replies = await db.find(Reply)({
-      _id: { $in: ids('replyId')(messages) }
-    })({});
+      .then(pagesCount);
+    const authors = await find(User)(conditionsIds(props('authorId')(messages)));
+    const posts = await find(Post)(conditionsIds(props('postId')(messages)));
+    const replies = await find(Reply)(conditionsIds(props('replyId')(messages)));
 
     res.json({
       messages,

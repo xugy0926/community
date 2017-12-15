@@ -2,55 +2,64 @@
   <div class="col-md-10">
     <div class="ui">
       <div class="ui comments comments-x">
-        <h1 class="ui header"><%= post.title %></h1>
+        <h1 class="ui header">
+          <%= post.title %>
+        </h1>
         <div class="comment">
           <div class="content">
             <div class="ui top attached header">
               <img src="<%= post.author.avatar %>" />
-              <a href="<%= apiPrefix.page %>/user/<%= post.author._id %>/info"><%= post.author.loginname %></a> <span class="date"><%= post.updateAt %></span>
+              <a href="<%= apiPrefix.page %>/user/<%= post.author._id %>/info">
+                <%= post.author.loginname %>
+              </a>
+              <span class="date">
+                <%= post.updateAt %>
+              </span>
             </div>
             <div class="ui attached segment">
               <div class='reply-content'>
                 <% if(post.isHtml) { %>
-                <div class='content'>
-                <%- post.linkedContent %>
-                <% } else { %>
-                <div class='<%=config.mdType%>'>
-                <%- markdown(post.linkedContent) %>
-                </div>
-                <% } %>
+                  <div class='content'>
+                    <%- post.linkedContent %>
+                      <% } else { %>
+                        <div class='<%=config.mdType%>'>
+                          <%- markdown(post.linkedContent) %>
+                        </div>
+                        <% } %>
+                  </div>
               </div>
-            </div>
-            <div class="ui bottom attached menu">
-              <div class="ui main menu message-actions">
-                <a class="popup icon item"  v-if="ups > 0" v-on:click="onUpPost(postId)">
-                  <i class="red heart icon"></i>　{{ ups }}
-                </a>
-                <a class="popup icon item" v-else v-on:click="onUpPost(postId)">
-                  <i class="heart icon"></i>
-                </a>
-                <a class="popup icon item" v-if="isCollect" v-on:click="onDelCollectPost"><i class="flag red icon"></i></a>
-                <a class="popup icon item" v-else v-on:click="onCollectPost"><i class="flag icon"></i></a>
-                <% if(currentUser 
+              <div class="ui bottom attached menu">
+                <div class="ui main menu message-actions">
+                  <a class="popup icon item" v-if="ups > 0" v-on:click="onUpPost(postId)">
+                    <i class="red heart icon"></i>　{{ ups }}
+                  </a>
+                  <a class="popup icon item" v-else v-on:click="onUpPost(postId)">
+                    <i class="heart icon"></i>
+                  </a>
+                  <a class="popup icon item" v-if="isCollect" v-on:click="onDelCollectPost">
+                    <i class="flag red icon"></i>
+                  </a>
+                  <a class="popup icon item" v-else v-on:click="onCollectPost">
+                    <i class="flag icon"></i>
+                  </a>
+                  <% if(currentUser 
                 && (currentUser._id === post.author._id.toString() 
                     || currentUser.isAdmin 
                     || currentUser.isSupport)) {%>
-                  <a class="popup icon item"
-                    href="<%= apiPrefix.page %>/edit/<%=post._id %>?zoneId=<%= post.zoneId %>">
-                    <i class="edit icon"></i>
-                  </a>
-                <% } %>
-                <!-- <a class="popup icon item" v-on:click="onDeletePost(item._id)"><i class="delete icon"></i></a> -->
+                    <a class="popup icon item" href="<%= apiPrefix.page %>/edit/<%=post._id %>?zoneId=<%= post.zoneId %>">
+                      <i class="edit icon"></i>
+                    </a>
+                    <% } %>
+                </div>
               </div>
             </div>
           </div>
         </div>
+        <%- partial('_comment') %>
       </div>
-      <%- partial('_comment') %>
     </div>
   </div>
 </div>
-<script src="http://vjs.zencdn.net/5.19.1/video.js"></script>
 <script>
   const userId = '<%= typeof(currentUser) !== "undefined" && currentUser ? currentUser._id : "" %>';
   const postId = '<%= typeof(post) !== "undefined" && post ? post._id : "" %>';
@@ -59,156 +68,137 @@
   const lily = Lily({
     data: {
       isCollect: <%= typeof(post) !== "undefined" && post ? post.isCollect : false %>,
-      ups: <%= typeof(post) !== "undefined" && post ? post.ups.length : 0 %>,
-      statusKey: '<%= typeof(post) !== "undefined" && post ? post.status : "saved" %>',
-      statusValue: '已保存',
-      isReviewing: false,
-      isReviewed: false
+    ups: <%= typeof(post) !== "undefined" && post ? post.ups.length : 0 %>,
+    statusKey: '<%= typeof(post) !== "undefined" && post ? post.status : "saved" %>',
+    statusValue: '已保存',
+    isReviewing: false,
+    isReviewed: false
     },
-    methods: {
-      getReplies (nextPage) {
-        axios.get(dataPrefix + '/replies',
-          {
-            params: {
-              postId: this.postId,
-              currentPage: nextPage
-            }
-          })
-          .then(this.parse)
-          .then(function (result) {
-            this.canLoadData = true;
-            this.currentPage = result.currentPage || 1;
-            this.pages = result.pages || 1;
-            this.authors = result.authors || [];
-            let replies = result.replies || [];
-            this.updateReplies(replies);
-          }.bind(this))
-          .catch(this.error)
-      },
-      updateReplies (replies) {
-        replies.forEach( function(item) {
-          item.htmlContent = md.render(item.content)
-          let index = _.findIndex(this.authors, function(i) {
-            return i._id === item.authorId;
-          })
-
-          if (index >= 0) {
-            item.author = this.authors[index];
-          }
-        }.bind(this))
-
-        replies.forEach( function(item){
-          item.updateAtAge = dateFns.distanceInWordsToNow(item.updateAt);
-          this.replies.push(item);
-        }.bind(this));
-      },
-      onReply () {
-        this.resetMessage();
-        axios.post(dataPrefix + '/replies/',
-          {
+  methods: {
+    getReplies(nextPage) {
+      axios.get(dataPrefix + '/replies',
+        {
+          params: {
             postId: this.postId,
-            content: this.content || ''
-          })
-          .then(this.parse)
-          .then(function (result) {
-            this.content = '';
-            let newReply = result.reply;
-            newReply.htmlContent = md.render(newReply.content);
-            this.replies.push(newReply);
-          }.bind(this))
-          .catch(this.error)
-      },
-      onReplyReply (replyId, loginname) {
-        let editorDialog = new EditorDialog();
-        let atUser = '@' + loginname + ' ';
-        editorDialog.init('回复'+atUser, atUser);
-        editorDialog.show(function (editedContent) {
-          if (editedContent) {
-            axios.post(dataPrefix + '/replies/',
-              {
-                postId: this.postId,
-                replyId: replyId,
-                content: editedContent
-              })
-              .then(this.parse)
-              .then(function (result) {
-                  let newReply = result.reply
-                  newReply.htmlContent = md.render(newReply.content)
-                  this.replies.push(newReply)
-                }.bind(this))
-                .catch(this.error)
+            currentPage: nextPage
           }
-        }.bind(this));
-      },
-      onEditReply (replyId, content) {
-        let editorDialog = new EditorDialog();
-        editorDialog.init('编辑', content);
-        editorDialog.show(function (editedContent) {
-          if (editedContent) {
-            axios.patch(dataPrefix + '/replies/' + replyId,
-              {
-                id: replyId,
-                content: editedContent
-              })
-              .then(this.parse)
-              .then(function (result) {
-                let index = _.findIndex(this.replies, function(reply) {
-                  if (reply._id === replyId) return true;
-                });
+        })
+        .then(this.parse)
+        .then((result) => {
+          this.canLoadData = true;
+          this.currentPage = result.currentPage || 1;
+          this.pages = result.pages || 1;
+          this.authors = result.authors || [];
+          let replies = result.replies || [];
+          this.updateReplies(replies);
+        })
+        .catch(this.error)
+    },
+    updateReplies(replies) {
+      replies.forEach((item) => {
+        item.htmlContent = md.render(item.content)
+        item.author = R.find(R.propEq('_id', item.authorId), this.authors);
+      })
 
-                this.replies[index].content = editedContent;
-                this.replies[index].htmlContent = md.render(editedContent);
-              }.bind(this))
-              .catch(this.error)
-          }
-        }.bind(this));
-      },
-      onDeleteReply (replyId) {
-        axios.delete(dataPrefix + '/replies/' + replyId)
-          .then(this.parse)
-          .then(function (result) {
-            let index = _.findIndex(this.replies, function(reply) {
-              if (reply._id === replyId) return true;
-            });
-
-            this.replies.$remove(this.replies[index]);
-          }.bind(this))
-          .catch(this.error)
-      },
-      onUpReply (replyId) {
-        axios.patch(dataPrefix + '/replies/' + replyId + '/up')
-          .then(this.parse)
-          .then(function (result) {
-            let index = _.findIndex(this.replies, function(reply) {
-              if (reply._id === replyId) return true;
-            });
-
-            this.replies[index].ups = result.ups;
-          }.bind(this))
-          .catch(this.error)
-      },
-      onCollectPost () {
-        axios.patch(dataPrefix + '/posts/' + this.postId + '/collect')
-          .then(function(response) {
-            this.isCollect = true;
-          }.bind(this))
-          .catch(this.error)
-      },
-      onDelCollectPost () {
-        axios.patch(dataPrefix + '/posts/' + this.postId + '/delCollect')
-          .then(function(response) {
-            this.isCollect = false;
-          }.bind(this))
-          .catch(this.error)
-      },
-      resetMessage: function() {
-        this.errorMsg = '';
-        this.successMsg = '';
-      },
-      onLoadData() {
-        this.getReplies(this.currentPage + 1);
-      }
+      replies.forEach((item) => {
+        item.updateAtAge = dateFns.distanceInWordsToNow(item.updateAt);
+        this.replies.push(item);
+      });
+    },
+    onReply() {
+      this.resetMessage();
+      axios.post(dataPrefix + '/replies/',
+        {
+          postId: this.postId,
+          content: this.content || ''
+        })
+        .then(this.parse)
+        .then((result) => {
+          this.content = '';
+          let newReply = result.reply;
+          newReply.htmlContent = md.render(newReply.content);
+          this.replies.push(newReply);
+        })
+        .catch(this.error)
+    },
+    onReplyReply(replyId, loginname) {
+      let editorDialog = new EditorDialog();
+      let atUser = '@' + loginname + ' ';
+      editorDialog.init('回复' + atUser, atUser);
+      editorDialog.show((editedContent) => {
+        if (editedContent) {
+          axios.post(dataPrefix + '/replies/',
+            {
+              postId: this.postId,
+              replyId: replyId,
+              content: editedContent
+            })
+            .then(this.parse)
+            .then((result) => {
+              let newReply = result.reply
+              newReply.htmlContent = md.render(newReply.content)
+              this.replies.push(newReply)
+            })
+            .catch(this.error)
+        }
+      });
+    },
+    onEditReply(replyId, content) {
+      let editorDialog = new EditorDialog();
+      editorDialog.init('编辑', content);
+      editorDialog.show((editedContent) => {
+        if (editedContent) {
+          axios.patch(dataPrefix + '/replies/' + replyId,
+            {
+              id: replyId,
+              content: editedContent
+            })
+            .then(this.parse)
+            .then((result) => {
+              const idx = R.findIndex(R.propEq('_id', replyId))(this.replies);
+              this.replies[idx].content = editedContent;
+              this.replies[idx].htmlContent = md.render(editedContent);
+            })
+            .catch(this.error)
+        }
+      });
+    },
+    onDeleteReply(replyId) {
+      axios.delete(dataPrefix + '/replies/' + replyId)
+        .then(this.parse)
+        .then((result) => {
+          const idx = R.findIndex(R.propEq('_id', replyId))(this.replies);
+          this.replies.$remove(this.replies[idx]);
+        })
+        .catch(this.error)
+    },
+    onUpReply(replyId) {
+      axios.patch(dataPrefix + '/replies/' + replyId + '/up')
+        .then(this.parse)
+        .then((result) => {
+          const idx = R.findIndex(R.propEq('_id', replyId))(this.replies);
+          this.replies[idx].ups = result.ups;
+        })
+        .catch(this.error)
+    },
+    onCollectPost() {
+      axios.patch(dataPrefix + '/posts/' + this.postId + '/collect')
+        .then(() => {
+          this.isCollect = true;
+        })
+        .catch(this.error)
+    },
+    onDelCollectPost() {
+      axios.patch(dataPrefix + '/posts/' + this.postId + '/delCollect')
+        .then(() => {
+          this.isCollect = false;
+        })
+        .catch(this.error)
+    },
+    onLoadData() {
+      this.getReplies(this.currentPage + 1);
     }
+  }
   });
 
   lily.userId = userId;

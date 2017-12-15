@@ -1,10 +1,7 @@
 <div class="row">
   <div class="col-md-3">
     <div class="ui vertical menu">
-      <div class="item"
-        v-for="(index, item) in zones"
-        v-bind:class="{active: index === selectedZoneIndex}"
-        v-on:click="onSelectedZone(index)">
+      <div class="item" v-for="(index, item) in zones" v-bind:class="{active: index === selectedZoneIndex}" v-on:click="onSelectedZone(index)">
         {{ item.value }}
       </div>
       <div class="item" v-on:click="onShowAddZoneDialog">
@@ -15,7 +12,8 @@
   <div class="col-md-9">
     <div class="ui segment" v-if="zones[selectedZoneIndex]">
       <div class="card-header">
-        板块/<strong>{{zones[selectedZoneIndex].value}}</strong>/属性
+        板块/
+        <strong>{{zones[selectedZoneIndex].value}}</strong>/属性
       </div>
       <div class="ui form">
         <div class="field">
@@ -61,7 +59,8 @@
         </div>
 
         <div class="field">
-          <label for="icon">板块ICON (ex: <a target="_blank" href="http://fontawesome.dashgame.com/">http://fontawesome.dashgame.com/</a>)</label>
+          <label for="icon">板块ICON (ex:
+            <a target="_blank" href="http://fontawesome.dashgame.com/">http://fontawesome.dashgame.com/</a>)</label>
           <input type="text" class="form-control" id="icon" v-cloak v-model="zones[selectedZoneIndex].icon">
         </div>
 
@@ -85,11 +84,11 @@
       <div class='ui form'>
         <div class="field">
           <label>Key</label>
-          <input id='zoneKey' name='zoneKey' size='30' type='text' v-model="zoneKey"/>
+          <input id='zoneKey' name='zoneKey' size='30' type='text' v-model="zoneKey" />
         </div>
         <div class="field">
           <label>Value</label>
-          <input id='zoneValue' name='zoneValue' size='30' type='text' v-model="zoneValue"/>
+          <input id='zoneValue' name='zoneValue' size='30' type='text' v-model="zoneValue" />
         </div>
       </div>
     </div>
@@ -113,26 +112,26 @@
       onUpdateZone: function () {
         axios.patch(dataPrefix + '/zones/' + this.zones[this.selectedZoneIndex]._id, this.zones[this.selectedZoneIndex])
           .then(this.parse)
-          .then(function(result) {
+          .then((result) => {
             this.resetMessage();
             this.successMsg = result.msg;
-          }.bind(this))
+          })
           .catch(this.error)
       },
-      onDeleteZone: function() {
+      onDeleteZone: function () {
         axios.delete(dataPrefix + '/zones/' + this.zones[this.selectedZoneIndex]._id)
           .then(this.parse)
-          .then(function(result) {
+          .then((result) => {
             this.resetMessage();
             this.zones.$remove(this.zones[this.selectedZoneIndex]);
             this.onSelectedZone(0);
-          }.bind(this))
+          })
           .catch(this.error)
       },
-      onShowAddZoneDialog: function() {
+      onShowAddZoneDialog: function () {
         $('.ui.modal').modal('show');
       },
-      onAddZone: function() {
+      onAddZone: function () {
         $('.ui.modal').modal('hide');
         axios.post(dataPrefix + '/zones',
           {
@@ -140,21 +139,17 @@
             value: this.zoneValue,
           })
           .then(this.parse)
-          .then(function(result) {
+          .then((result) => {
             this.resetMessage();
             this.successMsg = 'success'
             this.zones.push(result.data);
             this.zonekey = '';
             this.zoneValue = '';
-          }.bind(this))
+          })
           .catch(this.error)
-      },
-      resetMessage: function() {
-        this.errorMsg = '';
-        this.successMsg = '';
       }
     }
   });
 
-  lily.getZones({all: true});
+  lily.getZones({ all: true });
 </script>
