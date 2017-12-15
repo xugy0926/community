@@ -209,7 +209,7 @@ export const update = async (req, res, next) => {
       updateAt: new Date()
     };
 
-    await db.update(Post)(postId)(data);
+    await db.updateById(Post)(postId)(data);
     at.sendMessageToMentionUsers(content, postId, req.session.user._id);
     res.json({
       url: `${config.apiPrefix.page}/post/${post._id}`
