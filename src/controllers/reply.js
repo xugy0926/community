@@ -64,10 +64,10 @@ export const post = async (req, res, next) => {
     const postAuthor = await db.findOneById(User)(post.authorId);
 
     let reply = await db.create(Reply)(data);
-
+    await db.incById(Post)(postId, { replyCount: 1 });
     at.sendMessageToMentionUsers(content, postId, authorId, reply._id);
     await message.sendReplyMessage(post.authorId, authorId, postId, reply._id);
-
+    
     const author = await db.incById(User)(authorId)({
       replyCount: 1,
       score: 5
@@ -75,6 +75,7 @@ export const post = async (req, res, next) => {
     reply = reply.toObject();
     reply.author = author;
     sendReplyNotify(req.session.user, postAuthor, post, reply);
+
     res.json({ reply });
   } catch (err) {
     next(err);
@@ -92,6 +93,7 @@ export const del = async (req, res, next) => {
       deleted: true
     });
 
+    await db.incById(Post)(reply.postId, { replyCount: -1 });
     await db.incById(User)(userId)({ replyCount: -1, score: -5 });
 
     res.end();
