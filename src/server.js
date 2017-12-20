@@ -5,6 +5,7 @@ import connectBusboy from 'connect-busboy';
 import connectMongodb from 'connect-mongo';
 import express from 'express';
 import ejsMate from 'ejs-mate';
+import expressGraphQL from 'express-graphql';
 import session from 'express-session';
 import cors from 'cors';
 import path from 'path';
@@ -24,6 +25,7 @@ import githubAuth from './middlewares/githubAuth';
 import errorHandler from './middlewares/errorHandler';
 import page404 from './middlewares/404';
 import db from './data/index';
+import schema from './data/schema';
 
 const debug = require('debug')('community:app');
 const MongoStore = new connectMongodb(session);
@@ -76,6 +78,16 @@ app.use(
 app.use(githubAuth());
 app.use(authUser);
 app.use(zone);
+
+app.use(
+  '/graphql',
+  expressGraphQL(req => ({
+    schema,
+    graphiql: true,
+    rootValue: { req },
+    pretty: true,
+  })),
+);
 
 app.use(config.apiPrefix.page, pageRouter);
 app.use(config.apiPrefix.data, dataRouter);

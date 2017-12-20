@@ -60,7 +60,9 @@
           return data;
         },
         error(err) {
-          this.errorMsg = err.response ? err.response.data.error : err;
+          let commonError = R.path(['response', 'data', 'error'])(err); // get defualt error.
+          let graphqlErrors = R.path(['response', 'data', 'errors'])(err); // get graphql error.
+          this.errorMsg = commonError ? commonError : (graphqlErrors && graphqlErrors[0] ? errors[0].message : err);
           alert(this.errorMsg);
         },
         signin() {
@@ -127,18 +129,28 @@
             })
             .catch(this.error);
         },
-        getZones(params) {
+        getZones({ all = false }) {
           axios
-            .get(dataPrefix + '/zones', {
-              params
-            })
+            .get(
+              graphqlPrefix +
+                `?query={
+               zones (all: ${all}) {
+                 _id
+                 key
+                 value
+                 template
+                 mustReview
+                 enable
+                }
+              }`
+            )
             .then(this.parse)
             .then(result => {
-              result.zones.forEach(function(item) {
+              result.data.zones.forEach(function(item) {
                 item.active = false;
               });
 
-              this.zones = result.zones;
+              this.zones = result.data.zones;
             })
             .catch(this.error);
         },

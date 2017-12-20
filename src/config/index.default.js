@@ -31,6 +31,7 @@ module.exports = {
   apiPrefix: {
     page: '',
     data: '/api/v1',
+    graphql: '/graphql'
   },
 
   mdType: 'chinese-article',
