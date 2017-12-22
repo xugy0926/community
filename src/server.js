@@ -24,7 +24,8 @@ import zone from './middlewares/zone';
 import githubAuth from './middlewares/githubAuth';
 import errorHandler from './middlewares/errorHandler';
 import page404 from './middlewares/404';
-import db from './data/index';
+import initDB from './data/index';
+import * as db from './data/db';
 import schema from './data/schema';
 
 const debug = require('debug')('community:app');
@@ -85,8 +86,11 @@ app.use(
     schema,
     graphiql: true,
     rootValue: { req },
-    pretty: true,
-  })),
+    context: {
+      db
+    },
+    pretty: true
+  }))
 );
 
 app.use(config.apiPrefix.page, pageRouter);
@@ -94,7 +98,8 @@ app.use(config.apiPrefix.data, dataRouter);
 app.use(page404);
 app.use(errorHandler);
 
-db().then(() => {
+initDB()
+  .then(() => {
     require('./data/init');
     app.listen(config.port, () => {
       debug(`The server is running at http://localhost:${config.port}/`);

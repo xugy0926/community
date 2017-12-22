@@ -1,5 +1,4 @@
 import { GraphQLList as List, GraphQLBoolean } from 'graphql';
-import * as db from '../db';
 import Zone from '../../data/models/zone';
 import ZoneType from '../types/ZoneType';
 
@@ -12,7 +11,7 @@ const zones = {
       type: GraphQLBoolean
     }
   },
-  resolve(parentValu, { all = false }, req) {
+  resolve(obj, { all = false }, { db }, { rootValue }) {
     const conditions = { deleted: false };
 
     if (!all) {
