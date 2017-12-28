@@ -79,7 +79,6 @@ export const signupPage = (req, res) => {
 };
 
 export const signinPage = (req, res) => {
-  req.session.loginReferer = req.headers.referer;
   res.render('sign/signin');
 };
 

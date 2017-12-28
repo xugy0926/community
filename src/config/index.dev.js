@@ -25,6 +25,7 @@ module.exports = {
 
   sessionSecret: 'community-test-secret', // 务必修改
   authCookieName: 'community-test-name', // 务必修改
+  jwtSecret: 'jwt-secret', // 务必修改
 
   fileLimit: '2MB',
 

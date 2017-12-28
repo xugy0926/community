@@ -57,16 +57,6 @@ app.use(cookieParser(config.sessionSecret));
 app.use(useragent.express());
 app.use('/static', express.static(path.join(__dirname, 'public')));
 app.use('/static', express.static(path.join(__dirname, 'upload')));
-app.use(
-  session({
-    secret: config.sessionSecret,
-    store: new MongoStore({
-      url: config.mongodb.url
-    }),
-    resave: true,
-    saveUninitialized: true
-  })
-);
 
 app.use(
   connectBusboy({

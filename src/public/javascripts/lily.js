@@ -72,13 +72,8 @@
               password: this.password
             })
             .then(this.parse)
-            .then(function(result) {
-              const user = result.user;
-              if (user && user.active) {
-                location.href = pagePrefix + '/';
-              } else {
-                this.errorMsg = result.message;
-              }
+            .then(() => {
+              location.href = pagePrefix + '/';
             })
             .catch(this.error);
         },

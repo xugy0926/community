@@ -1,8 +1,10 @@
 import R from 'ramda';
+import jwt from 'jwt-simple';
 import bcrypt from 'bcrypt';
 import validator from 'validator';
 import utility from 'utility';
 import uuid from 'node-uuid';
+import addDays from 'date-fns/add_days';
 import config from '../config';
 import { isNil, isNotNil } from '../functions/type';
 import account from '../functions/account';
@@ -15,11 +17,11 @@ const findOne = db.findOne(User)(R.__, {});
 const updateById = db.updateById(User);
 const create = db.create(User);
 
-export const accesstoken = async (req, res) => {
-  authMiddleWare.genSession(req.user, res);
-  const active = (req.user && req.user.active) || false;
-  const user = req.user;
-  res.json({ data: { user, active } });
+const opts = {
+  path: '/',
+  maxAge: 1000 * 60 * 60 * 24 * 30,
+  signed: true,
+  httpOnly: true
 };
 
 export const signup = async (req, res, next) => {
@@ -69,7 +71,9 @@ export const signup = async (req, res, next) => {
     res.json({
       user: doc,
       active: false,
-      message: `欢迎加入${config.name}！我们已给您的注册邮箱发送了一封邮件, 请点击里面的链接来激活您的帐号。`
+      message: `欢迎加入${
+        config.name
+      }！我们已给您的注册邮箱发送了一封邮件, 请点击里面的链接来激活您的帐号。`
     });
   } catch (err) {
     next(err);
@@ -101,20 +105,41 @@ export const signin = async (req, res, next) => {
       res.json({
         user: doc,
         active: false,
-        message: `此帐号还没有被激活，激活链接已发送到 ${doc.email} 邮箱，请查收。`
+        message: `此帐号还没有被激活，激活链接已发送到 ${
+          doc.email
+        } 邮箱，请查收。`
       });
       return;
     }
 
-    authMiddleWare.genSession(doc, res);
-    res.json({ user: doc, active: true });
+    const user = doc.toObject();
+    delete user.pass;
+    delete user.githubAccessToken;
+
+    if (config.ADMIN_ID === user.loginname || user.role === 'A') {
+      user.isAdmin = true;
+    } else if (user.role === 'S') {
+      user.isSupport = true;
+    } else {
+      user.isNormal = true;
+    }
+
+    const token = jwt.encode(
+      Object.assign(user, {
+        exp: addDays(new Date(), 30)
+          .valueOf()
+      }),
+      config.jwtSecret
+    );
+
+    res.cookie(config.authCookieName, token, opts);
+    res.end();
   } catch (err) {
     next(err);
   }
 };
 
 export const signout = (req, res) => {
-  req.session.destroy();
   res.clearCookie(config.authCookieName, { path: '/' });
   res.end();
 };
@@ -164,7 +189,10 @@ export const createSearchPassword = async (req, res, next) => {
 
     await updateById(doc._id)(data);
     mail.sendResetPassMail(email, data.retrieveKey, doc.loginname);
-    res.json({ msg: '我们已给您填写的电子邮箱发送了一封邮件，请在24小时内点击里面的链接来重置密码。' });
+    res.json({
+      msg:
+        '我们已给您填写的电子邮箱发送了一封邮件，请在24小时内点击里面的链接来重置密码。'
+    });
   } catch (err) {
     next(err);
   }
@@ -185,7 +213,7 @@ export const authSearchPassword = async (req, res, next) => {
       loginname,
       retrieveKey: key
     });
-    
+
     if (isNil(doc)) {
       return next(new Error(`找不到用户${loginname}`));
     }
@@ -269,7 +297,17 @@ export const github = async (req, res, next) => {
       await user.save();
     }
 
-    authMiddleWare.genSession(user, res);
+    delete user.pass;
+
+    const token = jwt.encode(
+      Object.assign(user, {
+        exp: addDays(new Date(), 30)
+          .valueOf()
+      }),
+      config.jwtSecret
+    );
+
+    res.cookie(config.authCookieName, token, opts);
     res.redirect('/');
   } catch (err) {
     next(err);
