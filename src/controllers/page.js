@@ -15,12 +15,12 @@ export const indexPage = async (req, res, next) => {
   const zones = res.locals.zones || [];
 
   try {
-    if (zones.length < 1) {
-      return res.redirect('/cms/zone');
+    const profile = await db.findOne(Profile)({}, {});
+    let html = '';
+    if (zones.length > 0) {
+      html = await suggestGoodPosts(zones[0]);
     }
 
-    const profile = await db.findOne(Profile)({}, {});
-    const html = await suggestGoodPosts(zones[0]);
     res.render('index', {
       selectedKey: 'home',
       blocks: zones,
