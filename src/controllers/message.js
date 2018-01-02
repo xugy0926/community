@@ -13,7 +13,7 @@ const limit = config.postListCount;
 const pagesCount = R.divide(R.__, limit);
 
 export const unreadCount = (req, res, next) => {
-  const masterId = req.session.user._id;
+  const masterId = req.user._id;
   const hasRead = false;
 
   db
@@ -23,7 +23,7 @@ export const unreadCount = (req, res, next) => {
 };
 
 export const userMessages = async (req, res, next) => {
-  const masterId = req.session.user._id;
+  const masterId = req.user._id;
   const currentPage = parseInt(req.body.currentPage, 10) || 1;
   const type = req.body.type || 'unRead';
 
@@ -71,7 +71,7 @@ export const read = (req, res, next) => {
 
 export const toRead = (req, res, next) => {
   db
-    .update(Message)({ masterId: req.session.user._id, hasRead: false })({
+    .update(Message)({ masterId: req.user._id, hasRead: false })({
       hasRead: true
     })
     .then(() => res.end())

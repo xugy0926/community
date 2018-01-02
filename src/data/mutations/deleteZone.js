@@ -1,6 +1,7 @@
 import { GraphQLID, GraphQLNonNull } from 'graphql';
 import Zone from '../../data/models/zone';
 import ZoneType from '../types/ZoneType';
+import { adminRequired } from '../../core/auth';
 
 const deleteZone = {
   type: ZoneType,
@@ -10,7 +11,10 @@ const deleteZone = {
       type: new GraphQLNonNull(GraphQLID)
     }
   },
-  resolve: (obj, { id }, { db }) => db.remove(Zone)({ _id: id })
+  resolve: (obj, { id }, { req, db }) => {
+    adminRequired(req);
+    db.remove(Zone)({ _id: id });
+  }
 };
 
 export default deleteZone;

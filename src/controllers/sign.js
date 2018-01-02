@@ -240,7 +240,7 @@ export const authSearchPassword = async (req, res, next) => {
 };
 
 export const updateResetPassword = async (req, res, next) => {
-  const userId = req.session.user._id;
+  const userId = req.user._id;
   const oldPassword = validator.trim(req.body.oldPassword) || '';
   const newPassword = validator.trim(req.body.newPassword) || '';
 

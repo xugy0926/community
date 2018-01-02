@@ -6,7 +6,7 @@ import User from '../data/models/user';
 export const one = async (req, res, next) => {
   const userId = req.params.id || '';
 
-  if (!userId && req.session.user._id && !userId.equals(req.session.user._id)) {
+  if (!userId && req.user._id && !userId.equals(req.user._id)) {
     return next('没权限查看');
   }
 
@@ -34,8 +34,8 @@ export const patch = async (req, res, next) => {
   };
 
   try {
-    const doc = await db.updateById(User)(req.session.user._id)(data);
-    req.session.user = doc.toObject({ virtual: true });
+    const doc = await db.updateById(User)(req.user._id)(data);
+    req.user = doc.toObject({ virtual: true });
     res.end();
   } catch (err) {
     next(err);

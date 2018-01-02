@@ -35,7 +35,7 @@ export const post = async (req, res, next) => {
   const content = validator.trim(String(req.body.content || ''));
   const postId = req.body.postId;
   const replyId = req.body.replyId || '';
-  const authorId = req.session.user._id;
+  const authorId = req.user._id;
 
   if (content.trim().length <= 2) {
     return next('最少两个字以上!');
@@ -74,7 +74,7 @@ export const post = async (req, res, next) => {
     });
     reply = reply.toObject();
     reply.author = author;
-    sendReplyNotify(req.session.user, postAuthor, post, reply);
+    sendReplyNotify(req.user, postAuthor, post, reply);
 
     res.json({ reply });
   } catch (err) {
@@ -84,7 +84,7 @@ export const post = async (req, res, next) => {
 
 export const del = async (req, res, next) => {
   const replyId = req.params.id;
-  const userId = req.session.user._id.toString();
+  const userId = req.user._id.toString();
 
   try {
     const reply = await db.findOneById(Reply)(replyId);
@@ -105,7 +105,7 @@ export const del = async (req, res, next) => {
 export const update = async (req, res, next) => {
   const replyId = req.params.id;
   const content = req.body.content;
-  const userId = req.session.user._id.toString();
+  const userId = req.user._id.toString();
 
   if (content.trim().length <= 2) {
     return next('最少两个字以上!');
@@ -123,7 +123,7 @@ export const update = async (req, res, next) => {
 
 export const up = async (req, res, next) => {
   const replyId = req.params.id;
-  const userId = req.session.user._id;
+  const userId = req.user._id;
 
   try {
     const reply = await db.findOneById(Reply)(replyId);
@@ -137,7 +137,7 @@ export const up = async (req, res, next) => {
     let data = {};
     if (upIndex < 0) {
       reply.ups.push(userId);
-      sendUpReplyNotify(req.session.user, author, post, reply);
+      sendUpReplyNotify(req.user, author, post, reply);
     } else {
       reply.ups.splice(upIndex, 1);
     }

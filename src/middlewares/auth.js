@@ -52,22 +52,6 @@ export const userRequired = (req, res, next) => {
   next();
 };
 
-export const blockUser = () => {
-  return (req, res, next) => {
-    if (req.path === '/signout') {
-      next();
-      return;
-    }
-
-    if (req.user && req.user.isBlock && req.method !== 'GET') {
-      next('您已被管理员屏蔽了。有疑问请联系管理员');
-      return;
-    }
-
-    next();
-  };
-};
-
 export const authUser = async (req, res, next) => {
   res.locals.currentUser = null;
 

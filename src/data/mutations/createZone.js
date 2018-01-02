@@ -1,6 +1,7 @@
 import { GraphQLNonNull, GraphQLString } from 'graphql';
 import Zone from '../../data/models/zone';
 import ZoneType from '../types/ZoneType';
+import { adminRequired } from '../../core/auth';
 
 const createZone = {
   type: ZoneType,
@@ -14,7 +15,8 @@ const createZone = {
       type: new GraphQLNonNull(GraphQLString)
     }
   },
-  resolve: (obj, { key, value }, { db }) => {
+  resolve: (obj, { key, value }, { req, db }) => {
+    adminRequired(req);
     const conditions = { $or: [{ key }, { value }] };
     return db
       .findOne(Zone)(conditions, {})

@@ -8,6 +8,7 @@ import {
 } from 'graphql';
 import Zone from '../../data/models/zone';
 import ZoneType from '../types/ZoneType';
+import { adminRequired } from '../../core/auth';
 
 const updateZone = {
   type: ZoneType,
@@ -37,7 +38,10 @@ const updateZone = {
       type: GraphQLBoolean
     }
   },
-  resolve: (obj, { id, ...data }, { db }) => db.updateById(Zone)(id, data)
+  resolve: (obj, { id, ...data }, { req, db }) => {
+    adminRequired(req);
+    db.updateById(Zone)(id, data);
+  }
 };
 
 export default updateZone;

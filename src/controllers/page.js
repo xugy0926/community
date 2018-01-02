@@ -103,26 +103,26 @@ export const inputSearchPasswordPage = async (req, res, next) => {
 };
 
 export const resetPasswordPage = (req, res) => {
-  const userId = req.session.user._id;
+  const userId = req.user._id;
   res.render('sign/resetPassword', { userId });
 };
 
 export const myMessagesPage = (req, res) => {
-  const userId = req.session.user._id || '';
+  const userId = req.user._id || '';
   const type = req.params.type || 'read';
   res.render('message/index', { userId, type });
 };
 
 export const allMessagePage = (req, res) => {
   const type = req.query.type || 'read';
-  const userId = req.session.user._id || '';
+  const userId = req.user._id || '';
   res.render('message/all', { userId, type });
 };
 
 export const showPostPage = async (req, res, next) => {
   const postId = req.params.id;
   const userId =
-    req.session.user && req.session.user._id ? req.session.user._id : '';
+    req.user && req.user._id ? req.user._id : '';
 
   try {
     const post = await transaction.fullPost(postId);
@@ -204,7 +204,7 @@ export const userRepliesPage = (req, res) => {
 };
 
 export const settingPage = (req, res) => {
-  const userId = req.session.user._id;
+  const userId = req.user._id;
   res.render('user/setting', { userId });
 };
 

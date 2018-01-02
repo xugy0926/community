@@ -130,7 +130,7 @@ export const post = async (req, res, next) => {
   const isHtml = req.body.isHtml || false;
   const advertisingMap = req.body.advertisingMap || '';
   const recommendUrl = req.body.recommendUrl || '';
-  const authorId = req.session.user._id;
+  const authorId = req.user._id;
 
   if (title === '') {
     return next(new Error('标题不能为空'));
@@ -146,7 +146,7 @@ export const post = async (req, res, next) => {
     description,
     content,
     area,
-    authorId: req.session.user._id,
+    authorId: req.user._id,
     status,
     mdType,
     tags,
@@ -188,8 +188,8 @@ export const update = async (req, res, next) => {
     return next(new Error('标题太短（需4个字以上）'));
   }
 
-  const isAdmin = req.session.user.isAdmin;
-  const currentUserId = req.session.user._id;
+  const isAdmin = req.user.isAdmin;
+  const currentUserId = req.user._id;
 
   try {
     const post = await db.findOneById(Post)(postId);
@@ -210,7 +210,7 @@ export const update = async (req, res, next) => {
     };
 
     await db.updateById(Post)(postId)(data);
-    at.sendMessageToMentionUsers(content, postId, req.session.user._id);
+    at.sendMessageToMentionUsers(content, postId, req.user._id);
     res.json({
       url: `${config.apiPrefix.page}/post/${post._id}`
     });
@@ -221,8 +221,8 @@ export const update = async (req, res, next) => {
 
 export const del = async (req, res, next) => {
   const id = req.params.id;
-  const isAdmin = req.session.user.isAdmin;
-  const currentUserId = req.session.user._id;
+  const isAdmin = req.user.isAdmin;
+  const currentUserId = req.user._id;
 
   try {
     const post = await db.findOneById(Post)(id);
@@ -283,7 +283,7 @@ export const lock = async (req, res, next) => {
 
 export const collect = async (req, res, next) => {
   const postId = req.params.id;
-  const userId = req.session.user._id;
+  const userId = req.user._id;
 
   try {
     const collect = await db.findOne(PostCollect)({ userId, postId }, {});
@@ -304,7 +304,7 @@ export const collect = async (req, res, next) => {
     await db.incById(User)(userId)({
       collectPostCount: 1
     });
-    req.session.user.collectPostCount += 1;
+    req.user.collectPostCount += 1;
     res.end();
   } catch (err) {
     next(err);
@@ -313,7 +313,7 @@ export const collect = async (req, res, next) => {
 
 export const delCollect = async (req, res, next) => {
   const postId = req.params.id;
-  const userId = req.session.user._id;
+  const userId = req.user._id;
 
   try {
     const post = await db.findOneById(Post)(postId);
@@ -329,7 +329,7 @@ export const delCollect = async (req, res, next) => {
       collectPostCount: -1
     });
 
-    req.session.user.collectPostCount -= 1;
+    req.user.collectPostCount -= 1;
     res.end();
   } catch (err) {
     next(err);
@@ -339,8 +339,8 @@ export const delCollect = async (req, res, next) => {
 export const status = async (req, res, next) => {
   const id = req.params.id;
   const status = req.body.status || 'saved';
-  const isAdmin = req.session.user.isAdmin;
-  const currentUserId = req.session.user._id;
+  const isAdmin = req.user.isAdmin;
+  const currentUserId = req.user._id;
 
   try {
     const post = await db.findOneById(Post)(id);
@@ -355,7 +355,7 @@ export const status = async (req, res, next) => {
 
 export const up = async (req, res, next) => {
   const id = req.params.id;
-  const userId = req.session.user._id;
+  const userId = req.user._id;
 
   try {
     const post = await db.findOneById(Post)(id);
