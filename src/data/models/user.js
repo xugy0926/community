@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
 import timePlugin from './timePlugin';
 import base from './base'
-import * as CONSTANTS from '../../common/constants';
+import config from '../../config'
+import role from '../role';
 
 const Schema = mongoose.Schema;
 
@@ -25,7 +26,7 @@ const UserSchema = new Schema(
       githubUsername: { type: String },
       githubAccessToken: { type: String },
       isBlock: { type: Boolean, default: false },
-      role: { type: String, default: CONSTANTS.ROLE_TYPE.Normal },
+      role: { type: String, default: role.Normal },
       score: { type: Number, default: 0 },
       postCount: { type: Number, default: 0 },
       replyCount: { type: Number, default: 0 },
@@ -50,13 +51,12 @@ UserSchema.plugin(timePlugin);
 
 UserSchema.methods.isAdmin = function isAdmin() {
   return (
-    this.role === CONSTANTS.ROLE_TYPE.Admin ||
-    this.loginname === CONSTANTS.ADMIN_ID
+    this.role === role.Admin
   );
 };
 
 UserSchema.methods.isSupport = function isSupport() {
-  return this.role === CONSTANTS.ROLE_TYPE.Support;
+  return this.role === role.Support;
 };
 
 UserSchema.index({ loginname: 1 }, { unique: true });

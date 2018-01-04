@@ -44,8 +44,8 @@
                   </a>
                   <% if(currentUser 
                 && (currentUser._id === post.author._id.toString() 
-                    || currentUser.isAdmin 
-                    || currentUser.isSupport)) {%>
+                    || currentUser.isAdmin() 
+                    || currentUser.isSupport())) {%>
                     <a class="popup icon item" href="<%= apiPrefix.page %>/edit/<%=post._id %>?zoneId=<%= post.zoneId %>">
                       <i class="edit icon"></i>
                     </a>

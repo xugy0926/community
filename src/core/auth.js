@@ -9,7 +9,7 @@ export const adminRequired = function (req) {
     throw new Error('You are not authorized');
   }
 
-  if (!req.user.isAdmin) {
+  if (!req.user.isAdmin()) {
     throw new Error('You are not a admin');
   }
 }

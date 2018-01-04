@@ -3,7 +3,7 @@ import config from '../config';
 import * as db from '../data/db';
 import User from '../data/models/user';
 import Message from '../data/models/message';
-import { ADMIN_ID } from '../common/constants';
+import role from '../data/role';
 
 export const adminRequired = (req, res, next) => {
   if (!req.user) {
@@ -13,7 +13,7 @@ export const adminRequired = (req, res, next) => {
     return;
   }
 
-  if (!req.user.isAdmin) {
+  if (!req.user.isAdmin()) {
     let err = new Error('需要管理员权限');
     err.status = 403;
     next(err);
@@ -31,7 +31,7 @@ export const supportRequired = (req, res, next) => {
     return;
   }
 
-  if (!req.user.isSupport && !req.user.isAdmin) {
+  if (!req.user.isSupport && !req.user.isAdmin()) {
     let err = new Error('需要运营权限权限');
     err.status = 403;
     next(err);
@@ -72,6 +72,15 @@ export const authUser = async (req, res, next) => {
         { masterId: decoded._id, hasRead: false },
         {}
       );
+
+      decoded.isAdmin = function () {
+        return this.role === role.Admin
+      }
+
+      decoded.isSupport = function () {
+        return this.role === role.Support
+      }
+
       res.locals.count = count;
       req.user = res.locals.currentUser = decoded;
       next();

@@ -1,4 +1,4 @@
-<% if(currentUser && (currentUser.isAdmin || currentUser.isSupport)) { %>
+<% if(currentUser && (currentUser.isAdmin() || currentUser.isSupport())) { %>
 <ul class="navbar-nav flex-row">
   <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle" href="#" id="cmsMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

@@ -11,7 +11,7 @@ module.exports = {
     // API URL to be used in the server-side code
     serverUrl:
       process.env.API_SERVER_URL ||
-      `http://localhost:${process.env.PORT || 3000}`,
+      `http://localhost:${process.env.PORT || 3000}`
   },
 
   name: '小白学编程',
@@ -54,7 +54,7 @@ module.exports = {
     port: 465,
     auth: {
       user: '',
-      pass: '',
+      pass: ''
     }
   },
 
@@ -66,12 +66,12 @@ module.exports = {
     host: '127.0.0.1',
     port: 32768, //6379,
     db: 0,
-    password: '',
+    password: ''
   },
 
   upload: {
     path: path.join(__dirname, '../upload/'),
-    url: '/static/',
+    url: '/static/'
   },
 
   qn: {
@@ -79,7 +79,7 @@ module.exports = {
     secretKey: '',
     bucket: '',
     origin: '',
-    uploadURL: '',
+    uploadURL: ''
   },
 
   github: {

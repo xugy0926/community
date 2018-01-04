@@ -188,7 +188,7 @@ export const update = async (req, res, next) => {
     return next(new Error('标题太短（需4个字以上）'));
   }
 
-  const isAdmin = req.user.isAdmin;
+  const isAdmin = req.user.isAdmin();
   const currentUserId = req.user._id;
 
   try {
@@ -221,7 +221,7 @@ export const update = async (req, res, next) => {
 
 export const del = async (req, res, next) => {
   const id = req.params.id;
-  const isAdmin = req.user.isAdmin;
+  const isAdmin = req.user.isAdmin();
   const currentUserId = req.user._id;
 
   try {
@@ -339,7 +339,7 @@ export const delCollect = async (req, res, next) => {
 export const status = async (req, res, next) => {
   const id = req.params.id;
   const status = req.body.status || 'saved';
-  const isAdmin = req.user.isAdmin;
+  const isAdmin = req.user.isAdmin();
   const currentUserId = req.user._id;
 
   try {

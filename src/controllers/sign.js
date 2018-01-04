@@ -116,14 +116,6 @@ export const signin = async (req, res, next) => {
     delete user.pass;
     delete user.githubAccessToken;
 
-    if (config.ADMIN_ID === user.loginname || user.role === 'A') {
-      user.isAdmin = true;
-    } else if (user.role === 'S') {
-      user.isSupport = true;
-    } else {
-      user.isNormal = true;
-    }
-
     const token = jwt.encode(
       Object.assign(user, {
         exp: addDays(new Date(), 30)

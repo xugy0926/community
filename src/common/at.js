@@ -4,7 +4,7 @@ import * as db from '../data/db';
 import User from '../data/models/user';
 import * as Message from './message';
 
-export const fetchUsers = (text) => {
+export const fetchUsers = text => {
   if (!text) {
     return [];
   }
@@ -34,9 +34,14 @@ export const fetchUsers = (text) => {
   }
   names = R.uniq(names);
   return names;
-}
+};
 
-export const sendMessageToMentionUsers = async (content, postId, authorId, replyId) => {
+export const sendMessageToMentionUsers = async (
+  content,
+  postId,
+  authorId,
+  replyId
+) => {
   if (!content || !authorId || !postId) {
     logger.debug(
       'sendMessageToMentionUsers'.red,
@@ -68,9 +73,9 @@ export const sendMessageToMentionUsers = async (content, postId, authorId, reply
   } catch (err) {
     logger.error(err);
   }
-}
+};
 
-export const linkUsers = (text) => {
+export const linkUsers = text => {
   const users = fetchUsers(text);
   for (let i = 0; i < users.length; i++) {
     const name = users[i];
@@ -80,4 +85,4 @@ export const linkUsers = (text) => {
     );
   }
   return text;
-}
+};

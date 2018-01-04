@@ -17,7 +17,8 @@ async function createAdmin() {
         passwordHash: passwordHash,
         email: admin.email,
         avatar: admin.avatar,
-        active: true
+        active: true,
+        role: 'A'
       });
     }
   } catch (err) {
