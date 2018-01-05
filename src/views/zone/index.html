@@ -110,7 +110,32 @@
         this.selectedZoneIndex = index;
       },
       onUpdateZone: function () {
-        axios.patch(dataPrefix + '/zones/' + this.zones[this.selectedZoneIndex]._id, this.zones[this.selectedZoneIndex])
+        axios.post('/graphql', {
+          query: `
+            mutation {
+              updateZone(id: ${JSON.stringify(this.zones[this.selectedZoneIndex]._id)}, 
+                key: ${JSON.stringify(this.zones[this.selectedZoneIndex].key)},
+                value: ${JSON.stringify(this.zones[this.selectedZoneIndex].value)},
+                template: ${JSON.stringify(this.zones[this.selectedZoneIndex].template)},
+                enable: ${JSON.stringify(this.zones[this.selectedZoneIndex].enable)},
+                mustReview: ${this.zones[this.selectedZoneIndex].mustReview},
+                weight: ${this.zones[this.selectedZoneIndex].weight},
+                icon: ${JSON.stringify(this.zones[this.selectedZoneIndex].icon)},
+                createText: ${JSON.stringify(this.zones[this.selectedZoneIndex].createText)},
+              ) {
+                _id
+                key
+                value
+                template
+                mustReview
+                enable,
+                icon,
+                weight,
+                createText
+              }
+            }
+          `
+        })
           .then(this.parse)
           .then((result) => {
             this.resetMessage();
@@ -119,7 +144,13 @@
           .catch(this.error)
       },
       onDeleteZone: function () {
-        axios.delete(dataPrefix + '/zones/' + this.zones[this.selectedZoneIndex]._id)
+        axios.post('/graphql', {
+          query: `
+            mutation {
+              deleteZone(id: ${JSON.stringify(this.zones[this.selectedZoneIndex]._id)})
+            }
+          `
+        })
           .then(this.parse)
           .then((result) => {
             this.resetMessage();
@@ -133,20 +164,34 @@
       },
       onAddZone: function () {
         $('.ui.modal').modal('hide');
-        axios.post(dataPrefix + '/zones',
-          {
-            key: this.zoneKey,
-            value: this.zoneValue,
-          })
+        axios.post('/graphql', {
+          query: `
+            mutation {
+              createZone(key: ${JSON.stringify(this.zoneKey)}, value: ${JSON.stringify(this.zoneValue)}) {
+                _id
+                key
+                value
+                template
+                mustReview
+                enable,
+                icon,
+                weight,
+                createText
+              }
+            }
+          `
+        })
           .then(this.parse)
           .then((result) => {
             this.resetMessage();
             this.successMsg = 'success'
-            this.zones.push(result.data);
+            this.zones.push(result.data.createZone);
             this.zonekey = '';
             this.zoneValue = '';
           })
-          .catch(this.error)
+          .catch(err => {
+            console.log(err);
+          })
       }
     }
   });

@@ -3,7 +3,8 @@ import {
   GraphQLID as ID,
   GraphQLString as StringType,
   GraphQLBoolean as BooleanType,
-  GraphQLNonNull as NonNull
+  GraphQLNonNull as NonNull,
+  GraphQLInt as IntType
 } from 'graphql';
 
 const ZoneType = new ObjectType({
@@ -14,7 +15,10 @@ const ZoneType = new ObjectType({
     value: { type: StringType },
     template: { type: StringType },
     mustReview: { type: BooleanType },
-    enable: { type: BooleanType }
+    enable: { type: BooleanType },
+    weight: { type: IntType },
+    icon: { type: StringType },
+    createText: { type: StringType }
   }
 });
 

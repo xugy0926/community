@@ -1,19 +1,25 @@
-import { GraphQLID, GraphQLNonNull } from 'graphql';
+import { GraphQLID, GraphQLNonNull, GraphQLBoolean } from 'graphql';
 import Zone from '../../data/models/zone';
 import ZoneType from '../types/ZoneType';
 import { adminRequired } from '../../core/auth';
 
 const deleteZone = {
-  type: ZoneType,
+  type: GraphQLBoolean,
   args: {
     id: {
       name: 'id',
       type: new GraphQLNonNull(GraphQLID)
     }
   },
-  resolve: (obj, { id }, { req, db }) => {
+  resolve: ({ req }, { id }, { db }) => {
     adminRequired(req);
-    db.remove(Zone)({ _id: id });
+    db
+      .remove(Zone)({ _id: id })
+      .then(result => {
+        return result.ok ? true : false;
+      });
+    
+    return true;
   }
 };
 

@@ -1,6 +1,7 @@
 import R from 'ramda';
 import {
   GraphQLList,
+  GraphQLInt,
   GraphQLString,
   GraphQLBoolean,
   GraphQLID,
@@ -36,9 +37,21 @@ const updateZone = {
     mustReview: {
       name: 'value',
       type: GraphQLBoolean
+    },
+    weight: {
+      name: 'weight',
+      type: GraphQLInt
+    },
+    icon: {
+      name: 'icon',
+      type: GraphQLString
+    },
+    createText: {
+      name: 'createText',
+      type: GraphQLString
     }
   },
-  resolve: (obj, { id, ...data }, { req, db }) => {
+  resolve: ({ req }, { id, ...data }, { db }) => {
     adminRequired(req);
     db.updateById(Zone)(id, data);
   }

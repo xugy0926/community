@@ -62,7 +62,7 @@
         error(err) {
           let commonError = R.path(['response', 'data', 'error'])(err); // get defualt error.
           let graphqlErrors = R.path(['response', 'data', 'errors'])(err); // get graphql error.
-          this.errorMsg = commonError ? commonError : (graphqlErrors && graphqlErrors[0] ? errors[0].message : err);
+          this.errorMsg = commonError ? commonError : (graphqlErrors && graphqlErrors[0] ? graphqlErrors[0].message : err);
           alert(this.errorMsg);
         },
         signin() {
@@ -135,7 +135,10 @@
                  value
                  template
                  mustReview
-                 enable
+                 enable,
+                 icon,
+                 weight,
+                 createText
                 }
               }`
             )

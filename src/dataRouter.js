@@ -62,12 +62,6 @@ router.post('/message/data', userRequired, message.userMessages);
 router.post('/message/read', userRequired, message.read);
 router.patch('/message/toRead', userRequired, message.toRead);
 
-// zone
-router.get('/zones', adminRequired, zone.more);
-router.post('/zones', adminRequired, zone.post);
-router.delete('/zones/:id', adminRequired, zone.del);
-router.patch('/zones/:id', adminRequired, zone.update);
-
 // profile
 router.get('/profile', adminRequired, profile.one);
 router.post('/profile', adminRequired, profile.create);

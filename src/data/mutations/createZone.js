@@ -15,7 +15,7 @@ const createZone = {
       type: new GraphQLNonNull(GraphQLString)
     }
   },
-  resolve: (obj, { key, value }, { req, db }) => {
+  resolve: ({ req }, { key, value }, { db }) => {
     adminRequired(req);
     const conditions = { $or: [{ key }, { value }] };
     return db
