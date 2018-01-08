@@ -124,7 +124,7 @@
             })
             .catch(this.error);
         },
-        getZones({ all = false }) {
+        getZones(all = false) {
           axios
             .get(
               graphqlPrefix +
