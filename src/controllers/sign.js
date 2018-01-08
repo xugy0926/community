@@ -102,13 +102,8 @@ export const signin = async (req, res, next) => {
         utility.md5(doc.email + doc.pass + config.sessionSecret),
         doc.loginname
       );
-      res.json({
-        user: doc,
-        active: false,
-        message: `此帐号还没有被激活，激活链接已发送到 ${
-          doc.email
-        } 邮箱，请查收。`
-      });
+
+      next(`此帐号还没有被激活，激活链接已发送到 ${doc.email} 邮箱，请查收。`);
       return;
     }
 
@@ -118,8 +113,7 @@ export const signin = async (req, res, next) => {
 
     const token = jwt.encode(
       Object.assign(user, {
-        exp: addDays(new Date(), 30)
-          .valueOf()
+        exp: addDays(new Date(), 30).valueOf()
       }),
       config.jwtSecret
     );
@@ -293,8 +287,7 @@ export const github = async (req, res, next) => {
 
     const token = jwt.encode(
       Object.assign(user, {
-        exp: addDays(new Date(), 30)
-          .valueOf()
+        exp: addDays(new Date(), 30).valueOf()
       }),
       config.jwtSecret
     );

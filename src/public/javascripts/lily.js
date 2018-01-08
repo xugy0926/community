@@ -80,14 +80,14 @@
         signup() {
           axios
             .post(dataPrefix + '/user/signup', {
-              loginname: vm.loginname,
-              password: vm.password,
-              rePassword: vm.rePassword,
-              email: vm.email
+              loginname: this.loginname,
+              password: this.password,
+              rePassword: this.rePassword,
+              email: this.email
             })
             .then(this.parse)
             .then(result => {
-              vm.successMsg = result.message;
+              this.successMsg = result.message;
             })
             .catch(this.error);
         },
