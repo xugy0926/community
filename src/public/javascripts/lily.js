@@ -219,6 +219,13 @@
               if (this.posts.length > 0) {
                 const idx = R.findIndex(R.propEq('_id', id))(this.posts);
                 this.posts[idx].ups = result.ups;
+
+                let userId = localStorage.getItem('userId');
+                if (userId && R.indexOf(userId, result.ups) > -1) {
+                  Vue.set(this.posts[idx], 'meUp', true);
+                } else {
+                  Vue.set(this.posts[idx], 'meUp', false);                
+                }
               } else {
                 this.ups = result.ups.length;
               }
