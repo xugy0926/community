@@ -8,7 +8,7 @@ import role from '../data/role';
 export const adminRequired = (req, res, next) => {
   if (!req.user) {
     let err = new Error('需要登录');
-    err.status = 403;
+    err.status = 401;
     next(err);
     return;
   }
@@ -26,7 +26,7 @@ export const adminRequired = (req, res, next) => {
 export const supportRequired = (req, res, next) => {
   if (!req.user) {
     let err = new Error('需要登录');
-    err.status = 403;
+    err.status = 401;
     next(err);
     return;
   }
@@ -44,7 +44,7 @@ export const supportRequired = (req, res, next) => {
 export const userRequired = (req, res, next) => {
   if (!req.user) {
     let err = new Error('需要登录');
-    err.status = 403;
+    err.status = 401;
     next(err);
     return;
   }

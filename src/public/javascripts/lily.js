@@ -128,7 +128,7 @@
           axios
             .get(
               graphqlPrefix +
-                `?query={
+                `?query=query {
                zones (all: ${all}) {
                  _id
                  key

@@ -3,8 +3,18 @@ import config from '../config';
 export default function (err, req, res, next) {
   const errorDetails = err.stack || err;
   console.error('Yay', errorDetails);
+  const errorCode = err.status || 500;
+
+  if (req.method === 'GET' && errorCode === 401) {
+    return res.redirect('/signin');
+  }
+
+  if (req.method === 'GET' && errorCode === 403) {
+    return res.send(`<h1>需要管理员权限</h1>\n`);
+  }
+
   // render the error page
-  res.status(err.status || 500).format({
+  res.status(errorCode).format({
     json() {
       const errorInfo = {
         details: config.isProduction ? null : err,
