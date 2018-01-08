@@ -119,7 +119,7 @@ export const signin = async (req, res, next) => {
     );
 
     res.cookie(config.authCookieName, token, opts);
-    res.end();
+    res.json({user, token});
   } catch (err) {
     next(err);
   }

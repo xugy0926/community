@@ -18,7 +18,7 @@
       </div>
       <div class="meta">
         <a class="like">
-          <i class="like icon" v-on:click="onUpPost(item._id)"></i> {{ item.ups.length }} Likes
+          <i class="like icon" v-bind:class="{red: item.meUp}" v-on:click="onUpPost(item._id)"></i> {{ item.ups.length }} Likes
         </a>
       </div>
     </div>

@@ -72,7 +72,8 @@
               password: this.password
             })
             .then(this.parse)
-            .then(() => {
+            .then((result) => {
+              localStorage.setItem('userId', result.user._id);
               location.href = pagePrefix + '/';
             })
             .catch(this.error);
@@ -171,6 +172,12 @@
                   R.propEq('_id', item.authorId),
                   newAuthors
                 );
+                
+                let userId = localStorage.getItem('userId');
+                if (userId && R.indexOf(userId, item.ups) > -1) {
+                  item.meUp = true;
+                }
+
                 this.posts.push(item);
               });
               this.pages = result.pages;
