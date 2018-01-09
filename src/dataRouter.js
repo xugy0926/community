@@ -4,8 +4,6 @@ import * as user from './controllers/user';
 import * as message from './controllers/message';
 import * as post from './controllers/post';
 import * as reply from './controllers/reply';
-import * as zone from './controllers/zone';
-import * as profile from './controllers/profile';
 import {
   authRequired,
   supportRequired,
@@ -61,10 +59,5 @@ router.post('/message/unread/count', userRequired, message.unreadCount);
 router.post('/message/data', userRequired, message.userMessages);
 router.post('/message/read', userRequired, message.read);
 router.patch('/message/toRead', userRequired, message.toRead);
-
-// profile
-router.get('/profile', adminRequired, profile.one);
-router.post('/profile', adminRequired, profile.create);
-router.patch('/profile/:id', adminRequired, profile.update);
 
 export default router;
