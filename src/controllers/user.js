@@ -42,18 +42,6 @@ export const patch = async (req, res, next) => {
   }
 };
 
-export const toggleStar = async (req, res, next) => {
-  const userId = req.body.userId;
-  const isStar = req.body.isStar;
-
-  try {
-    await db.updateById(User)(userId)({ isStar });
-    res.end();
-  } catch (err) {
-    next(err);
-  }
-};
-
 export const block = async (req, res, next) => {
   const userId = req.body.userId;
   const action = req.body.action;
