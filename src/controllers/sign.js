@@ -54,10 +54,10 @@ export const signup = async (req, res, next) => {
 
     if (isNotNil(doc)) return next(new Error('账号已经存在'));
 
-    const passwordHash = bcrypt.hash(password);
+    const passwordHash = await bcrypt.hash(password, 10);
     await create({
       loginname,
-      passwordHash,
+      pass: passwordHash,
       email,
       accessToken: uuid.v4()
     });
@@ -137,7 +137,6 @@ export const activeAccount = async (req, res, next) => {
   try {
     const doc = await findOne({ loginname });
     if (!doc) return next(new Error('data not found'));
-
     const key2 = utility.md5(doc.email + doc.pass + config.sessionSecret);
     if (key !== key2) {
       return next(new Error('信息有误，帐号无法被激活'));
@@ -152,7 +151,7 @@ export const activeAccount = async (req, res, next) => {
     };
 
     await updateById(doc._id)(data);
-    res.end('激活成功');
+    res.end('success!');
   } catch (err) {
     next(err);
   }
