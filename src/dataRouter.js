@@ -27,8 +27,6 @@ router.get('/user/:id/posts', userRequired, post.userPosts);
 router.get('/user/:id/detail', userRequired, user.one);
 router.patch('/user/:id/update', userRequired, user.patch);
 router.get('/user/:id/collectPosts', userRequired, post.collectPosts);
-router.post('/user/set_star', adminRequired, user.toggleStar);
-router.post('/user/cancel_star', adminRequired, user.toggleStar);
 router.post('/user/block', adminRequired, user.block);
 router.post('/user/list', adminRequired, user.users);
 router.post('/user/updateRole', adminRequired, user.updateRole);
