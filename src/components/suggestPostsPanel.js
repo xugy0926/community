@@ -11,7 +11,7 @@ import props from '../functions/props';
 export default async function(zone) {
   if (!zone) throw new Error('zone is null');
 
-  const conditions = { zoneId: zone._id, good: false };
+  const conditions = { zoneId: zone._id, good: false, status: 'P'};
   const options = { limit: 10, sort: '-createAt' };
   const posts = await db.find(Post)(conditions)(options);
   const authors = await db.find(User)(conditionsIds(props('authorId')(posts)))({});
