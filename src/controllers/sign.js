@@ -16,6 +16,7 @@ import User from '../data/models/user';
 const findOne = db.findOne(User)(R.__, {});
 const updateById = db.updateById(User);
 const create = db.create(User);
+const thinUser = R.compose(R.dissoc('pass'), R.dissoc('githubAccessToken'));
 
 const opts = {
   path: '/',
@@ -107,8 +108,10 @@ export const signin = async (req, res, next) => {
       return;
     }
 
+    const user = thinUser(doc.toObject());
+
     const token = jwt.encode(
-      Object.assign(R.compose(R.dissoc('pass'), R.dissoc('githubAccessToken')(doc.toObject())), {
+      Object.assign(user, {
         exp: addDays(new Date(), 30).valueOf()
       }),
       config.jwtSecret
@@ -279,7 +282,7 @@ export const github = async (req, res, next) => {
     }
 
     const token = jwt.encode(
-      Object.assign(R.dissoc('pass', user), {
+      Object.assign(thinUser(user), {
         exp: addDays(new Date(), 30).valueOf()
       }),
       config.jwtSecret

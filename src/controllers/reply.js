@@ -32,12 +32,12 @@ export const more = async (req, res, next) => {
 };
 
 export const post = async (req, res, next) => {
-  const content = R.trim(String(req.body.content || ''));
-  const postId = req.body.postId;
+  const content = R.trim(req.body.content || '');
+  const postId = req.body.postId || '';
   const replyId = req.body.replyId || '';
-  const authorId = req.user._id;
+  const authorId = req.user._id || '';
 
-  if (content.trim().length <= 2) {
+  if (R.trim(content).length <= 2) {
     return next('最少两个字以上!');
   }
 
