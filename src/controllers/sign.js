@@ -25,10 +25,10 @@ const opts = {
 };
 
 export const signup = async (req, res, next) => {
-  const loginname = validator.trim(req.body.loginname).toLowerCase();
-  const email = validator.trim(req.body.email).toLowerCase();
-  const password = validator.trim(req.body.password) || '';
-  const rePassword = validator.trim(req.body.rePassword) || '';
+  const loginname = R.toLower(R.trim(req.body.loginname || ''));
+  const email = R.toLower(R.trim(req.body.email || ''));
+  const password = R.trim(req.body.password || '');
+  const rePassword = R.trim(req.body.rePassword || '');
 
   // 验证信息的正确性
   if ([loginname, password, rePassword, email].some(item => item === '')) {
@@ -43,7 +43,7 @@ export const signup = async (req, res, next) => {
   if (!validator.isEmail(email)) {
     return next(new Error('邮箱不合法'));
   }
-  if (password !== rePassword) {
+  if (!R.equals(password, rePassword)) {
     return next(new Error('两次密码输入不一致'));
   }
 
@@ -81,8 +81,8 @@ export const signup = async (req, res, next) => {
 };
 
 export const signin = async (req, res, next) => {
-  const loginname = validator.trim(req.body.loginname || '').toLowerCase();
-  const password = validator.trim(req.body.password || '');
+  const loginname = R.toLower(R.trim(req.body.loginname || ''));
+  const password = R.trim(req.body.password || '');
 
   if (isNil(loginname) || isNil(password)) {
     return next(new Error('信息不完整'));
@@ -107,12 +107,8 @@ export const signin = async (req, res, next) => {
       return;
     }
 
-    const user = doc.toObject();
-    delete user.pass;
-    delete user.githubAccessToken;
-
     const token = jwt.encode(
-      Object.assign(user, {
+      Object.assign(R.compose(R.dissoc('pass'), R.dissoc('githubAccessToken')(doc.toObject())), {
         exp: addDays(new Date(), 30).valueOf()
       }),
       config.jwtSecret
@@ -131,8 +127,8 @@ export const signout = (req, res) => {
 };
 
 export const activeAccount = async (req, res, next) => {
-  const key = validator.trim(req.query.key || '');
-  const loginname = validator.trim(req.query.name || '');
+  const key = R.trim(req.query.key || '');
+  const loginname = R.trim(req.query.name || '');
 
   try {
     const doc = await findOne({ loginname });
@@ -158,7 +154,7 @@ export const activeAccount = async (req, res, next) => {
 };
 
 export const createSearchPassword = async (req, res, next) => {
-  const email = validator.trim(req.body.email).toLowerCase();
+  const email = R.toLower(R.trim(req.body.email));
   if (!validator.isEmail(email)) {
     return next(new Error('邮箱不合法'));
   }
@@ -184,10 +180,10 @@ export const createSearchPassword = async (req, res, next) => {
 };
 
 export const authSearchPassword = async (req, res, next) => {
-  const key = validator.trim(req.body.key || '');
-  const loginname = validator.trim(req.body.loginname || '');
-  const password = validator.trim(req.body.password || '');
-  const rePassword = validator.trim(req.body.rePassword || '');
+  const key = R.trim(req.body.key || '');
+  const loginname = R.trim(req.body.loginname || '');
+  const password = R.trim(req.body.password || '');
+  const rePassword = R.trim(req.body.rePassword || '');
 
   if (password !== rePassword) {
     return next(new Error('输入的密码不一致'));
@@ -226,8 +222,8 @@ export const authSearchPassword = async (req, res, next) => {
 
 export const updateResetPassword = async (req, res, next) => {
   const userId = req.user._id;
-  const oldPassword = validator.trim(req.body.oldPassword) || '';
-  const newPassword = validator.trim(req.body.newPassword) || '';
+  const oldPassword = R.trim(req.body.oldPassword || '');
+  const newPassword = R.trim(req.body.newPassword || '');
 
   if (oldPassword === newPassword) {
     return next(new Error('新密码和老密码一致'));
@@ -282,10 +278,8 @@ export const github = async (req, res, next) => {
       await user.save();
     }
 
-    delete user.pass;
-
     const token = jwt.encode(
-      Object.assign(user, {
+      Object.assign(R.dissoc('pass', user), {
         exp: addDays(new Date(), 30).valueOf()
       }),
       config.jwtSecret

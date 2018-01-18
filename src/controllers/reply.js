@@ -1,4 +1,4 @@
-import validator from 'validator';
+import R from 'ramda';
 import props from '../functions/props';
 import { onlyMe, withoutMe } from '../functions/limit';
 import * as at from '../common/at';
@@ -32,7 +32,7 @@ export const more = async (req, res, next) => {
 };
 
 export const post = async (req, res, next) => {
-  const content = validator.trim(String(req.body.content || ''));
+  const content = R.trim(String(req.body.content || ''));
   const postId = req.body.postId;
   const replyId = req.body.replyId || '';
   const authorId = req.user._id;
