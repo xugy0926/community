@@ -22,16 +22,11 @@
   </li>
 </ul>
 <% } else { %>
-<ul class="navbar-nav flex-row">
-  <li class="nav-item">
-    <a class="nav-link" href="<%= apiPrefix.page %>/signin">登录</a>
-  </li>
+
+    <a class="btn btn-outline-warning my-2 my-sm-0" href="<%= apiPrefix.page %>/signin">登录</a>
   <% if(signupValid) { %>
-  <li class="nav-item">
-    <a class="nav-link" href="<%= apiPrefix.page %>/signup">注册</a>
-  </li>
+    <a class="btn btn-outline-warning my-2 my-sm-0 " href="<%= apiPrefix.page %>/signup">注册</a>
   <% } %>
-</ul>
 <% } %>
 <script type="text/javascript">
   new Vue({

@@ -14,7 +14,7 @@ module.exports = {
       `http://localhost:${process.env.PORT || 3000}`
   },
 
-  name: '小白学编程',
+  name: '一起学JS',
   description: '',
   keywords: '',
 

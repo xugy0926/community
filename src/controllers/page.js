@@ -16,15 +16,10 @@ export const indexPage = async (req, res, next) => {
 
   try {
     const profile = await db.findOne(Profile)({}, {});
-    let html = '';
-    if (zones.length > 0) {
-      html = await suggestGoodPosts(zones[0]);
-    }
 
     res.render('index', {
       selectedKey: 'home',
       blocks: zones,
-      suggestHtml: html,
       profile
     });
   } catch (err) {

@@ -1,16 +1,11 @@
-<div class='ui red segment'>
-  <div class="ui relaxed divided list">
-    <div class="item" v-for="item in posts">
-      <div class="right floated content">
-        <i class="comment outline icon"></i>{{ item.replyCount }}
-      </div>
-      <img class="ui avatar image" v-bind:src="item.author.avatar">
-      <div class="content">
-        <a class="header" href="/post/{{ item._id }}">{{ item.title }}</a>
-        <div class="description">
-          update {{ item.updateAtAgo }} by {{ item.author.loginname }}
-        </div>
-      </div>
+<div class="list-group">
+  <a href="/post/{{ item._id }}" class="list-group-item list-group-item-action flex-column align-items-start" v-for="item in posts">
+    <div class="d-flex w-100 justify-content-between">
+      <h5 class="mb-1">{{ item.title }}</h5>
+      <small>
+        <span class="badge badge-primary badge-pill">{{ item.replyCount }}</span>
+      </small>
     </div>
-  </div>
+    <p class="mb-1">{{ item.author.loginname }}  <small>update {{ item.updateAtAgo }} by {{ item.author.loginname }}</small></p>
+  </a>
 </div>
