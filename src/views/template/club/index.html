@@ -1,23 +1,21 @@
-<div class="ui grid">
-  <div class="sixteen wide mobile sixteen wide tablet sixteen wide computer column">
+
     <div class="row justify-content-center">
       <div class="col-md-10">
-        <div class="sixteen wide column">
-          <div class="ui buttons">
-            <button class="ui button" v-if="newest">最新</button>
-            <button class="ui button" v-else v-on:click="onNewest">最新</button>
-            <button class="ui button" v-if="good">精华</button>
-            <button class="ui button" v-else v-on:click="onGood">精华</button>
-          </div>
-          <%- createPanel %>
+        <div class="d-flex w-100 justify-content-between">
+          <div class="btn-group" role="group" aria-label="Basic example">
+              <button type="button" class="btn btn-secondary" v-if="newest">最新</button>
+              <button type="button" class="btn btn-secondary" v-else v-on:click="onNewest">最新</button>
+              <button type="button" class="btn btn-secondary" v-if="good">精华</button>
+              <button type="button" class="btn btn-secondary" v-else v-on:click="onGood">精华</button>
+            </div>
+            <%- createPanel %>
         </div>
+        <br>
         <%- partial('../base/posts') %>
         <button v-if="canLoadData && posts.length > 0" class="fluid ui button" v-bind:class="{ loading: isLoading }" v-on:click="onLoadData">更多</button>
         <div v-else></div>
       </div>
     </div>
-  </div>
-</div>
 <script>
   const lily =  Lily({
     data: { good: false, url: dataPrefix + '/posts' },
