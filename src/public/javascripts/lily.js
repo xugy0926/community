@@ -68,7 +68,7 @@
         signin() {
           axios
             .post(dataPrefix + '/user/signin', {
-              loginname: this.username,
+              loginname: this.loginname,
               password: this.password
             })
             .then(this.parse)
