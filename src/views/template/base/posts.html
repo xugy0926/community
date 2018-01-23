@@ -1,15 +1,15 @@
 <div class="list-group">
-  <a href="/post/{{ item._id }}" class="list-group-item list-group-item-action flex-column align-items-start" v-for="item in posts">
+  <a :href="'/post/' + item._id" class="list-group-item list-group-item-action flex-column align-items-start" v-for="item in posts">
     <div class="d-flex">
-    <img class="mr-3 rounded-circle avatar" v-bind:src="item.author.avatar" alt="">
+    <img class="rounded-circle avatar" v-bind:src="item.author.avatar" alt="">
     <div class="w-100">
-      <div class="d-flex mr-9 justify-content-between">
+      <div class="d-flex mr-9 justify-content-between pl-3">
         <h6 class="mb-1">{{ item.title }}</h6>
         <small>
           <span class="badge badge-secondary badge-pill">{{ item.replyCount }}</span>
         </small>
       </div>
-      <p class="mb-1">{{ item.author.loginname }}  <small>update {{ item.updateAtAgo }}</small></p>
+      <p class="mb-1 pl-3">{{ item.author.loginname }}  <small>update {{ item.updateAtAgo }}</small></p>
       </div>
     </div>
   </a>

@@ -1,7 +1,7 @@
-<div class="row">
+<div id="app" class="row">
   <%- partial('../_notice') %>
     <div class="btn-group" role="group">
-      <button type="button" class="btn btn-secondary" v-for="(index, item) in zones" v-on:click="onSelectedZone(index)">{{ item.value }}</button>
+      <button type="button" class="btn btn-secondary" v-for="(item, index) in zones" v-on:click="onSelectedZone(index)">{{ item.value }}</button>
     </div>
     <div class="w-100 mt-3">
       <h5>
@@ -18,12 +18,12 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-if="posts.length > 0" v-for="(index, item) in posts">
+          <tr v-if="posts.length > 0" v-for="(item, index) in posts">
             <td>
-              <a href="<%= apiPrefix.page %>/user/{{ item.author._id}}/info">{{item.author.loginname}}</a>
+              <a :href="'<%= apiPrefix.page %>/user/' + item.author._id + '/info'">{{item.author.loginname}}</a>
             </td>
             <td>
-              <a href='<%= apiPrefix.page %>/post/{{item._id}}?zoneId={{selectedZone._id}}' target="_blank">{{item.title}}</a>
+              <a href="<%= apiPrefix.page %>/post/' + item._id + '?zoneId=' + selectedZone._id" target="_blank">{{item.title}}</a>
             </td>
             <td>{{ item.createAtAgo }}</td>
             <td class="opts">
@@ -59,7 +59,7 @@
                   操作
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  <a class="dropdown-item" href='<%= apiPrefix.page %>/edit/{{item._id}}' target="_blank">编辑</a>
+                  <a class="dropdown-item" :href="'<%= apiPrefix.page %>/edit/' + item._id" target="_blank">编辑</a>
                   <a class="dropdown-item" v-if="item.top" v-on:click="onTop(index, false)">取消置顶</a>
                   <a class="dropdown-item" v-else v-on:click="onTop(index, true)">置顶</a>
                   <a class="dropdown-item" v-if="item.good" v-on:click="onGood(index, false)">取消精华</a>

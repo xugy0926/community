@@ -1,4 +1,4 @@
-<div class="row">
+<div id="app" class="row">
   <table class="table">
     <thead>
       <tr>
@@ -12,7 +12,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-if="users.length > 0" v-for="(index, item) in users">
+      <tr v-if="users.length > 0" v-for="(item, index) in users">
         <td>
           <a>{{item.loginname}}</a>
         </td>

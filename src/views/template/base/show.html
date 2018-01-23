@@ -1,4 +1,4 @@
-<div class="row justify-content-center">
+<div id="app" class="row justify-content-center">
   <div class="col-md-10">
     <h3 class="mb-3">
       <%= post.title %>
@@ -53,7 +53,6 @@
     </div>
   </div>
   <%- partial('_comment') %>
-</div>
 </div>
 <script>
   const userId = '<%= typeof(currentUser) !== "undefined" && currentUser ? currentUser._id : "" %>';

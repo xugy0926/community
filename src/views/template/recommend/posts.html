@@ -1,15 +1,18 @@
-<div class="media mb-4" v-for="item in posts">
-    <img class="d-flex mr-3 rounded-circle avatar" v-bind:src="item.author.avatar" alt="">
-    <div class="media-body">
-      <h5 class="mt-0"><a>{{ item.author.loginname }}</a> 推荐  <small>update {{ item.updateAtAgo }}</small></h5> 
-      {{ item.description }}
-      <div class="extra text">
-        <a href="{{ item.recommendUrl }}" target="_blank">{{ item.title }}</a>
-      </div>
-      <div>
-        <a class="like">
-          <i class="like icon" v-bind:class="{red: item.meUp}" v-on:click="onUpPost(item._id)"></i> {{ item.ups.length }} Likes
-        </a>
-      </div>
+<div id="app" class="media mb-4" v-for="item in posts">
+  <img class="d-flex mr-3 rounded-circle avatar" v-bind:src="item.author.avatar" alt="">
+  <div class="media-body">
+    <h5 class="mt-0">
+      <a>{{ item.author.loginname }}</a> 推荐
+      <small>update {{ item.updateAtAgo }}</small>
+    </h5>
+    {{ item.description }}
+    <div class="extra text">
+      <a :href="item.recommendUrl" target="_blank">{{ item.title }}</a>
+    </div>
+    <div>
+      <a class="like">
+        <i class="like icon" v-bind:class="{red: item.meUp}" v-on:click="onUpPost(item._id)"></i> {{ item.ups.length }} Likes
+      </a>
     </div>
   </div>
+</div>
