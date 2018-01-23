@@ -21,14 +21,14 @@
       ].join('')).appendTo($body);
 
       this.$upload = this.$win.find('.upload-img').css({
-        height: 50,
-        padding: '60px 0',
+        height: 100,
+        padding: '30px 0',
         textAlign: 'center',
         border: '4px dashed#ddd'
       });
 
       this.$uploadBtn = this.$upload.find('.button').css({
-        width: 86,
+        width: 100,
         height: 40,
         margin: '0 auto'
       });
@@ -66,7 +66,7 @@
 
       this.uploader.on('uploadSuccess', function(file, res){
         if(res.success){
-            self.$win.modal('hide');
+          self.$win.modal('hide');
             if(self.callback) self.callback(res.url)
             // self.editor.push('!['+ file.name +']('+ res.url +')');
         }
