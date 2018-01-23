@@ -1,109 +1,112 @@
 <div id="app" class="col-md-10">
   <input type="hidden" id="zone-object" value="<%= typeof(zone) !== 'undefined' ? JSON.stringify(zone) : '' %>" />
   <!-- <%- partial('_advertisingMap') %> -->
-  <div class="card w-100">
-    <div class="card-header">{{ pageTitle }}</div>
-    <div class="card-body">
-      <div class="input-group">
-        <input autofocus type="text" class="form-control" placeholder="标题字数 10 字以上" v-model="title">
-      </div>
+  <%- partial('../../_notice') %>
+    <div class="card w-100">
+      <div class="card-header">{{ pageTitle }}</div>
+      <div class="card-body">
+        <div class="alert alert-warning alert-dismissible alert-sm fade show" role="alert">
+          <strong>注意！</strong> 建议用编辑软件写文章，进来不要直接在网页上编辑，以避免网页崩溃导致数据丢失。
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
 
-      <!-- <ul id="postTags"></ul> -->
+        <div class="form-group">
+          <input type="checkbox" class="form-checkbox-input" id="checkbox" v-model="isHtml">
+          <label class="form-check-label" for="checkbox">直接输入 html （如果没有特殊要求，请不要勾选）</label>
+        </div>
 
-      <div class='markdown_editor in_editor mt-3'>
-        <div class='markdown_in_editor'>
-          <textarea class='form-control editor' name='t_content' rows='20' placeholder='支持 Markdown 语法'></textarea>
+        <div class="form-group">
+          <input autofocus type="text" class="form-control" placeholder="标题字数 10 字以上" v-model="title">
+        </div>
+
+
+        <!-- <ul id="postTags"></ul> -->
+        <div class="form-group">
+          <textarea class="form-control" rows="20" placeholder="文章支持 Markdown 语法, 代码记得打标记" v-model="content"></textarea>
+        </div>
+        <button class='btn btn-primary' v-on:click="onUploadImage">上传图片</button>
+        <div class="text-right">
+          <button class="btn btn-primary" v-on:click="onPreview">预览</button>
+          <button class='btn btn-primary' v-on:click="onPublished('D')">保存草稿</button>
+          <button class='btn btn-primary' v-on:click="onPublished('P')">发布</button>
         </div>
       </div>
-      <button class='btn btn-primary' v-on:click="onPublished('D')">保存草稿</button>
-      <button class='btn btn-primary' v-on:click="onPublished('P')">发布</button>
-      <button class="btn btn-primary" v-on:click="onPreview">预览</button>
-      <div class="form-check mt-3">
-        <input type="checkbox" class="form-checkbox-input" id="checkbox" v-model="isHtml">
-        <label class="form-check-label" for="checkbox">html编辑模式</label>
-      </div>
     </div>
-  </div>
 
-  <%- partial('_preview_modal') %>
+    <%- partial('_preview_modal') %>
 </div>
 
-<!-- markdown editor -->
-<%- partial('../../includes/editor') %>
-  <script>
-    var sampleTags = [];
+<script>
+  var sampleTags = [];
 
-    $('#postTags').tagit({
-      availableTags: sampleTags,
-      removeConfirmation: true,
-      itemName: 'item',
-      fieldName: 'tags'
-    });
+  $('#postTags').tagit({
+    availableTags: sampleTags,
+    removeConfirmation: true,
+    itemName: 'item',
+    fieldName: 'tags'
+  });
 
-    const editor = new Editor();
-    editor.render($('.editor')[0]);
-
-    Lily({
-      data: {
-        title: '',
-        advertisingMap: '',
-        pageTitle: '新建',
-        post: '',
-        isHtml: false
-      },
-      methods: {
-        onPublished(status) {
-          status = typeof status !== 'undefined' ? status : 'P';
-          if (this.title === '') {
-            this.errorMsg = '标题为空';
-            return;
-          }
-
-          if (editor.codemirror.getValue() === '') {
-            this.errorMsg = '内容为空'
-            return
-          }
-
-          this.createPost({
-            zoneId,
-            title: this.title,
-            advertisingMap: this.advertisingMap,
-            content: editor.codemirror.getValue(),
-            tags: getTags(),
-            isHtml: this.isHtml,
-            status
-          });
-        },
-        onPreview() {
-          var md = new markdownit();
-          $('div#preview-content').empty();
-          $('div#preview-content').append(md.render(editor.codemirror.getValue()));
-          $('.modal.preview').modal('show');
-        },
-        onUploadImage() {
-          var imageUpload = new ImageUpload();
-          imageUpload.bind(uploadImageCallback);
-        },
-        onDeleteImage() {
-          this.advertisingMap = '';
+  Lily({
+    data: {
+      title: '',
+      advertisingMap: '',
+      pageTitle: '新建',
+      post: '',
+      isHtml: false
+    },
+    methods: {
+      onPublished(status) {
+        status = typeof status !== 'undefined' ? status : 'P';
+        if (this.title === '') {
+          this.errorMsg = '标题为空';
+          return;
         }
+
+        if (this.content === '') {
+          this.errorMsg = '内容为空'
+          return
+        }
+
+        this.createPost({
+          zoneId,
+          title: this.title,
+          advertisingMap: this.advertisingMap,
+          content: this.content,
+          tags: getTags(),
+          isHtml: this.isHtml,
+          status
+        });
+      },
+      onPreview() {
+        var md = new markdownit();
+        $('div#preview-content').empty();
+        $('div#preview-content').append(md.render(this.content));
+        $('.modal.preview-dialog').modal('show');
+      },
+      onUploadImage() {
+        var imageUpload = new ImageUpload();
+        imageUpload.bind(url => {
+          this.content += `\n![](${url})`;
+        });
+      },
+      onDeleteImage() {
+        this.advertisingMap = '';
       }
+    }
+  });
+
+  function getTags() {
+    var tags = [];
+    $("input[name='tags']").each(function (index, item) {
+      tags.push($(this).val())
     });
 
-    function uploadImageCallback(url) {
-      this.advertisingMap = url;
-    }
+    return tags;
+  }
 
-    function getTags() {
-      var tags = [];
-      $("input[name='tags']").each(function (index, item) {
-        tags.push($(this).val())
-      });
-
-      return tags;
-    }
-
-    function updateTags(tags) {
-      tags.forEach(item => { $("#postTags").tagit("createTag", item) })
-    }
-  </script>
+  function updateTags(tags) {
+    tags.forEach(item => { $("#postTags").tagit("createTag", item) })
+  }
+</script>

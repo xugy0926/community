@@ -1,15 +1,14 @@
-<div class="modal preview" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">预览</h5>
-        </div>
-        <div class="modal-body">
-            <div id="preview-content" class='<%=config.mdType%>'>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary">确认</button>
-        </div>
+<div class="modal preview-dialog" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">预览</h5>
+      </div>
+      <div class="modal-body">
+        <div id="preview-content" class='<%=config.mdType%>'></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
       </div>
     </div>
   </div>
