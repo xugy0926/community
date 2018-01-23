@@ -1,10 +1,10 @@
-<div class="ui segment">
-  <div class="ui form">
-    <div class="field">
-      <textarea class="form-control" v-model="profile.guide"></textarea>
+<div class="card">
+  <div class="card-body">
+    <div class="form-group">
+      <textarea class="form-control" rows="10" v-model="profile.guide"></textarea>
     </div>
     <div class="card-footer">
-      <button class="ui button" v-on:click="onUpdate">修改</button>
+      <button class="btn btn-primary" v-on:click="onUpdate">修改</button>
       <div class="ui checkbox">
         <input type="checkbox" v-model="profile.isHtml">
         <label>html编辑模式</label>
