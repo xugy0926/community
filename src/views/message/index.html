@@ -1,33 +1,32 @@
 <div class="row justify-content-center">
   <div class="col-md-8">
-    <div class="ui top attached tabular menu">
-      <a class="active item" data-tab="first" v-on:click="switchTab('unRead')">新消息</a>
-      <a class="item" data-tab="second" v-on:click="switchTab('read')">已读消息</a>
+
+    <div class="btn-group" role="group" aria-label="Basic example">
+      <button type="button" class="btn btn-secondary" v-on:click="switchTab('unRead')">新消息</button>
+      <button type="button" class="btn btn-secondary" v-on:click="switchTab('read')">已读消息</button>
     </div>
-    <div class="ui bottom active attached tab segment" data-tab="first">
+
+    <div v-if="currentType === 'unRead'">
       <% if (count) { %>
-      <div class="ui compact menu">
-        <a class="item" v-on:click="toRead">
-          <i class="icon mail"></i> 标记为全读
-          <div class="floating ui red label">
+        <button type="button" class="btn btn-primary mt-3" v-on:click="toRead">
+          标记为全读
+          <span class="badge badge-light">
             <%= count %>
-          </div>
-        </a>
-      </div>
-      <% } %>
-      <%- partial('components/unReadList') %>
-        <button v-show="unRead.canLoadData && unRead.messages.length > 0" class="fluid ui button" v-bind:class="{ loading: unRead.isLoading }"
-          v-on:click="onLoadData">更多</button>
+          </span>
+        </button>
+        <% } %>
+          <%- partial('components/unReadList') %>
+            <button v-show="unRead.canLoadData && unRead.messages.length > 0" class="btn btn-primary" v-bind:class="{ loading: unRead.isLoading }"
+              v-on:click="onLoadData">更多</button>
     </div>
-    <div class="ui bottom attached tab segment" data-tab="second">
+    <div v-if="currentType === 'read'">
       <%- partial('components/readList') %>
-        <button v-show="read.canLoadData && read.messages.length > 0" class="fluid ui button" v-bind:class="{ loading: read.isLoading }"
+        <button v-show="read.canLoadData && read.messages.length > 0" class="btn btn-primary" v-bind:class="{ loading: read.isLoading }"
           v-on:click="onLoadData">更多</button>
     </div>
   </div>
 </div>
 <script>
-  $('.menu .item').tab();
   const lily = Lily({
     data: {
       currentType: 'unRead',
@@ -116,7 +115,7 @@
         }
       }
     }
-  })
+  });
 
   lily.getData(lily.unRead.type, lily.unRead.currentPage);
   lily.getData(lily.read.type, lily.read.currentPage);

@@ -1,19 +1,19 @@
-<div class="ui red segment">
-  <table class="ui celled table">
+<div class="row">
+  <table class="table">
     <thead>
       <tr>
-        <th>姓名</th>
-        <th>邮箱</th>
-        <th>手机</th>
-        <th>激活</th>
-        <th>角色</th>
-        <th>注册时间</th>
-        <th>操作</th>
+        <th scope="col">姓名</th>
+        <th scope="col">邮箱</th>
+        <th scope="col">手机</th>
+        <th scope="col">激活</th>
+        <th scope="col">角色</th>
+        <th scope="col">注册时间</th>
+        <th scope="col">操作</th>
       </tr>
     </thead>
     <tbody>
       <tr v-if="users.length > 0" v-for="(index, item) in users">
-        <td style="width: 80px">
+        <td>
           <a>{{item.loginname}}</a>
         </td>
         <td>
@@ -24,21 +24,22 @@
         <td>{{ item.role }}</td>
         <td>{{ item.createAt }}</td>
         <td>
-          <div class="ui compact menu">
-            <div class="ui simple dropdown item">操作
-              <i class="dropdown icon"></i>
-              <div class="menu">
-                <div class="item"><a v-on:click="onUpdateRole(index, 'A')">管理员</a></div>
-                <div class="item"><a v-on:click="onUpdateRole(index, 'S')">运营</a></div>
-                <div class="item"><a v-on:click="onUpdateRole(index, 'N')">普通用户</a></div>
-              </div>
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+              aria-expanded="false">
+              操作
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" v-on:click="onUpdateRole(index, 'A')">管理员</a>
+              <a class="dropdown-item" v-on:click="onUpdateRole(index, 'S')">运营</a>
+              <a class="dropdown-item" v-on:click="onUpdateRole(index, 'N')">普通用户</a>
             </div>
           </div>
         </td>
       </tr>
     </tbody>
   </table>
-  <button v-show="canLoadData" class="fluid ui button" v-bind:class="{ loading: isLoading }" v-on:click="onLoadData">更多</button>
+  <button v-show="canLoadData" class="btn btn-primary btn-lg btn-block" v-bind:class="{ loading: isLoading }" v-on:click="onLoadData">更多</button>
   <p v-show="users.length < 1">无数据</p>
 </div>
 <script>
@@ -48,7 +49,7 @@
       users: []
     },
     methods: {
-      fetchUsers (currentPage) {
+      fetchUsers(currentPage) {
         this.isLoading = true;
         axios.post(dataPrefix + '/user/list',
           {
@@ -67,7 +68,7 @@
           })
           .catch(this.error)
       },
-      onUpdateRole (index, role) {
+      onUpdateRole(index, role) {
         axios.post(dataPrefix + '/user/updateRole',
           {
             role: role,
@@ -78,7 +79,7 @@
           })
           .catch(this.error)
       },
-      onLoadData () {
+      onLoadData() {
         this.fetchUsers(this.currentPage + 1);
       }
     }

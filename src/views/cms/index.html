@@ -1,21 +1,20 @@
 <div class="row">
   <%- partial('../_notice') %>
-    <ul class="ui buttons">
-      <button class="ui button" v-for="(index, item) in zones" v-on:click="onSelectedZone(index)">{{ item.value }}
-      </button>
-    </ul>
-    <div class="ui red segment">
-      <h3 class="ui top attached label">
+    <div class="btn-group" role="group">
+      <button type="button" class="btn btn-secondary" v-for="(index, item) in zones" v-on:click="onSelectedZone(index)">{{ item.value }}</button>
+    </div>
+    <div class="w-100 mt-3">
+      <h5>
         {{ pageTitle }}
-      </h3>
-      <table class="ui celled table">
+      </h5>
+      <table class="table">
         <thead>
           <tr>
-            <th>作者</th>
-            <th>标题</th>
-            <th>时间</th>
-            <th>状态</th>
-            <th>操作</th>
+            <th scope="col">作者</th>
+            <th scope="col">标题</th>
+            <th scope="col">时间</th>
+            <th scope="col">状态</th>
+            <th scope="col">操作</th>
           </tr>
         </thead>
         <tbody>
@@ -28,25 +27,25 @@
             </td>
             <td>{{ item.createAtAgo }}</td>
             <td class="opts">
-              <a class="active" v-if="item.top">
+              <a class="text-danger" v-if="item.top">
                 <i class="fa fa-hand-o-up"></i>
               </a>
               <a v-else>
                 <i class="fa fa-hand-o-up"></i>
               </a>
-              <a class="active" v-if="item.good">
+              <a class="text-danger" v-if="item.good">
                 <i class="fa fa-star-o"></i>
               </a>
               <a v-else>
                 <i class="fa fa-star-o"></i>
               </a>
-              <a class="active" v-if="item.lock">
+              <a class="text-danger" v-if="item.lock">
                 <i class="fa fa-lock"></i>
               </a>
               <a v-else>
                 <i class="fa fa-unlock"></i>
               </a>
-              <a class="active" v-if="item.status">
+              <a class="text-danger" v-if="item.status">
                 <i class="fa fa-eye"></i>
               </a>
               <a v-else>
@@ -54,42 +53,27 @@
               </a>
             </td>
             <td>
-              <div class="ui compact menu">
-                <div class="ui simple dropdown item">操作
-                  <i class="dropdown icon"></i>
-                  <div class="menu">
-                    <div class="item">
-                      <a href='<%= apiPrefix.page %>/edit/{{item._id}}' target="_blank">编辑</a>
-                    </div>
-                    <div class="item" v-if="item.top">
-                      <a v-on:click="onTop(index, false)">取消置顶</a>
-                    </div>
-                    <div class="item" v-else>
-                      <a v-on:click="onTop(index, true)">置顶</a>
-                    </div>
-                    <div class="item" v-if="item.good">
-                      <a v-on:click="onGood(index, false)">取消精华</a>
-                    </div>
-                    <div class="item" v-else>
-                      <a v-on:click="onGood(index, true)">精华</a>
-                    </div>
-                    <div class="item" v-if="item.lock">
-                      <a v-on:click="onLock(index, false)">取消锁定</a>
-                    </div>
-                    <div class="item" v-else>
-                      <a v-on:click="onLock(index, false)">锁定</a>
-                    </div>
-                    <div class="item" v-on:click="onDelete(index)">
-                      <a>删除</a>
-                    </div>
-                  </div>
+              <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                  aria-expanded="false">
+                  操作
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  <a class="dropdown-item" href='<%= apiPrefix.page %>/edit/{{item._id}}' target="_blank">编辑</a>
+                  <a class="dropdown-item" v-if="item.top" v-on:click="onTop(index, false)">取消置顶</a>
+                  <a class="dropdown-item" v-else v-on:click="onTop(index, true)">置顶</a>
+                  <a class="dropdown-item" v-if="item.good" v-on:click="onGood(index, false)">取消精华</a>
+                  <a class="dropdown-item" v-else v-on:click="onGood(index, true)">精华</a>
+                  <a class="dropdown-item" v-if="item.lock" v-on:click="onLock(index, false)">取消锁定</a>
+                  <a class="dropdown-item" v-else v-on:click="onLock(index, false)">锁定</a>
+                  <a class="dropdown-item" v-on:click="onDelete(index)">删除</a>
                 </div>
               </div>
             </td>
           </tr>
         </tbody>
       </table>
-      <button v-show="canLoadData && posts.length > 0" class="fluid ui button" v-bind:class="{ loading: isLoading }" v-on:click="onLoadData">更多</button>
+      <button v-show="canLoadData && posts.length > 0" class="btn btn-primary btn-lg btn-block" v-bind:class="{ loading: isLoading }" v-on:click="onLoadData">更多</button>
       <p v-show="posts.length < 1">无数据</p>
     </div>
 </div>
@@ -159,7 +143,7 @@
       onGood(index) {
         axios.patch(dataPrefix + '/posts/' + this.posts[index]._id + '/good', {})
           .then(this.parse)
-          .then((response) => {
+          .then((result) => {
             this.successMsg = result.msg;
             this.posts[index].good = !this.posts[index].good;
           })

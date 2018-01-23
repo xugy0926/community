@@ -1,35 +1,38 @@
 <div class="row">
-  <div class="col-md-3">
-    <div class="card w-100">
-      <div class="image">
-        <img src="<%= user.avatar %>">
-      </div>
-      <div class="content">
-        <a class="header">
-          <%= user.loginname %>
-        </a>
-        <div class="meta">
-          <span class="date">
-            <%= user.createAt %>
-          </span>
+  <div class="col-lg-3 col-md-6">
+    <div class="card">
+      <!-- Heading Area (image and name/title) -->
+      <div class="card-body">
+        <div class="row">
+          <div class="col">
+            <img src="<%= user.avatar %>" alt="user team member profile image" class="img-fluid rounded-circle mx-auto d-block">
+          </div>
         </div>
-        <div class="description">
-          <%= user.signature %>
+        <div class="row">
+          <div class="col text-center">
+            <h3 class="display-4">
+              <%= user.loginname %>
+            </h3>
+            <p>
+              <%= user.signature %>
+            </p>
+          </div>
         </div>
       </div>
-      <div class="extra content">
-        <a>
-          <i class="book icon"></i>
-          <%= user.postCount %>
-        </a>
-        <a>
-          <i class="reply icon"></i>
-          <%= user.replyCount %>
-        </a>
+      <!-- Description Area (skills and social links) -->
+      <div class="card-body">
+        <div class="row">
+          <div class="col text-center">
+            <h6>加入时间:</h6>
+            <p>
+              <%= user.createAt %>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-  <div class="col-md-9">
+  <div class="col-lg-9 col-md-6">
     <div class="btn-group mb-3" role="group" aria-label="Basic example">
       <button type="button" class="btn btn-secondary" v-bind:class="{ active: tab === 'post' }" v-on:click="onSwitchTab('post')">文章</button>
       <button type="button" class="btn btn-secondary" v-bind:class="{ active: tab === 'collect' }" v-on:click="onSwitchTab('collect')">收藏</button>
