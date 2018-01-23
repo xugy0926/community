@@ -1,50 +1,9 @@
-.navbar-x {
-  padding: 1rem 1rem;
+.avatar {
+  height: 48px;
+  width: 48px;
 }
 
-.container-x {
-  padding-top: 5em;
-}
-
-.ui.menu .item img.logo {
-  margin-right: 1.5em;
-}
-
-.wireframe {
-  margin-top: 0em;
-}
-.ui.footer.segment {
-  margin: 5em 0em 0em;
-  padding: 4em 0em;
-}
-
-.ui.menu .item-x {
-  padding-left: .23em;
-  padding-right: .23em;
-  padding-top: .23em;
-  padding-bottom: .23em;
-}
-
-.ui.menu.message-actions {
-  border: 0px solid rgba(34,36,38,.15);
-  box-shadow: 0 0px 0px 0 rgba(34,36,38,.15);
-}
-
-.ui.comments.comments-x {
-  max-width: 933px;
-}
-
-.ui.comments .comment .avatar {
-  display: block;
-  width: 2.5em;
-  height: auto;
-  float: left;
-  margin-top: 0.2em;
-  margin-right: 0.2em;
-  margin-bottom: 0.2em;
-  margin-left: 0.2em;
-}
-
-.ui.comments .comment>.avatar~.content-x {
-  margin-left: 0em;
+.avatar-sm {
+  height: 32px;
+  width: 32px;
 }

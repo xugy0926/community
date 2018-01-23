@@ -1,55 +1,58 @@
-<div class='ui text container'>
-  <h3 class="ui top attached header">
-    修改密码
-  </h3>
-  <div class="ui attached segment">
-    <div class='ui form'>
-      <div class='field'>
-        <label>用户名</label>
-        <input class='readonly' size='30' type='text' readonly='true' v-model="loginname"/>
+<div class="row justify-content-md-center">
+  <div class="col-md-6">
+    <div class='card'>
+      <div class="card-header bg-primary text-white">
+        个人信息
       </div>
+      <div class="card-body">
+        <div class=''>
+          <div class='form-group'>
+            <label>用户名</label>
+            <input class='form-control readonly' size='30' type='text' readonly='true' v-model="loginname" />
+          </div>
 
-      <div class='field'>
-        <label>电子邮件</label>
-        <input class='readonly' size='30' type='text' readonly='true' v-model="email"/>
-      </div>
+          <div class='form-group'>
+            <label>电子邮件</label>
+            <input class='form-control readonly' size='30' type='text' readonly='true' v-model="email" />
+          </div>
 
-      <div class="field">
-        <label>头像</label>
-        <div>
-        <button class="ui button" v-on:click="onUploadAvatar">上传头像</button>
+          <div class="form-group">
+            <label>头像</label>
+            <div>
+              <button class="btn btn-primary" v-on:click="onUploadAvatar">上传头像</button>
+            </div>
+          </div>
+
+          <div class="ui small images">
+            <img class="avatar" v-bind:src="avatar">
+          </div>
+
+          <div class='form-group'>
+            <label>微信</label>
+            <input class="form-control " size='30' type='text' v-model="weixin" />
+          </div>
+
+          <div class='form-group'>
+            <label>QQ</label>
+            <input class="form-control " size='30' type='text' v-model="qq" />
+          </div>
+
+          <div class='form-group'>
+            <label>所在地点</label>
+            <input class="form-control " size='30' type='text' v-model="location" />
+          </div>
+
+          <div class="form-group">
+            <label>个性签名</label>
+            <textarea class="form-control " id='signature' name='signature' size='30' v-model="signature"></textarea>
+          </div>
+
+          <button class="btn btn-primary" v-on:click="onUpdateUserInfo">更新资料</button>
         </div>
       </div>
-
-      <div class="ui small images">
-        <img v-bind:src="avatar">
-      </div>
-
-      <div class='field'>
-        <label>微信</label>
-        <input size='30' type='text' v-model="weixin"/>
-      </div>
-
-      <div class='field'>
-        <label>QQ</label>
-        <input size='30' type='text' v-model="qq"/>
-      </div>
-
-      <div class='field'>
-        <label>所在地点</label>
-        <input size='30' type='text' v-model="location"/>
-      </div>
-
-      <div class="field">
-        <label>个性签名</label>
-        <textarea id='signature' name='signature' size='30' v-model="signature"></textarea>
-      </div>
-
-      <button class="ui button" v-on:click="onUpdateUserInfo">更新资料</button>
     </div>
   </div>
 </div>
-
 <script type="text/javascript">
   const userId = '<%= typeof(userId) !== "undefined" && userId ? userId : ""%>';
   const lily = Lily({
