@@ -1,15 +1,15 @@
 <div class="list-group mt-3">
-  <div class="list-group-item list-group-item-action flex-column align-items-start" v-for="(index, item) in read.messages">
+  <div class="list-group-item list-group-item-action flex-column align-items-start" v-for="(item, index) in read.messages">
     <div class="d-flex">
       <div class="w-100">
         <div class="d-flex mr-9 justify-content-between">
             <span v-if="item.type === 'reply'">
               <a href="#">{{authors[item.authorId].loginname}}</a> 回复了
-              <a href="/post/{{item.postId}}">{{posts[item.postId].title}}</a>
+              <a :href="'/post/' + item.postId">{{posts[item.postId].title}}</a>
             </span>
             <span v-if="item.type === 'reply2'">
               <a href="#">{{authors[item.authorId].loginname}}</a> 回复了
-              <a href="/post/{{item.postId}}">{{posts[item.postId].title}} 的评论</a>
+              <a :href="'/post/' + item.postId">{{posts[item.postId].title}} 的评论</a>
             </span>
             <span v-if="item.type === 'follow'">
               <a href="#">{{authors[item.authorId].loginname}}</a> follow 了你</span>

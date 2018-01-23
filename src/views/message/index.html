@@ -1,4 +1,4 @@
-<div class="row justify-content-center">
+<div id="app" class="row justify-content-center">
   <div class="col-md-8">
 
     <div class="btn-group" role="group" aria-label="Basic example">
@@ -16,12 +16,12 @@
         </button>
         <% } %>
           <%- partial('components/unReadList') %>
-            <button v-show="unRead.canLoadData && unRead.messages.length > 0" class="btn btn-primary" v-bind:class="{ loading: unRead.isLoading }"
+            <button v-show="unRead.canLoadData && unRead.messages.length > 0" class="btn btn-primary btn-lg btn-block mt-3" v-bind:class="{ loading: unRead.isLoading }"
               v-on:click="onLoadData">更多</button>
     </div>
     <div v-if="currentType === 'read'">
       <%- partial('components/readList') %>
-        <button v-show="read.canLoadData && read.messages.length > 0" class="btn btn-primary" v-bind:class="{ loading: read.isLoading }"
+        <button v-show="read.canLoadData && read.messages.length > 0" class="btn btn-primary btn-lg btn-block mt-3" v-bind:class="{ loading: read.isLoading }"
           v-on:click="onLoadData">更多</button>
     </div>
   </div>

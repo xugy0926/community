@@ -1,4 +1,4 @@
-<div class="row justify-content-center">
+<div id="app" class="row justify-content-center">
   <div class="col-md-8">
     <div class='ui feed'>
       <div class="event">
@@ -7,30 +7,34 @@
         </div>
         <div class="content">
           <div class="summary">
-            <a><%=  post.author.loginname %></a> 推荐
+            <a>
+              <%=  post.author.loginname %>
+            </a> 推荐
             <div class="date">
-                <%= post.updateAt %>
+              <%= post.updateAt %>
             </div>
           </div>
           <div class="extra text">
-              <%=  post.description %>
+            <%=  post.description %>
           </div>
           <div class="extra text">
-            <a href="<%= post.recommendUrl %>" target="_blank"><%= post.title %></a>
+            <a href="<%= post.recommendUrl %>" target="_blank">
+              <%= post.title %>
+            </a>
           </div>
           <div class="meta">
             <a class="like">
-              <i class="like icon"></i> <%= post.ups.length %> Likes
+              <i class="like icon"></i>
+              <%= post.ups.length %> Likes
             </a>
             <% if(currentUser 
             && (currentUser._id === post.author._id.toString() 
                 || currentUser.isAdmin() 
                 || currentUser.isSupport())) {%>
-              <a class="popup icon item"
-                href="<%= apiPrefix.page %>/edit/<%=post._id %>?zoneId=<%= post.zoneId %>">
+              <a class="popup icon item" href="<%= apiPrefix.page %>/edit/<%=post._id %>?zoneId=<%= post.zoneId %>">
                 <i class="edit icon"></i>
               </a>
-            <% } %>
+              <% } %>
           </div>
         </div>
       </div>

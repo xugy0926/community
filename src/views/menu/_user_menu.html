@@ -1,46 +1,45 @@
-
-<% if (currentUser){ %>
-<ul class="navbar-nav flex-row">
-  <li class="nav-item">
-    <a class="nav-link" href="<%= apiPrefix.page %>/user/messages">
-      <i class="fa fa-bell" aria-hidden="true"></i><span><%= count %></span>
-    </a>
-  </li>    
-</ul>
-<ul class="navbar-nav flex-row">
-  <li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle" href="" id="userMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+<% if (currentUser) { %>
+  <ul class="navbar-nav flex-row">
+    <li class="nav-item">
+      <a class="nav-link" href="<%= apiPrefix.page %>/user/messages">
+        <i class="fa fa-bell" aria-hidden="true"></i>
+        <span><%= count %></span>
+      </a>
+    </li>
+  </ul>
+  <ul class="navbar-nav flex-row">
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" href="" id="userMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <%= currentUser.loginname %>
-    </a>
-    <div class="dropdown-menu" aria-labelledby="userMenuLink">
-      <a class="dropdown-item" href="<%= apiPrefix.page %>/user/<%= currentUser._id %>/info">我的</a>
-      <a class="dropdown-item" href="<%= apiPrefix.page %>/user/<%= currentUser._id %>/setting">设置</a>
-      <a class="dropdown-item" href="<%= apiPrefix.page %>/password/reset">密码</a>
-      <div class="divider"></div>
-      <a class="dropdown-item" v-on:click="signout">退出</a>
-    </div>
-  </li>
-</ul>
+      </a>
+      <div id="my" class="dropdown-menu" aria-labelledby="userMenuLink">
+        <a class="dropdown-item" href="<%= apiPrefix.page %>/user/<%= currentUser._id %>/info">我的</a>
+        <a class="dropdown-item" href="<%= apiPrefix.page %>/user/<%= currentUser._id %>/setting">设置</a>
+        <a class="dropdown-item" href="<%= apiPrefix.page %>/password/reset">密码</a>
+        <div class="divider"></div>
+        <a class="dropdown-item" v-on:click="signout">退出</a>
+      </div>
+      <script type="text/javascript">
+        new Vue({
+          el: '#my',
+          methods: {
+            signout() {
+              axios.post(dataPrefix + '/user/signout')
+                .then(function () {
+                  location.href = '/';
+                })
+                .catch(function (err) {
+                  console.log(err);
+                })
+            }
+          }
+        });
+      </script>
+    </li>
+  </ul>
 <% } else { %>
-
-    <a class="btn btn-outline-warning my-2 my-sm-0" href="<%= apiPrefix.page %>/signin">登录</a>
+  <a class="btn btn-outline-warning my-2 my-sm-0" href="<%= apiPrefix.page %>/signin">登录</a>
   <% if(signupValid) { %>
-    <a class="btn btn-outline-warning my-2 my-sm-0 " href="<%= apiPrefix.page %>/signup">注册</a>
+  <a class="btn btn-outline-warning my-2 my-sm-0 " href="<%= apiPrefix.page %>/signup">注册</a>
   <% } %>
 <% } %>
-<script type="text/javascript">
-  new Vue({
-    el: '#menu',
-    methods: {
-      signout() {
-        axios.post(dataPrefix + '/user/signout')
-          .then(function() {
-            location.href = '/';
-          })
-          .catch(function(err) {
-            console.log(err);
-          })
-      }
-    }
-  });
-</script>
