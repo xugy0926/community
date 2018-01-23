@@ -4,15 +4,17 @@
       var $body = $('body');
       var callback = null;
       this.$win = $([
-        '<div class="ui upload-image modal">',
-          '<div class="header">',
-            '图片',
-          '</div>',
-          '<div class="content">',
-            '<div class="upload-img">',
-                '<div class="button">上传图片</div>',
-                '<span class="tip"></span>',
-                '<div class="alert alert-error hide"></div>',
+        '<div class="modal" tabindex="-1" role="dialog">',
+          '<div class="modal-dialog" role="document">',   
+            '<div class="modal-content">',
+              '<div class="modal-header">图片</div>',
+                '<div class="modal-body">',
+                    '<div class="upload-img">',
+                    '<div class="button">上传图片</div>',
+                    '<span class="tip"></span>',
+                    '<div class="alert alert-error hide"></div>',
+                    '</div>',
+                '</div>',
             '</div>',
           '</div>',
         '</div>'

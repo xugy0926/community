@@ -1,64 +1,59 @@
 <div class="row justify-content-center">
   <div class="col-md-10">
-    <div class="ui">
-      <div class="ui comments comments-x">
-        <h1 class="ui header">
-          <%= post.title %>
-        </h1>
-        <div class="comment">
-          <div class="content">
-            <div class="ui top attached header">
-              <img src="<%= post.author.avatar %>" />
-              <a href="<%= apiPrefix.page %>/user/<%= post.author._id %>/info">
-                <%= post.author.loginname %>
+    <h3 class="mb-3">
+      <%= post.title %>
+    </h3>
+    <div class="card">
+      <div class="card-header">
+        <img class="avatar-sm" src="<%= post.author.avatar %>" />
+        <a href="<%= apiPrefix.page %>/user/<%= post.author._id %>/info">
+          <%= post.author.loginname %>
+        </a>
+        <span class="date">
+          <%= post.updateAt %>
+        </span>
+      </div>
+      <div class="card-body">
+        <% if(post.isHtml) { %>
+          <div>
+            <%- post.linkedContent %>
+          </div>
+          <% } else { %>
+            <div class='<%=config.mdType%>'>
+              <%- markdown(post.linkedContent) %>
+            </div>
+            <% } %>
+      </div>
+      <div class="card-footer bg-white pt-0 pb-0">
+        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+          <div class="btn-group mr-2" role="group" aria-label="First group">
+            <button type="button" class="btn btn-white text-secondary" v-if="ups > 0" v-on:click="onUpPost(postId)">
+                <i class="fa fa-heart-o" aria-hidden="true"></i> {{ ups }}
+            </button>
+            <button type="button" class="btn btn-white text-secondary" v-else v-on:click="onUpPost(postId)">
+                <i class="fa fa-heart-o" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="btn btn-white text-secondary" v-if="isCollect" v-on:click="onDelCollectPost">
+                <i class="fa fa-flag" aria-hidden="true"></i> <small>取消收藏</small>
+            </button>
+            <button type="button" class="btn btn-white text-secondary" v-else v-on:click="onCollectPost">
+                <i class="fa fa-flag" aria-hidden="true"></i> <small>收藏</small>
+            </button>
+            <% if(currentUser
+              && (currentUser._id === post.author._id.toString() 
+                  || currentUser.isAdmin() 
+                  || currentUser.isSupport())) {%>
+              <a class="btn btn-white text-secondary" href="<%= apiPrefix.page %>/edit/<%=post._id %>?zoneId=<%= post.zoneId %>">
+                  <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
               </a>
-              <span class="date">
-                <%= post.updateAt %>
-              </span>
-            </div>
-            <div class="ui attached segment">
-              <div class='reply-content'>
-                <% if(post.isHtml) { %>
-                  <div class='content'>
-                    <%- post.linkedContent %>
-                      <% } else { %>
-                        <div class='<%=config.mdType%>'>
-                          <%- markdown(post.linkedContent) %>
-                        </div>
-                        <% } %>
-                  </div>
-              </div>
-              <div class="ui bottom attached menu">
-                <div class="ui main menu message-actions">
-                  <a class="popup icon item" v-if="ups > 0" v-on:click="onUpPost(postId)">
-                    <i class="red heart icon"></i>　{{ ups }}
-                  </a>
-                  <a class="popup icon item" v-else v-on:click="onUpPost(postId)">
-                    <i class="heart icon"></i>
-                  </a>
-                  <a class="popup icon item" v-if="isCollect" v-on:click="onDelCollectPost">
-                    <i class="flag red icon"></i>
-                  </a>
-                  <a class="popup icon item" v-else v-on:click="onCollectPost">
-                    <i class="flag icon"></i>
-                  </a>
-                  <% if(currentUser 
-                && (currentUser._id === post.author._id.toString() 
-                    || currentUser.isAdmin() 
-                    || currentUser.isSupport())) {%>
-                    <a class="popup icon item" href="<%= apiPrefix.page %>/edit/<%=post._id %>?zoneId=<%= post.zoneId %>">
-                      <i class="edit icon"></i>
-                    </a>
-                    <% } %>
-                </div>
-              </div>
-            </div>
+              <% } %>
           </div>
         </div>
-        <%- partial('_comment') %>
       </div>
     </div>
   </div>
+  <%- partial('_comment') %>
+</div>
 </div>
 <script>
   const userId = '<%= typeof(currentUser) !== "undefined" && currentUser ? currentUser._id : "" %>';

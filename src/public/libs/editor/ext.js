@@ -82,16 +82,20 @@
     var ToolImage = function(){
         var self = this;
         this.$win = $([
-        '<div class="ui modal">',
-          '<div class="header">图片</div>',
-          '<div class="content">',
-            '<div class="upload-img">',
-              '<div class="button">上传图片</div>',
-                '<span class="tip"></span>',
-                '<div class="alert alert-error hide"></div>',
-              '</div>',
+        '<div class="modal" tabindex="-1" role="dialog">',
+          '<div class="modal-dialog" role="document">',   
+            '<div class="modal-content">',
+              '<div class="modal-header">图片</div>',
+                '<div class="modal-body">',
+                    '<div class="upload-img">',
+                    '<div class="button">上传图片</div>',
+                    '<span class="tip"></span>',
+                    '<div class="alert alert-error hide"></div>',
+                    '</div>',
+                '</div>',
             '</div>',
-          '</div>'
+          '</div>',
+        '</div>'
         ].join('')).appendTo($body);
 
         this.$upload = this.$win.find('.upload-img').css({
@@ -102,10 +106,12 @@
         });
 
         this.$uploadBtn = this.$upload.find('.button').css({
-            width: 86,
+            width: 100,
             height: 40,
             margin: '0 auto'
         });
+
+        console.log(this.$uploadBtn);
 
         this.$uploadTip = this.$upload.find('.tip').hide();
 

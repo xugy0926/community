@@ -1,26 +1,26 @@
-<div class="ui">
-  <input type="hidden" id="zone-object" value="<%= typeof(zone) !== 'undefined' ? JSON.stringify(zone) : '' %>"/>
+<div class="col-md-10">
+  <input type="hidden" id="zone-object" value="<%= typeof(zone) !== 'undefined' ? JSON.stringify(zone) : '' %>" />
   <!-- <%- partial('_advertisingMap') %> -->
-  <div class="ui segment">
-    <div class="ui top attached label">{{ pageTitle }}</div>
-    <div class="ui form">
-      <div class="field">
-        <input autofocus type="text" placeholder="标题字数 10 字以上" v-model="title">
+  <div class="card w-100">
+    <div class="card-header">{{ pageTitle }}</div>
+    <div class="card-body">
+      <div class="input-group">
+        <input autofocus type="text" class="form-control" placeholder="标题字数 10 字以上" v-model="title">
       </div>
 
       <!-- <ul id="postTags"></ul> -->
 
-      <div class='markdown_editor in_editor'>
+      <div class='markdown_editor in_editor mt-3'>
         <div class='markdown_in_editor'>
           <textarea class='form-control editor' name='t_content' rows='20' placeholder='支持 Markdown 语法'></textarea>
         </div>
       </div>
-      <button class='ui button' v-on:click="onPublished('D')">保存草稿</button>
-      <button class='ui button' v-on:click="onPublished('P')">发布</button>
-      <button class="ui button" v-on:click="onPreview">预览</button>
-      <div class="ui checkbox">
-        <input type="checkbox" id="checkbox" v-model="isHtml">
-        <label>html编辑模式</label>
+      <button class='btn btn-primary' v-on:click="onPublished('D')">保存草稿</button>
+      <button class='btn btn-primary' v-on:click="onPublished('P')">发布</button>
+      <button class="btn btn-primary" v-on:click="onPreview">预览</button>
+      <div class="form-check mt-3">
+        <input type="checkbox" class="form-checkbox-input" id="checkbox" v-model="isHtml">
+        <label class="form-check-label" for="checkbox">html编辑模式</label>
       </div>
     </div>
   </div>
@@ -30,79 +30,80 @@
 
 <!-- markdown editor -->
 <%- partial('../../includes/editor') %>
-<script>
-  var sampleTags = [];
+  <script>
+    var sampleTags = [];
 
-  $('#postTags').tagit({
+    $('#postTags').tagit({
       availableTags: sampleTags,
       removeConfirmation: true,
       itemName: 'item',
       fieldName: 'tags'
-  });
-
-  const editor = new Editor();
-  editor.render($('.editor')[0]);
-
-  Lily({
-    data: {
-      title: '',
-      advertisingMap: '',
-      pageTitle: '新建',
-      post: '',
-      isHtml: false
-    },
-    methods: {
-      onPublished (status) {
-        status = typeof status !== 'undefined' ? status : 'P';
-        if (this.title === '') {
-          this.errorMsg = '标题为空';
-          return;
-        }
-
-        if (editor.codemirror.getValue() === '') {
-          this.errorMsg = '内容为空'
-          return
-        }
-
-        this.createPost({
-          zoneId,
-          title: this.title,
-          advertisingMap: this.advertisingMap,
-          content: editor.codemirror.getValue(),
-          tags: getTags(),
-          isHtml: this.isHtml,
-          status});
-      },
-      onPreview () {
-        var md = new markdownit();
-        $('div#preview-content').empty();
-        $('div#preview-content').append(md.render(editor.codemirror.getValue()));
-        $('.ui.preview.modal').modal('show');
-      },
-      onUploadImage () {
-        var imageUpload = new ImageUpload();
-        imageUpload.bind(uploadImageCallback);
-      },
-      onDeleteImage () {
-        this.advertisingMap = '';
-      }
-    }
-  });
-
-  function uploadImageCallback(url) {
-    this.advertisingMap = url;
-  }
-
-  function getTags() {
-    var tags = [];
-    $("input[name='tags']").each(function(index,item) {
-      tags.push($(this).val())
     });
 
-    return tags;
-  }
+    const editor = new Editor();
+    editor.render($('.editor')[0]);
 
-  function updateTags(tags) {
-    tags.forEach(item => {$("#postTags").tagit("createTag", item)})
-  }
-</script>
+    Lily({
+      data: {
+        title: '',
+        advertisingMap: '',
+        pageTitle: '新建',
+        post: '',
+        isHtml: false
+      },
+      methods: {
+        onPublished(status) {
+          status = typeof status !== 'undefined' ? status : 'P';
+          if (this.title === '') {
+            this.errorMsg = '标题为空';
+            return;
+          }
+
+          if (editor.codemirror.getValue() === '') {
+            this.errorMsg = '内容为空'
+            return
+          }
+
+          this.createPost({
+            zoneId,
+            title: this.title,
+            advertisingMap: this.advertisingMap,
+            content: editor.codemirror.getValue(),
+            tags: getTags(),
+            isHtml: this.isHtml,
+            status
+          });
+        },
+        onPreview() {
+          var md = new markdownit();
+          $('div#preview-content').empty();
+          $('div#preview-content').append(md.render(editor.codemirror.getValue()));
+          $('.modal.preview').modal('show');
+        },
+        onUploadImage() {
+          var imageUpload = new ImageUpload();
+          imageUpload.bind(uploadImageCallback);
+        },
+        onDeleteImage() {
+          this.advertisingMap = '';
+        }
+      }
+    });
+
+    function uploadImageCallback(url) {
+      this.advertisingMap = url;
+    }
+
+    function getTags() {
+      var tags = [];
+      $("input[name='tags']").each(function (index, item) {
+        tags.push($(this).val())
+      });
+
+      return tags;
+    }
+
+    function updateTags(tags) {
+      tags.forEach(item => { $("#postTags").tagit("createTag", item) })
+    }
+  </script>

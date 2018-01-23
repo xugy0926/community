@@ -1,31 +1,38 @@
-<div class="row justify-content-center">
-  <div class="col-md-4">
+<div class="row justify-content-md-center">
+  <div class="col-md-6">
     <%- partial('../_notice') %>
-    <div class="ui three segment">
-      <h1 class="display-3">Hello, JS!</h1>
-      <p class="lead">welcome</p>
-      <hr class="my-4">
-      <div class="ui form">
-        <% if(signinValid) { %>
-        <div class="field">
-          <label>账号</label>
-          <input size='30' type='text' v-model="username"/>
-        </div>
-        <div class='field'>
-          <label>密码</label>
-          <input size='30' type='password' v-model="password"/>
-        </div>
-        <button class='ui primary button' v-on:click="signin">登录</button>
-        <% } %>
-        <a class="ui github button" href="/auth/github">
-          <i class="github icon"></i>
-          GitHub登录
-        </a>
-        <% if(signinValid) { %>
-        <div class="ui container">
-          <a href='<%= apiPrefix.page %>/password/searchFromMail'>通过邮箱找密码?</a>
-        </div>
-        <% } %>
+    <div class="card">
+      <div class="card-header bg-primary text-white">
+        <i class="fa fa-sign-in" aria-hidden="true"></i> 登录</div>
+      <div class="card-body">
+          <% if(signinValid) { %>
+          <div class="form-group">
+            <label for="exampleInputEmail">账号:</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text"><i class="fa fa-user" aria-hidden="true"></i></div>
+                </div>
+              <input type="text" class="form-control" size="30" placeholder="" v-model="username">
+            </div>
+
+          </div>
+          <div class="form-group">
+            <label for="exampleInputName">密码:</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text"><i class="fa fa-key" aria-hidden="true"></i></div>
+                  </div>
+              <input type="password" class="form-control" size="30" placeholder="" v-model="password">
+            </div>
+          </div>
+          <button class="btn btn-primary" v-on:click="signin">登录</button>
+          <% } %>
+          <a class="btn btn-primary"  href="/auth/github">Github 登录</a>
+          <% if(signinValid) { %>
+          <div class="mt-3">
+            <a href='<%= apiPrefix.page %>/password/searchFromMail'>通过邮箱找密码?</a>
+          </div>
+          <% } %>
       </div>
     </div>
   </div>
@@ -33,4 +40,3 @@
 <script>
   Lily({});
 </script>
-  

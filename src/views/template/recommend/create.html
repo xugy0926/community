@@ -1,20 +1,24 @@
-<div class="row justify-content-center">
-  <div class="col-md-8">
-    <input type="hidden" id="zone-object" value="<%= typeof(zone) !== 'undefined' ? JSON.stringify(zone) : '' %>"/>
-    <div class="ui segment">
-      <div class="ui top attached label">{{ pageTitle }}</div>
-      <div class="ui form">
-        <div class="field">
-          <input autofocus type="text" placeholder="推荐的文章标题" v-model="title">
+<div class="row justify-content-md-center">
+  <div class="col-md-6">
+    <div class="card border-primary">
+      <div class="card-header bg-primary text-white">
+        {{ pageTitle }}
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <div class="input-group">
+            <input autofocus type="text" class="form-control" placeholder="推荐的文章标题" v-model="title">
+          </div>
         </div>
-
-        <div class="field">
-          <input autofocus type="text" placeholder="推荐的文章链接" v-model="recommendUrl">
+        <div class="form-group">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="推荐的文章链接" v-model="recommendUrl">
+          </div>
         </div>
-        <div class="field">
-          <textarea v-model="description" placeholder="推荐语"></textarea>
+        <div class="form-group">
+          <textarea class="form-control" v-model="description" placeholder="推荐语" rows="6"></textarea>
         </div>
-        <button class='ui button' v-on:click="onPublished('P')">发布</button>
+        <button type="button" class="btn btn-primary" v-on:click="onPublished('P')">发布</button>
       </div>
     </div>
   </div>
@@ -26,14 +30,15 @@
       pageTitle: '新建',
     },
     methods: {
-      onPublished: function(status) {
+      onPublished: function (status) {
         status = typeof status !== 'undefined' ? status : 'P';
         this.createPost({
           zoneId,
           title: this.title,
           recommendUrl: this.recommendUrl,
           description: this.description,
-          status});
+          status
+        });
       }
     }
   });
