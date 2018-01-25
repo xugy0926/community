@@ -41,6 +41,7 @@
   <script src="/static/javascripts/editor.dialog.js"></script>
   <script src="/static/javascripts/image.upload.js"></script>
   <script src="/static/javascripts/lily.js"></script>
+  <%- config.googleAnalytics %>
 
   <% if (typeof(post) !== 'undefined') { %>
   <title><%= post.title %> - <%= config.name %></title>
@@ -51,6 +52,6 @@
 <script>
   window.pagePrefix = '<%= apiPrefix.page %>';
   window.dataPrefix = '<%= apiPrefix.data %>';
-  window.graphqlPrefix = '<%= apiPrefix.graphql %>'
+  window.graphqlPrefix = '<%= apiPrefix.graphql %>';
   window.zoneId = '<%= typeof zoneId !=="undefined" ? zoneId : "" %>';
 </script>
