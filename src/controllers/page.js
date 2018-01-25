@@ -19,8 +19,8 @@ export const zonePage = async (req, res, next) => {
   try {
     const zone = res.locals.zone;
     const html = await createPanel(zone);
-    res.render(page, {
-      zoneKey: `template/${zone.template}/index`,
+    res.render(`template/${zone.template}/index`, {
+      zoneKey: zone.key,
       template: zone.template,
       zoneId: zone._id,
       type: req.query.type,
