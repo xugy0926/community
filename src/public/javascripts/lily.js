@@ -1,10 +1,10 @@
-(function(global, factory) {
+(function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined'
     ? (module.exports = factory())
     : typeof define === 'function' && define.amd
       ? define(factory)
       : (global.Lily = factory(global));
-})(this, function() {
+})(this, function () {
   function Lily({ el, data, methods }) {
     if (!el) el = '#app';
     if (!data) data = {};
@@ -128,8 +128,8 @@
         getZones(all = false) {
           axios
             .get(
-              graphqlPrefix +
-                `?query=query {
+            graphqlPrefix +
+            `?query=query {
                zones (all: ${all}) {
                  _id
                  key
@@ -145,7 +145,7 @@
             )
             .then(this.parse)
             .then(result => {
-              result.data.zones.forEach(function(item) {
+              result.data.zones.forEach(function (item) {
                 item.active = false;
               });
 
@@ -172,7 +172,7 @@
                   R.propEq('_id', item.authorId),
                   newAuthors
                 );
-                
+
                 let userId = localStorage.getItem('userId');
                 if (userId && R.indexOf(userId, item.ups) > -1) {
                   item.meUp = true;
@@ -189,7 +189,7 @@
         getPost(id) {
           return axios
             .get(dataPrefix + '/posts/' + id)
-            .then(function(response) {
+            .then(function (response) {
               return response.data;
             });
         },
@@ -197,7 +197,7 @@
           axios
             .post(dataPrefix + '/posts', body)
             .then(this.parse)
-            .then(function(result) {
+            .then(function (result) {
               location.href = result.url;
             })
             .catch(this.error);
@@ -206,7 +206,7 @@
           axios
             .patch(dataPrefix + '/posts/' + id, body)
             .then(this.parse)
-            .then(function(result) {
+            .then(function (result) {
               location.href = result.url;
             })
             .catch(this.error);
@@ -224,7 +224,7 @@
                 if (userId && R.indexOf(userId, result.ups) > -1) {
                   Vue.set(this.posts[idx], 'meUp', true);
                 } else {
-                  Vue.set(this.posts[idx], 'meUp', false);                
+                  Vue.set(this.posts[idx], 'meUp', false);
                 }
               } else {
                 this.ups = result.ups.length;
