@@ -87,5 +87,7 @@ module.exports = {
     clientID: '',
     clientSecret: '',
     callbackURL: ''
-  }
+  },
+
+  googleAnalytics: `your google analytics code`,
 };

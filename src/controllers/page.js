@@ -12,29 +12,15 @@ import PostCollect from '../data/models/postCollect';
 import Profile from '../data/models/profile';
 
 export const indexPage = async (req, res, next) => {
-  const zones = res.locals.zones || [];
-
-  try {
-    const profile = await db.findOne(Profile)({}, {});
-
-    res.render('index', {
-      selectedKey: 'home',
-      blocks: zones,
-      profile
-    });
-  } catch (err) {
-    next(err);
-  }
+  res.render('index');
 };
 
 export const zonePage = async (req, res, next) => {
   try {
     const zone = res.locals.zone;
     const html = await createPanel(zone);
-    let page = 'template/' + zone.template + '/index';
     res.render(page, {
-      selectedKey: zone.key,
-      zoneKey: zone.key,
+      zoneKey: `template/${zone.template}/index`,
       template: zone.template,
       zoneId: zone._id,
       type: req.query.type,
@@ -127,7 +113,7 @@ export const showPostPage = async (req, res, next) => {
       post.isCollect = collect ? true : false;
     }
 
-    let page = 'template/' + zone.template + '/show';
+    let page = `template/${zone.template}/show`;
     res.render(page, { post, zoneId: zone._id });
   } catch (err) {
     next(err);
@@ -137,8 +123,8 @@ export const showPostPage = async (req, res, next) => {
 export const createPostPage = async (req, res, next) => {
   try {
     const zone = res.locals.zone;
-    let page = 'template/' + zone.template + '/create';
-    res.render(page, {zoneId: zone._id});
+    let page = `template/${zone.template}/create`;
+    res.render(page, { zoneId: zone._id });
   } catch (err) {
     next(err);
   }
@@ -148,7 +134,7 @@ export const editPostPage = async (req, res, next) => {
   try {
     const postId = req.params.id;
     const zone = res.locals.zone;
-    let page = 'template/' + zone.template + '/edit';
+    let page = `template/${zone.template}/edit`;
     res.render(page, { postId, zoneId: zone._id });
   } catch (err) {
     next(err);
@@ -206,5 +192,5 @@ export const settingPage = (req, res) => {
 export const showAboutPage = (req, res) => {
   const file = fs.readFileSync(path.join(__dirname, '../views/static/about.md'), 'utf-8');
   const content = markdown(file);
-  res.render('static/index', {content});
+  res.render('static/index', { content });
 };

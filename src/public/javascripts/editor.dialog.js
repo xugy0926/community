@@ -1,21 +1,20 @@
 (function(global) {
-
   var EditorDialog = function() {
     var $body = $('body');
     this.$win =$([
       '<div id="edit-dialog-modal" class="modal" tabindex="-1" role="dialog">',
       '<div class="modal-dialog modal-lg" role="document">',
         '<div class="modal-content">',
-            '<div class="modal-header"></div>',
-            '<div class="modal-body comment-reply-input">',
-              '<div class="form-group">',
-                '<textarea class="form-control reply-content" rows="10"></textarea>',
-              '</div>',
+          '<div class="modal-header"></div>',
+          '<div class="modal-body comment-reply-input">',
+            '<div class="form-group">',
+              '<textarea class="form-control reply-content" rows="10"></textarea>',
             '</div>',
-            '<div class="modal-footer">',
-              '<button type="button" class="btn btn-primary" role="submit">提交</button>',
-              '<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>',
-            '</div>',
+          '</div>',
+          '<div class="modal-footer">',
+            '<button type="button" class="btn btn-primary" role="submit">提交</button>',
+            '<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>',
+          '</div>',
         '</div>',
       '</div>',
       '</div>'].join('')).appendTo($body);
