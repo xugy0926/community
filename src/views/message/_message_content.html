@@ -26,11 +26,10 @@
     </div>
   </div>
 </div>
-<div class="card-body" v-if="item.reply && item.reply.content">
+<div class="card-body" v-if="item.reply && item.reply.mdContent">
   <p class="mb-1">{{ item.updateAt }}</p>
   <div class="p-3 bg-light">
-    <div class="<%=config.mdType%>">
-      {{ item.reply.content }}
+    <div class="<%=config.mdType%>" v-html="item.reply.mdContent">
     </div>
   </div>
 </div>

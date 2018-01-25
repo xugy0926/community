@@ -1,39 +1,41 @@
 <div id="app" class="row justify-content-md-center">
-    <div class="col-md-1 mr-3">
-      <div class="btn-group-vertical" role="group">
-        <button type="button" class="btn btn-secondary" v-on:click="switchTab('unRead')">新消息</button>
-        <button type="button" class="btn btn-secondary" v-on:click="switchTab('read')">已读消息</button>
-      </div>
+  <div class="col-md-1 mr-3">
+    <div class="btn-group-vertical" role="group">
+      <button type="button" class="btn btn-secondary" v-on:click="switchTab('unRead')">新消息</button>
+      <button type="button" class="btn btn-secondary" v-on:click="switchTab('read')">已读消息</button>
     </div>
+  </div>
 
-    <div class="col-md-8">
-      <div v-if="currentType === 'unRead'">
-        <% if (count) { %>
-          <button type="button" class="btn btn-primary btn-sm" v-on:click="toRead">
-            全部标记为已读
-            <span class="badge badge-light">
-              <%= count %>
-            </span>
-          </button>
+  <div class="col-md-8">
+    <div v-if="currentType === 'unRead'">
+      <% if (count) { %>
+        <button type="button" class="btn btn-primary btn-sm" v-on:click="toRead">
+          全部标记为已读
+          <span class="badge badge-light">
+            <%= count %>
+          </span>
+        </button>
         <% } %>
-        <%- partial('./_unread_list') %>
-        <button
-          v-show="unRead.canLoadData && unRead.messages.length > 0" 
-          class="btn btn-primary btn-lg btn-block mt-3" 
-          v-bind:class="{ loading: unRead.isLoading }"
-          v-on:click="onLoadData">更多</button>
-      </div>
-      <div v-if="currentType === 'read'">
-        <%- partial('./_read_list') %>
-        <button
-          v-show="read.canLoadData && read.messages.length > 0" 
-          class="btn btn-primary btn-lg btn-block mt-3" 
-          v-bind:class="{ loading: read.isLoading }"
-          v-on:click="onLoadData">更多</button>
-      </div>
+          <%- partial('./_unread_list') %>
+            <button v-show="unRead.canLoadData && unRead.messages.length > 0" class="btn btn-primary btn-lg btn-block mt-3" v-bind:class="{ loading: unRead.isLoading }"
+              v-on:click="onLoadData">更多</button>
     </div>
+    <div v-if="currentType === 'read'">
+      <%- partial('./_read_list') %>
+        <button v-show="read.canLoadData && read.messages.length > 0" class="btn btn-primary btn-lg btn-block mt-3" v-bind:class="{ loading: read.isLoading }"
+          v-on:click="onLoadData">更多</button>
+    </div>
+  </div>
 </div>
 <script>
+  const md = new markdownit({
+    html: true, // Enable HTML tags in source
+    xhtmlOut: false, // Use '/' to close single tags (<br />)
+    breaks: true, // Convert '\n' in paragraphs into <br>
+    linkify: true, // Autoconvert URL-like text to links
+    typographer: true, // Enable smartypants and other sweet transforms
+  });
+
   const lily = Lily({
     data: {
       currentType: 'unRead',
@@ -77,6 +79,7 @@
           })
           .then((result) => {
             result.messages.forEach((item) => {
+              item.reply.mdContent = md.render(item.reply.content);
               if (item.hasRead) {
                 this.read.messages.push(item);
                 this.read.currentPage = result.currentPage;
