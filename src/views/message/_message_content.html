@@ -1,0 +1,36 @@
+<div class="card-header list-group-item-action flex-column align-items-start">
+  <div class="d-flex">
+    <div class="w-100">
+      <div class="d-flex mr-9 justify-content-between">
+        <div class="mb-1">
+          <span v-if="item.type === 'reply'">
+            <a href="#">{{ item.author.name }}</a> 回复了
+            <a :href="'/post/' + item.post.id">{{ item.post.title }}</a>
+          </span>
+          <span v-if="item.type === 'reply2'">
+            <a href="#">{{ item.author.name }}</a> 回复了
+            <a :href="'/post/' + item.post.id ">{{ item.post.title }} 的评论</a>
+          </span>
+          <span v-if="item.type === 'follow'">
+            <a href="#">{{ item.author.name }}</a> follow 了你</span>
+          <span v-if="item.type === 'at'">
+            <a href="#">{{ item.author.name }}</a> @ 了你</span>
+        </div>
+        <div>
+          <a class="btn btn-primary text-white btn-sm" v-if="item.hasRead === false" v-on:click="onSetRead(index, item._id)">标记为已读</a>
+          <span v-else>已读
+            <a class="ui red empty circular label"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card-body" v-if="item.reply && item.reply.content">
+  <p class="mb-1">{{ item.updateAt }}</p>
+  <div class="p-3 bg-light">
+    <div class="<%=config.mdType%>">
+      {{ item.reply.content }}
+    </div>
+  </div>
+</div>

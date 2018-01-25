@@ -21,6 +21,19 @@ const MessageSchema = new Schema(
       authorId: { type: ObjectId }, // 谁发的？
       postId: { type: ObjectId },
       replyId: { type: ObjectId },
+      author: {
+        id: { type: ObjectId },
+        name: { type: String }
+      },
+      post: {
+        id: { type: ObjectId },
+        authorId: { type: ObjectId },
+        title: { type: String },
+      },
+      reply: {
+        id: { type: ObjectId },
+        content: { type: String }
+      },
       hasRead: { type: Boolean, default: false }
     },
     base

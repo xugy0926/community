@@ -1,39 +1,40 @@
 <div id="app" class="row">
-  <div class="col-md-3">
-    <div class="ui vertical menu">
-      <div class="item" v-for="(index, item) in zones" v-bind:class="{active: index === selectedZoneIndex}" v-on:click="onSelectedZone(index)">
+  <div class="col-md-2">
+    <div class="btn-group-vertical">
+      <button type="button" class="btn btn-secondary" v-for="(item, index) in zones" v-bind:class="{active: index === selectedZoneIndex}"
+        v-on:click="onSelectedZone(index)">
         {{ item.value }}
-      </div>
-      <div class="item" v-on:click="onShowAddZoneDialog">
+      </button>
+      <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#add-zone-dialog">
         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 添加大板块
-      </div>
+      </button>
     </div>
   </div>
-  <div class="col-md-9">
-    <div class="ui segment" v-if="zones[selectedZoneIndex]">
+  <div class="col-md-10">
+    <div class="card" v-if="zones[selectedZoneIndex]">
       <div class="card-header">
         板块/
         <strong>{{zones[selectedZoneIndex].value}}</strong>/属性
       </div>
-      <div class="ui form">
-        <div class="field">
+      <div class="card-body">
+        <div class="form-group">
           <label for="zoneId">Id</label>
           <input type="text" class="form-control" id="zoneId" v-cloak disabled v-model="zones[selectedZoneIndex]._id">
         </div>
-        <div class="field">
+        <div class="form-group">
           <label for="zoneKey1">Key</label>
           <input type="text" class="form-control" id="zoneKey1" v-cloak v-model="zones[selectedZoneIndex].key">
         </div>
-        <div class="field">
+        <div class="form-group">
           <label for="zoneValue1">值</label>
           <input type="text" class="form-control" id="zoneValue1" v-cloak v-model="zones[selectedZoneIndex].value">
         </div>
-        <div class="field">
+        <div class="form-group">
           <label for="zoneWeight">权值</label>
           <input type="text" class="form-control" id="zoneWeight" v-cloak v-model="zones[selectedZoneIndex].weight">
         </div>
 
-        <div class="field">
+        <div class="form-group">
           <label>菜单是否有效</label>
           <div>
             <input type="radio" id="zoneEnable1" v-bind:value="true" v-cloak v-model="zones[selectedZoneIndex].enable">
@@ -43,7 +44,7 @@
           </div>
         </div>
 
-        <div class="field">
+        <div class="form-group">
           <label>内容是否要评审</label>
           <div>
             <input type="radio" id="mustReview1" v-bind:value="true" v-cloak v-model="zones[selectedZoneIndex].mustReview">
@@ -53,48 +54,52 @@
           </div>
         </div>
 
-        <div class="field">
+        <div class="form-group">
           <label for="href">板块使用的模板（目前只有两种模板：club, recommend）</label>
           <input type="text" class="form-control" id="template" v-cloak v-model="zones[selectedZoneIndex].template">
         </div>
 
-        <div class="field">
+        <div class="form-group">
           <label for="icon">板块ICON (ex:
             <a target="_blank" href="http://fontawesome.dashgame.com/">http://fontawesome.dashgame.com/</a>)</label>
           <input type="text" class="form-control" id="icon" v-cloak v-model="zones[selectedZoneIndex].icon">
         </div>
 
-        <div class="field">
+        <div class="form-group">
           <label for="icon">创建内容的文案 (ex: 发帖)</label>
           <input type="text" class="form-control" id="icon" v-cloak v-model="zones[selectedZoneIndex].createText">
         </div>
 
-        <div class="ui button" v-on:click="onUpdateZone">更新</div>
-        <div class="ui button" v-on:click="onDeleteZone">删除</div>
+        <button class="btn btn-primary" v-on:click="onUpdateZone">更新</button>
+        <button class="btn btn-danger" v-on:click="onDeleteZone">删除</button>
       </div>
     </div>
   </div>
 
   <!-- 添加大板块dialog -->
-  <div class="ui modal">
-    <div class="header">
-      添加大板块
-    </div>
-    <div class="content">
-      <div class='ui form'>
-        <div class="field">
-          <label>Key</label>
-          <input id='zoneKey' name='zoneKey' size='30' type='text' v-model="zoneKey" />
+  <div id="add-zone-dialog" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          添加大板块
         </div>
-        <div class="field">
-          <label>Value</label>
-          <input id='zoneValue' name='zoneValue' size='30' type='text' v-model="zoneValue" />
+        <div class="modal-body">
+          <div class='ui form'>
+            <div class="form-group">
+              <label>Key</label>
+              <input id="zoneKey" name="zoneKey" class="form-control" size="30" type="text" v-model="zoneKey" />
+            </div>
+            <div class="form-group">
+              <label>Value</label>
+              <input id="zoneValue" name="zoneValue" class="form-control" size="30" type="text" v-model="zoneValue" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" v-on:click="onAddZone">添加</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
         </div>
       </div>
-    </div>
-    <div class="actions">
-      <div class="ui button">取消</div>
-      <div class="ui button" v-on:click="onAddZone">添加</div>
     </div>
   </div>
 </div>
@@ -159,11 +164,7 @@
           })
           .catch(this.error)
       },
-      onShowAddZoneDialog: function () {
-        $('.ui.modal').modal('show');
-      },
       onAddZone: function () {
-        $('.ui.modal').modal('hide');
         axios.post('/graphql', {
           query: `
             mutation {
