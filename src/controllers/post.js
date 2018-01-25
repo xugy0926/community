@@ -12,6 +12,7 @@ import * as db from '../data/db';
 import * as transaction from '../data/transaction';
 import Post from '../data/models/post';
 import User from '../data/models/user';
+import Message from '../data/models/message';
 import PostCollect from '../data/models/postCollect';
 
 async function fetchPosts(conditions, options) {
@@ -158,7 +159,24 @@ export const post = async (req, res, next) => {
   try {
     const post = await db.create(Post)(data);
     await db.incById(User)(post.authorId)({ postCount: 1 });
-    at.sendMessageToMentionUsers(content, post._id, authorId);
+
+    let message = {
+      author: {
+        id: req.user._id,
+        name: req.user.loginname
+      },
+      post: {
+        authorId: post.authorId,
+        title: post.title,
+        id: post._id
+      }
+    }
+    let names = at.fetchUsers(content);
+    let atUsers = await db.find(User)({ loginname: { $in: names } })({});
+    for (let i = 0; i < atUsers.length; i++) {
+      db.create(Message)(Object.assign({ type: 'at', masterId: atUsers[i]._id }, message));
+    }
+
     res.json({
       url: `${config.apiPrefix.page}/post/${post._id}`
     });
@@ -210,7 +228,24 @@ export const update = async (req, res, next) => {
     };
 
     await db.updateById(Post)(postId)(data);
-    at.sendMessageToMentionUsers(content, postId, req.user._id);
+
+    let message = {
+      author: {
+        id: req.user._id,
+        name: req.user.loginname
+      },
+      post: {
+        authorId: post.authorId,
+        title: post.title,
+        id: post._id
+      }
+    }
+    let names = at.fetchUsers(content);
+    let atUsers = await db.find(User)({ loginname: { $in: names } })({});
+    for (let i = 0; i < atUsers.length; i++) {
+      db.create(Message)(Object.assign({ type: 'at', masterId: atUsers[i]._id }, message));
+    }
+
     res.json({
       url: `${config.apiPrefix.page}/post/${post._id}`
     });

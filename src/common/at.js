@@ -1,8 +1,4 @@
 import R from 'ramda';
-import logger from './logger';
-import * as db from '../data/db';
-import User from '../data/models/user';
-import * as Message from './message';
 
 export const fetchUsers = text => {
   if (!text) {
@@ -34,45 +30,6 @@ export const fetchUsers = text => {
   }
   names = R.uniq(names);
   return names;
-};
-
-export const sendMessageToMentionUsers = async (
-  content,
-  postId,
-  authorId,
-  replyId
-) => {
-  if (!content || !authorId || !postId) {
-    logger.debug(
-      'sendMessageToMentionUsers'.red,
-      `${postId}&${authorId}&${replyId}`
-    );
-    return;
-  }
-
-  replyId = !replyId ? null : replyId;
-
-  const names = fetchUsers(content);
-
-  if (names.length === 0) {
-    return;
-  }
-
-  try {
-    let users = await db.find(User)({ loginname: { $in: names } })({});
-    if (users && users.length > 0) {
-      users = users.filter(user => {
-        if (!user) return false;
-        !user._id.equals(authorId);
-      });
-
-      for (let i = 0; i < users.length; i++) {
-        await Message.sendAtMessage(users[i]._id, authorId, postId, replyId);
-      }
-    }
-  } catch (err) {
-    logger.error(err);
-  }
 };
 
 export const linkUsers = text => {

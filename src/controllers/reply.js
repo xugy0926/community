@@ -2,14 +2,14 @@ import R from 'ramda';
 import props from '../functions/props';
 import { onlyMe, withoutMe } from '../functions/limit';
 import * as at from '../common/at';
-import * as message from '../common/message';
 import getPages from '../common/pages';
 import config from '../config';
-import { sendReplyNotify, sendUpReplyNotify } from '../common/mail';
+import { sendReplyMail, sendUpReplyMail } from '../common/mail';
 import * as db from '../data/db';
 import Post from '../data/models/post';
 import Reply from '../data/models/reply';
 import User from '../data/models/user';
+import Message from '../data/models/message';
 
 export const more = async (req, res, next) => {
   const postId = req.query.postId;
@@ -63,19 +63,39 @@ export const post = async (req, res, next) => {
 
     const postAuthor = await db.findOneById(User)(post.authorId);
 
-    let reply = await db.create(Reply)(data);
+    let reply = await db.create(Reply)(data).then(reply => reply.toObject());
     await db.incById(Post)(postId, { replyCount: 1 });
-    at.sendMessageToMentionUsers(content, postId, authorId, reply._id);
-    await message.sendReplyMessage(post.authorId, authorId, postId, reply._id);
-    
     const author = await db.incById(User)(authorId)({
       replyCount: 1,
       score: 5
     });
-    reply = reply.toObject();
-    reply.author = author;
-    sendReplyNotify(req.user, postAuthor, post, reply);
 
+    reply.author = author;
+
+    let message = {
+      author: {
+        id: req.user._id,
+        name: req.user.loginname
+      },
+      post: {
+        authorId: post.authorId,
+        title: post.title,
+        id: post._id
+      },
+      reply: {
+        id: reply._id,
+        content
+      }
+    }
+
+    let names = at.fetchUsers(content);
+    let atUsers = await db.find(User)({ loginname: { $in: names } })({});
+    for (let i = 0; i < atUsers.length; i++) {
+      db.create(Message)(Object.assign({ type: 'at', masterId: atUsers[i]._id }, message));
+    }
+
+    await db.create(Message)(Object.assign({ type: 'reply', masterId: post.authorId }, message));
+    sendReplyMail(req.user, postAuthor, message);
     res.json({ reply });
   } catch (err) {
     next(err);
@@ -137,7 +157,6 @@ export const up = async (req, res, next) => {
     let data = {};
     if (upIndex < 0) {
       reply.ups.push(userId);
-      sendUpReplyNotify(req.user, author, post, reply);
     } else {
       reply.ups.splice(upIndex, 1);
     }
