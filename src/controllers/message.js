@@ -44,17 +44,11 @@ export const userMessages = async (req, res, next) => {
     const pages = await db
       .count(Message)({ masterId, hasRead }, {})
       .then(pagesCount);
-    const authors = await find(User)(conditionsIds(props('authorId')(messages)));
-    const posts = await find(Post)(conditionsIds(props('postId')(messages)));
-    const replies = await find(Reply)(conditionsIds(props('replyId')(messages)));
 
     res.json({
       messages,
       pages,
       currentPage,
-      posts,
-      authors,
-      replies
     });
   } catch (err) {
     next(err);
