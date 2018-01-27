@@ -163,7 +163,7 @@
           axios.delete(dataPrefix + '/posts/' + this.posts[index]._id)
             .then(this.parse)
             .then((result) => {
-              this.posts.$remove(this.posts[index]);
+              Vue.delete(this.posts, index);
             })
             .catch(this.error)
         }

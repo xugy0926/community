@@ -15,14 +15,12 @@
       </div>
       <div class="card-body">
         <% if(post.isHtml) { %>
-          <div>
-            <%- post.linkedContent %>
-          </div>
-          <% } else { %>
-            <div class='<%=config.mdType%>'>
-              <%- markdown(post.linkedContent) %>
-            </div>
-            <% } %>
+          <%- post.linkedContent %>
+        <% } else { %>
+        <div class='<%=config.mdType%>'>
+          <%- markdown(post.linkedContent) %>
+        </div>
+        <% } %>
       </div>
       <div class="card-footer bg-white pt-0 pb-0">
         <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
@@ -162,7 +160,7 @@
         .then(this.parse)
         .then((result) => {
           const idx = R.findIndex(R.propEq('_id', replyId))(this.replies);
-          this.replies.$remove(this.replies[idx]);
+          Vue.delete(this.replies, idx);
         })
         .catch(this.error)
     },
