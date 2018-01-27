@@ -30,7 +30,7 @@ export const more = async (req, res, next) => {
   const currentPage = parseInt(req.query.currentPage, 10) || 1;
   const status = req.query.status || 'P';
   const authorId = req.query.authorId || '';
-  let good = validator.toBoolean(
+  const good = validator.toBoolean(
     typeof req.query.good !== 'undefined' ? req.query.good : 'false'
   );
 
@@ -202,8 +202,8 @@ export const update = async (req, res, next) => {
     return next(new Error('标题不能为空'));
   }
 
-  if (title.length < 4) {
-    return next(new Error('标题太短（需4个字以上）'));
+  if (title.length < 10) {
+    return next(new Error('标题太短（需 10 个字以上）'));
   }
 
   const isAdmin = req.user.isAdmin();

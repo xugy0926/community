@@ -14,7 +14,7 @@ const SITE_ROOT_URL = `${config.api.clientUrl}/${config.apiPrefix.page}`;
 export function sendReplyMail(fromUser, toUser, { post, reply }) {
   const subject = `${fromUser.loginname}评论了${post.title}`;
   const content =
-    `${fromUser.loginname}在<a href="${SITE_ROOT_URL}post/${post._id}">${post.title}</a>中回复了您，回复内容请参考下面。`;
+    `${fromUser.loginname}在 <a href="${SITE_ROOT_URL}post/${post.id}">${post.title}</a> 中回复了您。`;
 
   const str = readFileSync(
     path.join(__dirname, '../views/email/upReply.ejs'),
@@ -23,7 +23,8 @@ export function sendReplyMail(fromUser, toUser, { post, reply }) {
   const html = ejs.compile(str)({
     toName: toUser.loginname,
     content,
-    htmlContent: markdown(reply.content)
+    htmlContent: markdown(reply.content),
+    config
   });
 
   sendMail({
@@ -36,7 +37,7 @@ export function sendReplyMail(fromUser, toUser, { post, reply }) {
 export function sendUpReplyMail(fromUser, toUser, { post, reply }) {
   const subject = `${fromUser.loginname}点赞了你下面的回复`;
   const content =
-    `${fromUser.loginname}在<a href="${SITE_ROOT_URL}post/${post._id}">${post.title}</a>中点赞了您的回复。`;
+    `${fromUser.loginname}在 <a href="${SITE_ROOT_URL}post/${post.id}">${post.title}</a> 中点赞了您的回复。`;
 
   const str = readFileSync(
     path.join(__dirname, '../views/email/upReply.ejs'),
@@ -45,7 +46,8 @@ export function sendUpReplyMail(fromUser, toUser, { post, reply }) {
   const html = ejs.compile(str)({
     toName: toUser.loginname,
     content,
-    htmlContent: markdown(reply.content)
+    htmlContent: markdown(reply.content),
+    config
   });
 
   sendMail({

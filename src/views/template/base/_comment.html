@@ -33,21 +33,21 @@
     </div>
   </div>
   <% if (typeof(currentUser) !== 'undefined' && currentUser) { %>
-    <div class="card mt-3">
-      <div class="card-header">
-        <img class="avatar-sm" src="<%= currentUser.avatar %>" />
+  <div class="card w-100 mt-3">
+    <div class="card-header">
+      <img class="avatar-sm" src="<%= currentUser.avatar %>" />
+    </div>
+    <div class="card-body">
+      <div class="field">
+        <textarea class='form-control' rows='4' v-model="content"></textarea>
       </div>
-      <div class="card-body">
-        <div class="field">
-          <textarea class='form-control' rows='4' v-model="content"></textarea>
-        </div>
-        <button class="btn btn-primary mt-3" v-on:click="onReply">
-          <i class="icon edit"></i> 添加评论 </div>
+      <button class="btn btn-primary mt-3" v-on:click="onReply">
+        <i class="icon edit"></i> 添加评论 </div>
       </button>
     </div>
-</div>
-<% } else { %>
-  <div class="card text-center mt-3">
+  </div>
+  <% } else { %>
+  <div class="card w-100 text-center mt-3">
     <div class="card-body">
       <h5 class="card-title">登录后才能评论</h5>
       <a class="btn btn-primary" href="/signin">登录
