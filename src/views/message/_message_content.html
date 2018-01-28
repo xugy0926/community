@@ -27,7 +27,7 @@
   </div>
 </div>
 <div class="card-body" v-if="item.reply && item.reply.mdContent">
-  <p class="mb-1">{{ item.updateAt }}</p>
+  <p class="mb-1">{{ dateFns.distanceInWordsToNow(item.updateAt) }}</p>
   <div class="p-3 bg-light">
     <div class="<%=config.mdType%>" v-html="item.reply.mdContent">
     </div>

@@ -3,15 +3,15 @@
   <div class="media-body">
     <h5 class="mt-0">
       <a>{{ item.author.loginname }}</a> 推荐
-      <small>update {{ item.updateAtAgo }}</small>
+      <small> {{ dateFns.distanceInWordsToNow(item.updateAt) }}</small>
     </h5>
     {{ item.description }}
     <div class="extra text">
       <a :href="item.recommendUrl" target="_blank">{{ item.title }}</a>
     </div>
     <button type="button" class="btn btn-primary" v-on:click="onUpPost(item._id)">
-      <i class="fa fa-star" v-if="item.meUp" aria-hidden="true"></i> 
-      <i class="fa fa-star-o" v-else aria-hidden="true"></i> 
+      <i class="fa fa-star" v-if="item.meUp" aria-hidden="true"></i>
+      <i class="fa fa-star-o" v-else aria-hidden="true"></i>
       <span class="badge badge-light"> {{ item.ups.length }}</span>
     </button>
   </div>
