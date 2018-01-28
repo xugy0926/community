@@ -5,7 +5,7 @@
       <a>{{ item.author.loginname }}</a>
       <span class="date">{{ item.updateAtAge }}</span>
     </div>
-    <div class="card-body">
+    <div class="card-body" v-pre>
       <div class="<%=config.mdType%> reply-content" v-html="item.htmlContent">
       </div>
     </div>
