@@ -13,7 +13,7 @@
           <%= post.updateAt %>
         </span>
       </div>
-      <div class="card-body">
+      <div class="card-body" v-pre>
         <% if(post.isHtml) { %>
           <%- post.linkedContent %>
         <% } else { %>
