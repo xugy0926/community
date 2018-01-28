@@ -2,6 +2,7 @@ import express from 'express';
 import passport from 'passport';
 import * as sign from './controllers/sign';
 import * as page from './controllers/page';
+import * as sitemap from './controllers/sitemap';
 import {
   supportRequired,
   adminRequired,
@@ -54,5 +55,8 @@ router.get(
   passport.authenticate('github', { failureRedirect: '/signin' }),
   sign.github
 );
+
+// sitemap
+router.get('/sitemap.js', sitemap.index)
 
 export default router;

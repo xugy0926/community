@@ -25,7 +25,7 @@
             <td>
               <a href="<%= apiPrefix.page %>/post/' + item._id + '?zoneId=' + selectedZone._id" target="_blank">{{item.title}}</a>
             </td>
-            <td>{{ item.createAtAgo }}</td>
+            <td>{{ dateFns.distanceInWordsToNow(item.updateAt) }}</td>
             <td class="opts">
               <a class="text-danger" v-if="item.top">
                 <i class="fa fa-hand-o-up"></i>
@@ -120,10 +120,6 @@
           .catch(this.error)
       },
       updatePosts(posts) {
-        posts.forEach(function (item) {
-          item.createAtAgo = dateFns.distanceInWordsToNow(item.updateAt);
-        });
-
         posts.forEach((item) => {
           item.author = R.find(R.propEq('_id', item.authorId), this.authors);
         })

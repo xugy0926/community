@@ -167,7 +167,6 @@
               let newPosts = result.posts;
               let newAuthors = result.authors;
               newPosts.forEach(item => {
-                item.updateAtAgo = dateFns.distanceInWordsToNow(item.updateAt);
                 item.author = R.find(
                   R.propEq('_id', item.authorId),
                   newAuthors

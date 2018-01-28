@@ -9,7 +9,7 @@
           <span class="badge badge-secondary badge-pill">{{ item.replyCount }}</span>
         </small>
       </div>
-      <p class="mb-1 pl-3">{{ item.author.loginname }}  <small>update {{ item.updateAtAgo }}</small></p>
+      <p class="mb-1 pl-3">{{ item.author.loginname }}  <small>{{ dateFns.distanceInWordsToNow(item.updateAt) }}</small></p>
       </div>
     </div>
   </a>
