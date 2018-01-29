@@ -104,7 +104,7 @@ export const signin = async (req, res, next) => {
         doc.loginname
       );
 
-      next(`此帐号还没有被激活，激活链接已发送到 ${doc.email} 邮箱，请查收。`);
+      next(new Error(`此帐号还没有被激活，激活链接已发送到 ${doc.email} 邮箱，请查收。`));
       return;
     }
 
