@@ -38,11 +38,11 @@ export const post = async (req, res, next) => {
   const authorId = req.user._id || '';
 
   if (R.trim(content).length <= 2) {
-    return next('最少两个字以上!');
+    return next(new Error('最少两个字以上!'));
   }
 
   if (!postId || !authorId) {
-    return next('信息错误');
+    return next(new Error('信息错误'));
   }
 
   let data = {
@@ -58,7 +58,7 @@ export const post = async (req, res, next) => {
   try {
     const post = await db.findOneById(Post)(postId);
     if (!post) {
-      return next('找不到文章');
+      return next(new Error('找不到文章'));
     }
 
     const postAuthor = await db.findOneById(User)(post.authorId);
@@ -128,7 +128,7 @@ export const update = async (req, res, next) => {
   const userId = req.user._id.toString();
 
   if (content.trim().length <= 2) {
-    return next('最少两个字以上!');
+    return next(new Error('最少两个字以上!'));
   }
 
   try {

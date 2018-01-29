@@ -7,7 +7,7 @@ export const one = async (req, res, next) => {
   const userId = req.params.id || '';
 
   if (!userId && req.user._id && !userId.equals(req.user._id)) {
-    return next('没权限查看');
+    return next(new Error('没权限查看'));
   }
 
   try {
