@@ -72,11 +72,11 @@ export const userPosts = async (req, res, next) => {
   const options = {
     skip: (currentPage - 1) * limit,
     limit,
-    sort: '-top -lastReplyAt'
+    sort: '-createAt'
   };
 
   try {
-    const conditions = { authorId: userId };
+    const conditions = { authorId: userId , status: 'P'};
     const [posts, pages, authors] = await fetchPosts(conditions, options);
     res.json({ posts, currentPage, pages, authors });
   } catch (err) {
@@ -86,7 +86,7 @@ export const userPosts = async (req, res, next) => {
 
 export const collectPosts = async (req, res, next) => {
   const userId = req.params.id || '';
-  const currentPage = req.body.currentPage || 1;
+  const currentPage = parseInt(req.query.currentPage, 10) || 1;
   const limit = config.postListCount;
   const conditions = { userId };
   const options = {
@@ -107,6 +107,28 @@ export const collectPosts = async (req, res, next) => {
     next(err);
   }
 };
+
+export const draftPosts = async (req, res, next) => {
+  const userId = req.params.id || '';
+  const currentPage = parseInt(req.query.currentPage, 10) || 1;
+  const limit = config.postListCount;
+  const options = {
+    skip: (currentPage - 1) * limit,
+    limit,
+    sort: '-createAt'
+  };
+
+  const currentUserId = req.user._id;
+
+  try {
+    onlyMe(req)(userId)(currentUserId);
+    const conditions = { authorId: userId , status: 'D'};
+    const [posts, pages, authors] = await fetchPosts(conditions, options);
+    res.json({ posts, currentPage, pages, authors });
+  } catch (err) {
+    next(err);
+  }
+}
 
 export const one = (req, res, next) => {
   const postId = req.params.id;
@@ -131,6 +153,7 @@ export const post = async (req, res, next) => {
   const isHtml = req.body.isHtml || false;
   const advertisingMap = req.body.advertisingMap || '';
   const recommendUrl = req.body.recommendUrl || '';
+  const isOriginal = req.body.isOriginal || false;
   const authorId = req.user._id;
 
   if (title === '') {
@@ -153,7 +176,8 @@ export const post = async (req, res, next) => {
     tags,
     advertisingMap,
     recommendUrl,
-    isHtml
+    isHtml,
+    isOriginal
   };
 
   try {
@@ -197,6 +221,7 @@ export const update = async (req, res, next) => {
   const advertisingMap = req.body.advertisingMap || '';
   const recommendUrl = req.body.recommendUrl || '';
   const isHtml = req.body.isHtml || false;
+  const isOriginal = req.body.isOriginal || false;
 
   if (title === '') {
     return next(new Error('标题不能为空'));
@@ -224,6 +249,7 @@ export const update = async (req, res, next) => {
       advertisingMap,
       recommendUrl,
       isHtml,
+      isOriginal,
       updateAt: new Date()
     };
 

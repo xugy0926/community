@@ -18,6 +18,11 @@
         </div>
 
         <div class="form-group">
+          <input type="checkbox" class="form-checkbox-input" id="checkbox" v-model="isOriginal">
+          <label class="form-check-label" for="checkbox">原创请勾选，以保护你的权益</label>
+        </div>
+
+        <div class="form-group">
           <input autofocus type="text" class="form-control" placeholder="标题字数 10 字以上" v-model="title">
         </div>
 
@@ -54,7 +59,8 @@
       advertisingMap: '',
       pageTitle: '新建',
       post: '',
-      isHtml: false
+      isHtml: false,
+      isOriginal: false
     },
     methods: {
       onPublished(status) {
@@ -76,6 +82,7 @@
           content: this.content,
           tags: getTags(),
           isHtml: this.isHtml,
+          isOriginal: this.isOriginal,
           status
         });
       },

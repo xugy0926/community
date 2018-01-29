@@ -30,9 +30,15 @@
     </div>
   </div>
   <div class="col-lg-9 col-md-6">
-    <div class="btn-group mb-3" role="group" aria-label="Basic example">
-      <button type="button" class="btn btn-secondary" v-bind:class="{ active: tab === 'post' }" v-on:click="onSwitchTab('post')">文章</button>
-      <button type="button" class="btn btn-secondary" v-bind:class="{ active: tab === 'collect' }" v-on:click="onSwitchTab('collect')">收藏</button>
+    <div class="btn-group mb-3" role="group">
+      <button type="button" 
+        class="btn btn-secondary" 
+        v-for="item in tabs"
+        :key="item.key"
+        v-bind:class="{ active: item.key === tab }" 
+        v-on:click="onSwitchTab(item.key)">
+        {{ item.text }}
+      </button>
     </div>
     <%- partial('../template/base/posts') %>
       <br>
@@ -42,9 +48,22 @@
 </div>
 <script type="text/javascript">
   const userId = '<%= typeof(user) !== "undefined" ? user._id : "" %>';
+  const currentUserId = '<%= currentUser._id %>';
+
+  let tabs = [
+    { key: 'post', fetch: 'posts', text: '文章' },
+    { key: 'draft', fetch: 'draftPosts', text: '草稿' },
+    { key: 'collect', fetch: 'collectPosts', text: '收藏' }
+  ]
+
+  if (userId !== currentUserId) {
+    tabs = R.dropWhile(item => item.key !== 'draft', tabs);
+  }
+
   const lily = Lily({
     data: {
-      tab: 'post',
+      tabs,
+      tab: tabs[0].key,
       url: ''
     },
     methods: {
@@ -54,11 +73,9 @@
         this.currentPage = 1;
         this.pages = 1;
         this.canLoadData = true;
-        if (key === 'post') {
-          this.url = dataPrefix + '/user/' + userId + '/posts';
-        } else {
-          this.url = dataPrefix + '/user/' + userId + '/collectPosts';
-        }
+
+        const fetch = R.find(R.propEq('key', this.tab))(this.tabs).fetch;
+        this.url = dataPrefix + '/user/' + userId + '/' + fetch;
 
         this.getPosts(this.url, { currentPage: this.currentPage });
       },
