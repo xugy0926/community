@@ -31,7 +31,8 @@ const PostSchema = new Schema(
       tags: { type: String },
       isHtml: { type: Boolean, default: false },
       area: { type: String },
-      ups: [Schema.Types.ObjectId]
+      ups: [Schema.Types.ObjectId],
+      isOriginal: { type: Boolean, default: false }
     },
     base
   )
