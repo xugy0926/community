@@ -19,6 +19,7 @@ export default function (err, req, res, next) {
         details: config.isProduction ? null : err,
         error: err.name + ':' + err.message,
       };
+      
       res.json(errorInfo);
     },
 
@@ -32,8 +33,8 @@ export default function (err, req, res, next) {
 
     default() {
       const message = config.isProduction
-      ? `<p>${err.name}:${err.message}</p>`
-        : `${err.stack}`;
+        ? `<p>${err.name}:${err.message}</p>`
+        : `<pre>${err.stack}</pre>`;
 
       res.render('notify', { errorCode, message });
     },
