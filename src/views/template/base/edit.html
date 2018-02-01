@@ -119,7 +119,7 @@
       this.post = result.post || {};
       this.title = this.post.title || '';
       this.advertisingMap = this.post.advertisingMap || '';
-      this.tags = this.post.tags && this.post.tags !== '' ? this.post.tags.split(',') : [];
+      this.tags = this.post.tags || [];
       this.isHtml = this.post.isHtml;
       this.isOriginal = this.post.isOriginal;
       this.content = this.post.content;
