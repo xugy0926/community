@@ -53,7 +53,6 @@
     "mongoose": "^4.11.11",
     "morgan": "~1.8.1",
     "multiline": "^1.0.2",
-    "node-uuid": "^1.4.8",
     "nodemailer": "^4.1.0",
     "nodemailer-smtp-transport": "^2.7.4",
     "passport": "^0.4.0",
@@ -68,7 +67,7 @@
     "sitemap": "^1.13.0",
     "superagent": "^3.6.0",
     "utility": "^1.12.0",
-    "uuid": "^3.1.0",
+    "uuid": "^3.2.1",
     "validator": "^8.2.0"
   },
   "devDependencies": {
