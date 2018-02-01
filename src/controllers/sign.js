@@ -3,7 +3,7 @@ import jwt from 'jwt-simple';
 import bcrypt from 'bcrypt';
 import validator from 'validator';
 import utility from 'utility';
-import uuid from 'node-uuid';
+import uuidv4 from 'uuid/v4';
 import addDays from 'date-fns/add_days';
 import config from '../config';
 import { isNil, isNotNil } from '../functions/type';
@@ -60,7 +60,7 @@ export const signup = async (req, res, next) => {
       loginname,
       pass: passwordHash,
       email,
-      accessToken: uuid.v4()
+      accessToken: uuidv4()
     });
 
     mail.sendActiveMail(
@@ -167,7 +167,7 @@ export const createSearchPassword = async (req, res, next) => {
     if (!doc) return next(new Error('data not found'));
 
     const data = {
-      retrieveKey: uuid.v4(),
+      retrieveKey: uuidv4(),
       retrieveTime: new Date().getTime()
     };
 
@@ -272,7 +272,7 @@ export const github = async (req, res, next) => {
         githubAccessToken: profile.accessToken,
         avatar: photo,
         active: true,
-        accessToken: uuid.v4()
+        accessToken: uuidv4()
       });
     } else {
       user.loginname = profile.username;

@@ -298,6 +298,21 @@ export const del = async (req, res, next) => {
   }
 };
 
+export const tag = async (req, res, next) => {
+  const id = req.params.id;
+  const tags = req.body.tags || [];
+
+  try {
+    const post = await db.findOneById(Post)(id);
+    await db.updateById(Post)(id)({
+      tags
+    });
+    res.end();
+  } catch (err) {
+    next(err);
+  }
+}
+
 export const top = async (req, res, next) => {
   const id = req.params.id;
 
