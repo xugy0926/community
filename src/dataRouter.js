@@ -38,6 +38,7 @@ router.get('/posts', post.more);
 router.get('/posts/:id', post.one);
 router.post('/posts', userRequired, post.post);
 router.patch('/posts/:id', userRequired, post.update);
+router.patch('/posts/:id/tag', adminRequired, post.tag);
 router.patch('/posts/:id/up', userRequired, post.up);
 router.patch('/posts/:id/top', userRequired, post.top);
 router.patch('/posts/:id/good', userRequired, post.good);

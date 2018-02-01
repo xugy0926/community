@@ -28,7 +28,7 @@ const PostSchema = new Schema(
       status: { type: String },
       mdType: { type: String, default: config.mdType },
       canReply: { type: Boolean, default: true },
-      tags: { type: String },
+      tags: [String],
       isHtml: { type: Boolean, default: false },
       area: { type: String },
       ups: [Schema.Types.ObjectId],
