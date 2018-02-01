@@ -91,11 +91,11 @@ export const post = async (req, res, next) => {
     let names = at.fetchUsers(content);
     let atUsers = await db.find(User)({ loginname: { $in: names } })({});
     for (let i = 0; i < atUsers.length; i++) {
-      db.create(Message)(Object.assign({ type: 'at', masterId: atUsers[i]._id }, message));
+      await db.create(Message)(Object.assign({ type: 'at', masterId: atUsers[i]._id }, message));
     }
 
     await db.create(Message)(Object.assign({ type: 'reply', masterId: post.authorId }, message));
-    sendReplyMail(req.user, postAuthor, message);
+    if (authorId !== postAuthor._id) sendReplyMail(req.user, postAuthor, message);
     res.json({ reply });
   } catch (err) {
     next(err);
