@@ -95,7 +95,7 @@ export const post = async (req, res, next) => {
     }
 
     await db.create(Message)(Object.assign({ type: 'reply', masterId: post.authorId }, message));
-    if (authorId !== postAuthor._id) sendReplyMail(req.user, postAuthor, message);
+    if (authorId.toString() !== postAuthor._id.toString()) sendReplyMail(req.user, postAuthor, message);
     res.json({ reply });
   } catch (err) {
     next(err);
