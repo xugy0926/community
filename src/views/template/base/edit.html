@@ -59,14 +59,14 @@
     methods: {
       onPublished(status) {
         status = typeof status !== 'undefined' ? status : 'P';
-        if (this.title === '') {
-          this.errorMsg = '标题为空';
+        if (this.title === '' || this.title.length < 10) {
+          this.errorMsg = '标题不能为空，且需 10 个字或以上';
           return;
         }
 
         if (this.content === '') {
-          this.errorMsg = '内容为空'
-          return
+          this.errorMsg = '内容不能为空'
+          return;
         }
 
         this.savePost(postId, {
