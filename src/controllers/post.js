@@ -156,12 +156,8 @@ export const post = async (req, res, next) => {
   const isOriginal = req.body.isOriginal || false;
   const authorId = req.user._id;
 
-  if (title === '') {
-    return next(new Error('标题不能为空'));
-  }
-
-  if (title.length < 4) {
-    return next(new Error('标题太短（需4个字以上）'));
+  if (title.length < 10) {
+    return next(new Error('标题不能为空，且需 10 个字或以上'));
   }
 
   const data = {
@@ -223,12 +219,8 @@ export const update = async (req, res, next) => {
   const isHtml = req.body.isHtml || false;
   const isOriginal = req.body.isOriginal || false;
 
-  if (title === '') {
-    return next(new Error('标题不能为空'));
-  }
-
   if (title.length < 10) {
-    return next(new Error('标题太短（需 10 个字以上）'));
+    return next(new Error('标题不能为空，且需 10 个字或以上'));
   }
 
   const isAdmin = req.user.isAdmin();
