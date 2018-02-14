@@ -6,9 +6,9 @@
 
 ## Getting Started
 
-#### Requrements
+#### Requirements
 
-- Yarn package 
+- Yarn package
 - Node.js v8.9.1 or newer
 - pm2 package
 
