@@ -5,7 +5,7 @@ import { onlyMe, withoutMe } from '../functions/limit';
 import conditionsIds from '../functions/conditionsIds';
 import props from '../functions/props';
 import * as at from '../common/at';
-import markdown from '../common/markdown';
+import marked from '../common/marked';
 import upFile from '../common/upFile';
 import getPages from '../common/pages';
 import * as db from '../data/db';
@@ -136,7 +136,7 @@ export const one = (req, res, next) => {
   transaction
     .fullPost(postId)
     .then(post => {
-      post.mdContent = markdown(post.linkedContent);
+      post.mdContent = marked(post.linkedContent);
       res.json({ post });
     })
     .catch(next);

@@ -1863,10 +1863,6 @@ encodeurl@~1.0.1:
   version "1.0.2"
   resolved "http://registry.npm.taobao.org/encodeurl/download/encodeurl-1.0.2.tgz#ad3ff4c86ec2d029322f5a02c3a9a606c95b3f59"
 
-entities@~1.1.1:
-  version "1.1.1"
-  resolved "http://registry.npm.taobao.org/entities/download/entities-1.1.1.tgz#6e5c2d0a5621b5dadaecef80b90edfb5cd7772f0"
-
 errno@^0.1.4:
   version "0.1.6"
   resolved "http://registry.npm.taobao.org/errno/download/errno-0.1.6.tgz#c386ce8a6283f14fc09563b71560908c9bf53026"
@@ -3718,12 +3714,6 @@ libqp@1.1.0:
   version "1.1.0"
   resolved "http://registry.npm.taobao.org/libqp/download/libqp-1.1.0.tgz#f5e6e06ad74b794fb5b5b66988bf728ef1dedbe8"
 
-linkify-it@^2.0.0:
-  version "2.0.3"
-  resolved "http://registry.npm.taobao.org/linkify-it/download/linkify-it-2.0.3.tgz#d94a4648f9b1c179d64fa97291268bdb6ce9434f"
-  dependencies:
-    uc.micro "^1.0.1"
-
 load-json-file@^1.0.0:
   version "1.1.0"
   resolved "http://registry.npm.taobao.org/load-json-file/download/load-json-file-1.1.0.tgz#956905708d58b4bab4c2261b04f59f31c99374c0"
@@ -3749,10 +3739,6 @@ locate-path@^2.0.0:
   dependencies:
     p-locate "^2.0.0"
     path-exists "^3.0.0"
-
-lodash.assign@~4.2.0:
-  version "4.2.0"
-  resolved "http://registry.npm.taobao.org/lodash.assign/download/lodash.assign-4.2.0.tgz#0d99f3ccd7a6d261d19bdaeb9245005d285808e7"
 
 lodash.cond@^4.3.0:
   version "4.5.2"
@@ -3889,47 +3875,9 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
-markdown-it-block-image@0.0.3:
-  version "0.0.3"
-  resolved "http://registry.npm.taobao.org/markdown-it-block-image/download/markdown-it-block-image-0.0.3.tgz#d3fe650ebf2215ea2c7afb577b394e5f7ffc12ca"
-
-markdown-it-center-text@^1.0.3:
-  version "1.0.3"
-  resolved "http://registry.npm.taobao.org/markdown-it-center-text/download/markdown-it-center-text-1.0.3.tgz#1d05045767aacb928ea3d1264ba4f84aa529b4ab"
-
-markdown-it-container@^2.0.0:
-  version "2.0.0"
-  resolved "http://registry.npm.taobao.org/markdown-it-container/download/markdown-it-container-2.0.0.tgz#0019b43fd02eefece2f1960a2895fba81a404695"
-
-markdown-it-emoji@^1.4.0:
-  version "1.4.0"
-  resolved "http://registry.npm.taobao.org/markdown-it-emoji/download/markdown-it-emoji-1.4.0.tgz#9bee0e9a990a963ba96df6980c4fddb05dfb4dcc"
-
-markdown-it-html5-embed@^0.4.0:
-  version "0.4.0"
-  resolved "http://registry.npm.taobao.org/markdown-it-html5-embed/download/markdown-it-html5-embed-0.4.0.tgz#e9a2c666816f6a209e0e96d3527f9d5752192a62"
-  dependencies:
-    lodash.assign "~4.2.0"
-    markdown-it "^8.4.0"
-    mimoza "~1.0.0"
-
-markdown-it-underline@^1.0.1:
-  version "1.0.1"
-  resolved "http://registry.npm.taobao.org/markdown-it-underline/download/markdown-it-underline-1.0.1.tgz#43a54a541d95d739b43157701f1da306d7c300b2"
-
-markdown-it@^8.4.0:
-  version "8.4.0"
-  resolved "http://registry.npm.taobao.org/markdown-it/download/markdown-it-8.4.0.tgz#e2400881bf171f7018ed1bd9da441dac8af6306d"
-  dependencies:
-    argparse "^1.0.7"
-    entities "~1.1.1"
-    linkify-it "^2.0.0"
-    mdurl "^1.0.1"
-    uc.micro "^1.0.3"
-
-mdurl@^1.0.1:
-  version "1.0.1"
-  resolved "http://registry.npm.taobao.org/mdurl/download/mdurl-1.0.1.tgz#fe85b2ec75a59037f2adfec100fd6c601761152e"
+marked@^0.3.16:
+  version "0.3.16"
+  resolved "http://registry.npm.taobao.org/marked/download/marked-0.3.16.tgz#2f188b7dfcfa6540fe9940adaf0f3b791c9a5cba"
 
 media-typer@0.3.0:
   version "0.3.0"
@@ -3992,10 +3940,6 @@ micromatch@^3.1.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
 
-mime-db@^1.6.0:
-  version "1.32.0"
-  resolved "http://registry.npm.taobao.org/mime-db/download/mime-db-1.32.0.tgz#485b3848b01a3cda5f968b4882c0771e58e09414"
-
 mime-db@~1.30.0:
   version "1.30.0"
   resolved "http://registry.npm.taobao.org/mime-db/download/mime-db-1.30.0.tgz#74c643da2dd9d6a45399963465b26d5ca7d71f01"
@@ -4013,12 +3957,6 @@ mime@1.3.4:
 mime@^1.3.4, mime@^1.4.1:
   version "1.6.0"
   resolved "http://registry.npm.taobao.org/mime/download/mime-1.6.0.tgz#32cd9e5c64553bd58d19a568af452acff04981b1"
-
-mimoza@~1.0.0:
-  version "1.0.0"
-  resolved "http://registry.npm.taobao.org/mimoza/download/mimoza-1.0.0.tgz#d74aa4fe08932f005e430bdc7bfcfa95fcab4e62"
-  dependencies:
-    mime-db "^1.6.0"
 
 minimatch@^3.0.0, minimatch@^3.0.2, minimatch@^3.0.3, minimatch@^3.0.4:
   version "3.0.4"
@@ -4245,7 +4183,7 @@ node-pre-gyp@^0.6.39:
     tar "^2.2.1"
     tar-pack "^3.4.0"
 
-node-uuid@^1.4.8, node-uuid@~1.4.7:
+node-uuid@~1.4.7:
   version "1.4.8"
   resolved "http://registry.npm.taobao.org/node-uuid/download/node-uuid-1.4.8.tgz#b040eb0923968afabf8d32fb1f17f1167fdab907"
 
@@ -6007,10 +5945,6 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "http://registry.npm.taobao.org/typedarray/download/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
-uc.micro@^1.0.1, uc.micro@^1.0.3:
-  version "1.0.5"
-  resolved "http://registry.npm.taobao.org/uc.micro/download/uc.micro-1.0.5.tgz#0c65f15f815aa08b560a61ce8b4db7ffc3f45376"
-
 uglify-js@^2.6:
   version "2.8.29"
   resolved "http://registry.npm.taobao.org/uglify-js/download/uglify-js-2.8.29.tgz#29c5733148057bb4e1f75df35b7a9cb72e6a59dd"
@@ -6176,7 +6110,7 @@ utils-merge@1.0.1, utils-merge@1.x.x:
   version "1.0.1"
   resolved "http://registry.npm.taobao.org/utils-merge/download/utils-merge-1.0.1.tgz#9f95710f50a267947b2ccc124741c1028427e713"
 
-uuid@^3.0.0, uuid@^3.0.1, uuid@^3.1.0:
+uuid@^3.0.0, uuid@^3.0.1, uuid@^3.1.0, uuid@^3.2.1:
   version "3.2.1"
   resolved "http://registry.npm.taobao.org/uuid/download/uuid-3.2.1.tgz#12c528bb9d58d0b9265d9a2f6f0fe8be17ff1f14"
 

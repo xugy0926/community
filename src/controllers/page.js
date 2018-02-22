@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import markdown from '../common/markdown';
+import marked from '../common/marked';
 import suggestGoodPosts from '../components/suggestPostsPanel';
 import createPanel from '../components/createPanel';
 import * as db from '../data/db';
@@ -191,6 +191,6 @@ export const settingPage = (req, res) => {
 
 export const showAboutPage = (req, res) => {
   const file = fs.readFileSync(path.join(__dirname, '../views/static/about.md'), 'utf-8');
-  const content = markdown(file);
+  const content = marked(file);
   res.render('static/index', { content });
 };

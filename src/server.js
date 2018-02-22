@@ -18,7 +18,7 @@ import useragent from 'express-useragent';
 import config from './config';
 import pageRouter from './pageRouter';
 import dataRouter from './dataRouter';
-import markdown from './common/markdown';
+import marked from './common/marked';
 import { authUser } from './middlewares/auth';
 import zone from './middlewares/zone';
 import githubAuth from './middlewares/githubAuth';
@@ -41,7 +41,7 @@ app.locals._layoutFile = 'layout.html';
 app.locals = Object.assign(app.locals, {
   config: config,
   apiPrefix: config.apiPrefix,
-  markdown,
+  marked,
   multiline,
   signupValid: config.signupValid,
   signinValid: config.signinValid,

@@ -6,7 +6,7 @@ import ejs from 'ejs';
 import { readFileSync } from 'fs';
 import logger from './logger';
 import config from '../config';
-import markdown from '../common/markdown';
+import marked from '../common/marked';
 
 const transporter = mailer.createTransport(smtpTransport(config.email));
 const SITE_ROOT_URL = `${config.api.clientUrl}/${config.apiPrefix.page}`;
@@ -23,7 +23,7 @@ export function sendReplyMail(fromUser, toUser, { post, reply }) {
   const html = ejs.compile(str)({
     toName: toUser.loginname,
     content,
-    htmlContent: markdown(reply.content),
+    htmlContent: marked(reply.content),
     config
   });
 
@@ -46,7 +46,7 @@ export function sendUpReplyMail(fromUser, toUser, { post, reply }) {
   const html = ejs.compile(str)({
     toName: toUser.loginname,
     content,
-    htmlContent: markdown(reply.content),
+    htmlContent: marked(reply.content),
     config
   });
 

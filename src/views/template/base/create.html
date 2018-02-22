@@ -87,9 +87,8 @@
         });
       },
       onPreview() {
-        var md = new markdownit();
         $('div#preview-content').empty();
-        $('div#preview-content').append(md.render(this.content));
+        $('div#preview-content').append(marked(this.content));
         $('.modal.preview-dialog').modal('show');
       },
       onUploadImage() {
