@@ -11,7 +11,6 @@
     <%- partial('./posts') %>
     <br>
     <button v-if="canLoadData && posts.length > 0" class="btn btn-primary btn-lg btn-block" v-bind:class="{ loading: isLoading }" v-on:click="onLoadData">更多</button>
-    <div v-else></div>
   </div>
 </div>
 <script>
