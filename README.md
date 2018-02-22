@@ -1,8 +1,14 @@
+## 我为什么要开发这个社区项目？
+
+在 github 上的社区类项目很多，再开发一个不一定能比他们做的更好。
+
+在前后端技术飞速发展的年代，每一个学习者或者从业者都应该具备持续学习的能力。基于这个原因，维护这个项目是为了不断用新技术来改善这个项目，把学到的运用起来。这也是我一直以来崇尚的学习方法。
+
 ## Getting Started
 
-#### Requrements
+#### Requirements
 
-- Yarn package 
+- Yarn package
 - Node.js v8.9.1 or newer
 - pm2 package
 
