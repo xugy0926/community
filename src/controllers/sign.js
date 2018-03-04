@@ -56,7 +56,7 @@ export const signup = async (req, res, next) => {
     if (isNotNil(doc)) return next(new Error('账号已经存在'));
 
     const passwordHash = await bcrypt.hash(password, 10);
-    await create({
+    const user = await create({
       loginname,
       pass: passwordHash,
       email,
@@ -70,7 +70,7 @@ export const signup = async (req, res, next) => {
     );
 
     res.json({
-      user: doc,
+      user,
       active: false,
       message: `欢迎加入${
         config.name
@@ -92,7 +92,7 @@ export const signin = async (req, res, next) => {
   try {
     const doc = await findOne(account(loginname));
     if (isNil(doc)) return next(new Error('账号不存在'));
-    const isOk = bcrypt.compare(password, doc.pass);
+    const isOk = await bcrypt.compare(password, doc.pass);
     if (!isOk) return next(new Error('密码错误'));
 
     doc.pass = '';
