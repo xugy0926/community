@@ -174,7 +174,7 @@ export const createSearchPassword = async (req, res, next) => {
     await updateById(doc._id)(data);
     mail.sendResetPassMail(email, data.retrieveKey, doc.loginname);
     res.json({
-      msg:
+      message:
         '我们已给您填写的电子邮箱发送了一封邮件，请在24小时内点击里面的链接来重置密码。'
     });
   } catch (err) {
@@ -209,15 +209,17 @@ export const authSearchPassword = async (req, res, next) => {
       return next(new Error('该链接已过期，请重新申请'));
     }
 
+    const passwordHash = await bcrypt.hash(password, 10);
+
     const data = {
       retrieveTime: '',
       retrieveKey: '',
-      pass: bcrypt.hash(password),
+      pass: passwordHash,
       active: true
     };
 
     await updateById(doc._id)(data);
-    res.end();
+    res.json({ message: '新密码设置成功' });
   } catch (err) {
     next(err);
   }
@@ -234,18 +236,19 @@ export const updateResetPassword = async (req, res, next) => {
 
   try {
     const doc = await findOne({ _id: userId });
-    const isOk = bcrypt.compare(oldPassword, doc.pass);
+    const isOk = await bcrypt.compare(oldPassword, doc.pass);
     if (!isOk) {
       return next(new Error('老密码不对'));
     }
 
+    const passwordHash = await bcrypt.hash(password, 10);
     const data = {
-      pass: bcrypt.hash(newPassword),
+      pass: passwordHash,
       active: true
     };
 
     await updateById(userId)(data);
-    res.end();
+    res.json({ message: '更新成功' });
   } catch (err) {
     next(err);
   }
