@@ -241,7 +241,7 @@ export const updateResetPassword = async (req, res, next) => {
       return next(new Error('老密码不对'));
     }
 
-    const passwordHash = await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(newPassword, 10);
     const data = {
       pass: passwordHash,
       active: true
