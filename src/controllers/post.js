@@ -33,6 +33,8 @@ export const more = async (req, res, next) => {
   const good = validator.toBoolean(
     typeof req.query.good !== 'undefined' ? req.query.good : 'false'
   );
+  const title = req.query.title || '';
+  const content = req.query.title || '';
 
   const conditions = {};
 
@@ -46,6 +48,14 @@ export const more = async (req, res, next) => {
 
   if (authorId) {
     conditions.authorId = authorId;
+  }
+
+  if (title) {
+    conditions.title = new RegExp(title, "i");
+  }
+
+  if (content) {
+    conditions.content = new RegExp(content, "i");
   }
 
   conditions.zoneId = res.locals.zone._id;
