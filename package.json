@@ -9,8 +9,8 @@
   },
   "scripts": {
     "prestart": "npm run -s build",
-    "start": "NODE_ENV=production PORT=80 node ./dist/server.js",
-    "dev": "nodemon ./src/server.js --exec \"node -r dotenv/config -r babel-register\"",
+    "start": "NODE_ENV=production PORT=80 node ./dist/app.js",
+    "dev": "nodemon ./src/app.js --exec \"node -r dotenv/config -r babel-register\"",
     "clean": "rimraf dist",
     "build": "npm run clean && mkdir -p dist && babel src -s -D -d dist --ignore src/public && cp -r src/public dist",
     "test": "jest --watch",

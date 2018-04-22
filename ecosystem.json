@@ -1,0 +1,39 @@
+{
+  "apps": [{
+    "name": "community",
+    "script": "dist/app.js",
+    "env": {
+      "COMMON_VARIABLE": "true"
+    },
+    "env_production": {
+      "NODE_ENV": "production"
+    }
+  }],
+  "deploy": {
+    "production": {
+      "user": "node",
+      "host": ["0.0.0.0"],
+      "port": "22",
+      "ref": "origin/master",
+      "repo": "https://github.com/xugy0926/community.git",
+      "path": "/var/www/production/community",
+      "ssh_options": "StrictHostKeyChecking=no",
+      "post-deploy": "yarn && yarn run build && pm2 startOrRestart ecosystem.json --env production",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "staging" : {
+      "user" : "node",
+      "host" : "0.0.0.0",
+      "ref"  : "origin/master",
+      "repo" : "https://github.com/xugy0926/community.git",
+      "path" : "/var/www/development/community",
+      "ssh_options": ["StrictHostKeyChecking=no", "PasswordAuthentication=no"],
+      "post-deploy": "yarn && yarn run build && pm2 startOrRestart ecosystem.json --env dev",
+      "env"  : {
+        "NODE_ENV": "staging"
+      }
+    }
+  }
+}

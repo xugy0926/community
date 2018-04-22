@@ -2,7 +2,7 @@ depoly:
 	@git pull
 	@yarn
 	@yarn run build
-	@NODE_ENV=production PORT=80 pm2 start dist/server.js --name "community"
+	@NODE_ENV=production PORT=80 pm2 start dist/app.js --name "community"
 
 update:
 	@git pull
