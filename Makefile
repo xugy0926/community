@@ -1,4 +1,4 @@
-depoly:
+deploy:
 	@git pull
 	@yarn
 	@yarn run build
