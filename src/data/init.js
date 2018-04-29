@@ -11,10 +11,10 @@ async function createAdmin() {
   try {
     const user = await findOne({ loginname: admin.loginname });
     if (!user) {
-      const passwordHash = bcrypt.hash(admin.password);
+      const passwordHash = await bcrypt.hash(admin.password,10);
       await create({
         loginname: admin.loginname,
-        passwordHash: passwordHash,
+        pass: passwordHash,
         email: admin.email,
         avatar: admin.avatar,
         active: true,
