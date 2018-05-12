@@ -76,7 +76,7 @@ export const inputSearchPasswordPage = async (req, res, next) => {
     if (user) {
       res.render('sign/inputSearchPassword', { key, loginname });
     } else {
-      next(new Error('请重新发起充值密码请求'));
+      next(new Error('请重新发起重置密码请求'));
     }
   } catch (err) {
     next(err);
