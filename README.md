@@ -94,3 +94,9 @@ or
 ```
 $ make update
 ```
+
+#### pm2 deploy
+
+```
+pm2 deploy ecosystem.json production --force
+```
