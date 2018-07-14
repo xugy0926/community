@@ -27,7 +27,7 @@
         <% if(post.isHtml) { %>
           <%- post.linkedContent %>
         <% } else { %>
-        <div class='<%=config.mdType%>'>
+        <div class='<%=config.mdType%>' v-pre>
           <%- marked(post.linkedContent) %>
         </div>
         <% } %>
