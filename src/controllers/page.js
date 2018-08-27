@@ -24,7 +24,9 @@ export const zonePage = async (req, res, next) => {
       template: zone.template,
       zoneId: zone._id,
       type: req.query.type,
-      createPanel: html
+      createPanel: html,
+      title: req.query.title || '',
+      content: req.query.content || ''
     });
   } catch (err) {
     next(err);

@@ -3,9 +3,9 @@
     <div class="d-flex w-100 justify-content-between">
       <div class="btn-group" role="group" aria-label="Basic example">
         <button type="button" class="btn btn-secondary" v-if="newest">最新</button>
-        <button type="button" class="btn btn-secondary" v-else v-on:click="onNewest">最新</button>
+        <button type="button" class="btn btn-secondary" v-else v-on:click="onNewest(true)">最新</button>
         <button type="button" class="btn btn-secondary" v-if="good">精华</button>
-        <button type="button" class="btn btn-secondary" v-else v-on:click="onGood">精华</button>
+        <button type="button" class="btn btn-secondary" v-else v-on:click="onGood(true)">精华</button>
       </div>
       <%- createPanel %>
     </div>
@@ -18,28 +18,37 @@
 </div>
 <script>
   const lily = Lily({
-    data: { good: false, url: dataPrefix + '/posts' },
+    data: { good: false, url: dataPrefix + '/posts', isClick: false },
     methods: {
       reset() {
         this.currentPage = 1;
         this.pages = 1;
         this.posts = [];
+        this.canLoadData = true;
       },
-      onNewest() {
+      onNewest(isClick) {
         this.good = false;
+        this.isClick = isClick;
         this.reset();
-        this.getPosts(this.url, { zoneId, currentPage: 1, good: this.good });
+        ((title || content) && !isClick)
+          ? this.getPosts(this.url, { zoneId, title, content,  currentPage: 1 })
+          : this.getPosts(this.url, { zoneId, currentPage: 1, good: this.good });
       },
-      onGood() {
+      onGood(isClick) {
         this.good = true;
+        this.isClick = isClick;
         this.reset();
         this.getPosts(this.url, { zoneId, currentPage: 1, good: this.good });
       },
       onLoadData() {
-        this.getPosts(this.url, { zoneId, currentPage: this.currentPage + 1, good: this.good });
+        (title || content) && !this.isClick
+          ? this.getPosts(this.url, { zoneId, title, content, currentPage: this.currentPage + 1 })
+          : this.getPosts(this.url, { zoneId, currentPage: this.currentPage + 1, good: this.good });
       }
     }
   });
-
-  lily.onNewest();
+  let title = '<%= typeof title !=="undefined" ? title : "" %>';
+  let content = '<%= typeof content !=="undefined" ? content : "" %>';
+  lily.onNewest(false);
+  
 </script>
