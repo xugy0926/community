@@ -8,21 +8,16 @@
       <div class="card-body">
         <div class="form-group">
           <input type="checkbox" class="form-checkbox-input" id="rawhtml" v-model="isHtml">
-          <label class="form-check-label" for="rawhtml">直接输入 html （如果没有特殊要求，请不要勾选）</label>
+          <label class="form-check-label" for="rawhtml">直接输入 html（默认为 markdown）</label>
         </div>
 
         <div class="form-group">
-          <input type="checkbox" class="form-checkbox-input" id="original" v-model="isOriginal">
-          <label class="form-check-label" for="original">原创请勾选，以保护你的权益</label>
-        </div>
-
-        <div class="form-group">
-          <input autofocus type="text" class="form-control" placeholder="标题字数 10 字以上" v-model="title">
+          <input autofocus type="text" class="form-control" placeholder="标题字数 5 字以上" v-model="title">
         </div>
 
         <!-- <ul id="postTags"></ul> -->
         <div class="form-group">
-          <textarea class="form-control" rows="20" placeholder="文章支持 Markdown 语法, 代码记得打标记" v-model="content"></textarea>
+          <textarea class="form-control" rows="20" placeholder="文章支持 Markdown 语法" v-model="content"></textarea>
         </div>
         <button class='btn btn-primary' v-on:click="onUploadImage">上传图片</button>
         <div class="text-right">
@@ -53,14 +48,13 @@
       advertisingMap: '',
       pageTitle: '编辑',
       post: '',
-      isHtml: false,
-      isOriginal: false
+      isHtml: false
     },
     methods: {
       onPublished(status) {
         status = typeof status !== 'undefined' ? status : 'P';
-        if (this.title === '' || this.title.length < 10) {
-          this.errorMsg = '标题不能为空，且需 10 个字或以上';
+        if (this.title === '' || this.title.length < 5) {
+          this.errorMsg = '标题不能为空，且需 5 个字或以上';
           return;
         }
 
@@ -75,7 +69,6 @@
           content: this.content,
           tags: getTags(),
           isHtml: this.isHtml,
-          isOriginal: this.isOriginal,
           status
         });
       },
@@ -120,7 +113,6 @@
       this.advertisingMap = this.post.advertisingMap || '';
       this.tags = this.post.tags || [];
       this.isHtml = this.post.isHtml;
-      this.isOriginal = this.post.isOriginal;
       this.content = this.post.content;
       updateTags(this.tags);
     }.bind(lily))

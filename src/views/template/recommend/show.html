@@ -1,41 +1,22 @@
 <div id="app" class="row justify-content-center">
   <div class="col-md-8">
-    <div class='ui feed'>
-      <div class="event">
-        <div class="label">
-          <img v-bind:src="post.author.avatar">
-        </div>
-        <div class="content">
-          <div class="summary">
-            <a>
-              <%=  post.author.loginname %>
-            </a> 推荐
-            <div class="date">
-              <%= post.updateAt %>
-            </div>
-          </div>
-          <div class="extra text" v-pre>
-            <%=  post.description %>
-          </div>
-          <div class="extra text">
-            <a href="<%= post.recommendUrl %>" target="_blank">
-              <%= post.title %>
-            </a>
-          </div>
-          <div class="meta">
-            <a class="like">
-              <i class="like icon"></i>
-              <%= post.ups.length %> Likes
-            </a>
-            <% if(currentUser 
-            && (currentUser._id === post.author._id.toString() 
-                || currentUser.isAdmin() 
-                || currentUser.isSupport())) {%>
-              <a class="popup icon item" href="<%= apiPrefix.page %>/edit/<%=post._id %>?zoneId=<%= post.zoneId %>">
-                <i class="edit icon"></i>
-              </a>
-              <% } %>
-          </div>
+    <div class="card">
+      <div class="card-header">
+        <%=  post.author.loginname %> 推荐
+      </div>
+      <div class="card-body">
+        <h5 class="card-title"><%= post.title %></h5>
+        <div class="card-text" v-pre><%=  post.description %></div>
+        <div class="mt-3">
+        <a href="<%= post.recommendUrl %>" class="btn btn-primary">阅读</a>
+        <% if(currentUser 
+        && (currentUser._id === post.author._id.toString() 
+            || currentUser.isAdmin() 
+            || currentUser.isSupport())) {%>
+          <a class="btn btn-primary" href="<%= apiPrefix.page %>/edit/<%=post._id %>?zoneId=<%= post.zoneId %>">
+            修改
+          </a>
+          <% } %>
         </div>
       </div>
     </div>

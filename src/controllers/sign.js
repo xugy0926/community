@@ -9,7 +9,6 @@ import config from '../config';
 import { isNil, isNotNil } from '../functions/type';
 import account from '../functions/account';
 import * as mail from '../common/mail';
-import * as authMiddleWare from '../middlewares/auth';
 import * as db from '../data/db';
 import User from '../data/models/user';
 

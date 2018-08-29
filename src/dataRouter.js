@@ -41,7 +41,6 @@ router.patch('/posts/:id', userRequired, post.update);
 router.patch('/posts/:id/tag', adminRequired, post.tag);
 router.patch('/posts/:id/up', userRequired, post.up);
 router.patch('/posts/:id/top', userRequired, post.top);
-router.patch('/posts/:id/good', userRequired, post.good);
 router.patch('/posts/:id/lock', userRequired, post.lock);
 router.patch('/posts/:id/collect', userRequired, post.collect);
 router.patch('/posts/:id/delCollect', userRequired, post.delCollect);

@@ -33,12 +33,6 @@
               <a v-else>
                 <i class="fa fa-hand-o-up"></i>
               </a>
-              <a class="text-danger" v-if="item.good">
-                <i class="fa fa-star-o"></i>
-              </a>
-              <a v-else>
-                <i class="fa fa-star-o"></i>
-              </a>
               <a class="text-danger" v-if="item.lock">
                 <i class="fa fa-lock"></i>
               </a>
@@ -62,8 +56,6 @@
                   <a class="dropdown-item" :href="'<%= apiPrefix.page %>/edit/' + item._id" target="_blank">编辑</a>
                   <a class="dropdown-item" v-if="item.top" v-on:click="onTop(index, false)">取消置顶</a>
                   <a class="dropdown-item" v-else v-on:click="onTop(index, true)">置顶</a>
-                  <a class="dropdown-item" v-if="item.good" v-on:click="onGood(index, false)">取消精华</a>
-                  <a class="dropdown-item" v-else v-on:click="onGood(index, true)">精华</a>
                   <a class="dropdown-item" v-if="item.lock" v-on:click="onLock(index, false)">取消锁定</a>
                   <a class="dropdown-item" v-else v-on:click="onLock(index, false)">锁定</a>
                   <a class="dropdown-item" v-on:click="onDelete(index)">删除</a>
@@ -133,15 +125,6 @@
           .then((result) => {
             this.successMsg = result.msg;
             this.posts[index].top = !this.posts[index].top;
-          })
-          .catch(this.error)
-      },
-      onGood(index) {
-        axios.patch(dataPrefix + '/posts/' + this.posts[index]._id + '/good', {})
-          .then(this.parse)
-          .then((result) => {
-            this.successMsg = result.msg;
-            this.posts[index].good = !this.posts[index].good;
           })
           .catch(this.error)
       },

@@ -28,27 +28,23 @@ async function fetchPosts(conditions, options) {
 
 export const more = async (req, res, next) => {
   const currentPage = parseInt(req.query.currentPage, 10) || 1;
+  const zoneId = req.query.zondId || '';
   const status = req.query.status || 'P';
   const authorId = req.query.authorId || '';
-  const good = validator.toBoolean(
-    typeof req.query.good !== 'undefined' ? req.query.good : 'false'
-  );
 
   const conditions = {};
+
+  if (zoneId !== '') {
+    conditions.zondId = zoneId;
+  }
 
   if (status !== 'all') {
     conditions.status = status;
   }
 
-  if (good) {
-    conditions.good = good;
-  }
-
   if (authorId) {
     conditions.authorId = authorId;
   }
-
-  conditions.zoneId = res.locals.zone._id;
 
   const limit = config.postListCount;
   const options = {
@@ -153,8 +149,6 @@ export const post = async (req, res, next) => {
   const isHtml = req.body.isHtml || false;
   const advertisingMap = req.body.advertisingMap || '';
   const recommendUrl = req.body.recommendUrl || '';
-  const isOriginal = req.body.isOriginal || false;
-  const authorId = req.user._id;
 
   if (title.length < 10) {
     return next(new Error('标题不能为空，且需 10 个字或以上'));
@@ -173,7 +167,6 @@ export const post = async (req, res, next) => {
     advertisingMap,
     recommendUrl,
     isHtml,
-    isOriginal
   };
 
   try {
@@ -217,13 +210,11 @@ export const update = async (req, res, next) => {
   const advertisingMap = req.body.advertisingMap || '';
   const recommendUrl = req.body.recommendUrl || '';
   const isHtml = req.body.isHtml || false;
-  const isOriginal = req.body.isOriginal || false;
 
-  if (title.length < 10) {
-    return next(new Error('标题不能为空，且需 10 个字或以上'));
+  if (title.length < 5) {
+    return next(new Error('标题不能为空，且需 5 个字或以上'));
   }
 
-  const isAdmin = req.user.isAdmin();
   const currentUserId = req.user._id;
 
   try {
@@ -241,7 +232,6 @@ export const update = async (req, res, next) => {
       advertisingMap,
       recommendUrl,
       isHtml,
-      isOriginal,
       updateAt: new Date()
     };
 
@@ -274,7 +264,6 @@ export const update = async (req, res, next) => {
 
 export const del = async (req, res, next) => {
   const id = req.params.id;
-  const isAdmin = req.user.isAdmin();
   const currentUserId = req.user._id;
 
   try {
@@ -295,7 +284,6 @@ export const tag = async (req, res, next) => {
   const tags = req.body.tags || [];
 
   try {
-    const post = await db.findOneById(Post)(id);
     await db.updateById(Post)(id)({
       tags
     });
@@ -312,21 +300,6 @@ export const top = async (req, res, next) => {
     const post = await db.findOneById(Post)(id);
     await db.updateById(Post)(id)({
       top: !post.top
-    });
-    res.end();
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const good = async (req, res, next) => {
-  const id = req.params.id;
-
-  try {
-    const post = await db.findOneById(Post)(id);
-
-    await db.updateById(Post)(id)({
-      good: !post.good
     });
     res.end();
   } catch (err) {
@@ -407,7 +380,6 @@ export const delCollect = async (req, res, next) => {
 export const status = async (req, res, next) => {
   const id = req.params.id;
   const status = req.body.status || 'saved';
-  const isAdmin = req.user.isAdmin();
   const currentUserId = req.user._id;
 
   try {

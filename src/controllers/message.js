@@ -1,13 +1,7 @@
 import R from 'ramda';
 import config from '../config';
-import props from '../functions/props';
-import conditionsIds from '../functions/conditionsIds';
-import { onlyMe } from '../functions/limit';
 import * as db from '../data/db';
-import Post from '../data/models/post';
-import User from '../data/models/user';
 import Message from '../data/models/message';
-import Reply from '../data/models/reply';
 
 const limit = config.postListCount;
 const pagesCount = R.divide(R.__, limit);
@@ -38,8 +32,6 @@ export const userMessages = async (req, res, next) => {
 
   try {
     const messages = await db.find(Message)({ masterId, hasRead })(options);
-
-    const find = db.find(R.__)(R.__, {});
 
     const pages = await db
       .count(Message)({ masterId, hasRead }, {})

@@ -1,7 +1,7 @@
 <div id="app" class="row justify-content-md-center">
-  <div class="col-md-6">
-    <div class="card border-primary">
-      <div class="card-header bg-primary text-white">
+  <div class="col-md-8">
+    <div class="card border-default">
+      <div class="card-header bg-default">
         {{ pageTitle }}
       </div>
       <div class="card-body">
@@ -18,7 +18,9 @@
         <div class="form-group">
           <textarea class="form-control" v-model="description" placeholder="推荐语" rows="6"></textarea>
         </div>
-        <button type="button" class="btn btn-primary" v-on:click="onPublished('P')">发布</button>
+        <div class="text-right">
+          <button type="button" class="btn btn-primary" v-on:click="onPublished('P')">发布</button>
+        </div>
       </div>
     </div>
   </div>

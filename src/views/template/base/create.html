@@ -6,7 +6,7 @@
       <div class="card-header">{{ pageTitle }}</div>
       <div class="card-body">
         <div class="alert alert-warning alert-dismissible alert-sm fade show" role="alert">
-          <strong>注意！</strong> 建议用编辑软件写文章，进来不要直接在网页上编辑，以避免网页崩溃导致数据丢失。
+          <strong>注意！</strong> 避免网页崩溃导致数据丢失，建议用编辑软件写文章。
           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -14,12 +14,7 @@
 
         <div class="form-group">
           <input type="checkbox" class="form-checkbox-input" id="rawhtml" v-model="isHtml">
-          <label class="form-check-label" for="rawhtml">直接输入 html （如果没有特殊要求，请不要勾选）</label>
-        </div>
-
-        <div class="form-group">
-          <input type="checkbox" class="form-checkbox-input" id="original" v-model="isOriginal">
-          <label class="form-check-label" for="original">原创请勾选，以保护你的权益</label>
+          <label class="form-check-label" for="rawhtml">直接输入 html（默认为 markdown）</label>
         </div>
 
         <div class="form-group">
@@ -29,7 +24,7 @@
 
         <!-- <ul id="postTags"></ul> -->
         <div class="form-group">
-          <textarea class="form-control" rows="20" placeholder="文章支持 Markdown 语法, 代码记得打标记" v-model="content"></textarea>
+          <textarea class="form-control" rows="20" placeholder="文章支持 Markdown 语法" v-model="content"></textarea>
         </div>
         <button class='btn btn-primary' v-on:click="onUploadImage">上传图片</button>
         <div class="text-right">
@@ -59,8 +54,7 @@
       advertisingMap: '',
       pageTitle: '新建',
       post: '',
-      isHtml: false,
-      isOriginal: false
+      isHtml: false
     },
     methods: {
       onPublished(status) {
@@ -82,7 +76,6 @@
           content: this.content,
           tags: getTags(),
           isHtml: this.isHtml,
-          isOriginal: this.isOriginal,
           status
         });
       },

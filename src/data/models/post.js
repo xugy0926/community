@@ -16,9 +16,8 @@ const PostSchema = new Schema(
       content: { type: String },
       authorId: { type: ObjectId },
       recommendUrl: { type: String },
-      top: { type: Boolean, default: false }, // 置顶帖
-      good: { type: Boolean, default: false }, // 精华帖
-      lock: { type: Boolean, default: false }, // 被锁定主题
+      top: { type: Boolean, default: false },
+      lock: { type: Boolean, default: false },
       replyCount: { type: Number, default: 0 },
       visitCount: { type: Number, default: 0 },
       collectCount: { type: Number, default: 0 },
@@ -31,8 +30,7 @@ const PostSchema = new Schema(
       tags: [String],
       isHtml: { type: Boolean, default: false },
       area: { type: String },
-      ups: [Schema.Types.ObjectId],
-      isOriginal: { type: Boolean, default: false }
+      ups: [Schema.Types.ObjectId]
     },
     base
   )

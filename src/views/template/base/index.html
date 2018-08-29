@@ -1,0 +1,30 @@
+<div id="app" class="row justify-content-center">
+  <div class="col-md-10">
+
+    <%- partial('./posts') %>
+
+    <button v-if="canLoadData && posts.length > 0" class="btn btn-primary btn-lg btn-block" v-bind:class="{ loading: isLoading }"
+      v-on:click="onLoadData">更多</button>
+  </div>
+</div>
+<script>
+  const lily = Lily({
+    data: { url: dataPrefix + '/posts' },
+    methods: {
+      reset() {
+        this.currentPage = 1;
+        this.pages = 1;
+        this.posts = [];
+      },
+      onNewest() {
+        this.reset();
+        this.getPosts(this.url, { currentPage: 1 });
+      },
+      onLoadData() {
+        this.getPosts(this.url, { currentPage: this.currentPage + 1 });
+      }
+    }
+  });
+
+  lily.onNewest();
+</script>

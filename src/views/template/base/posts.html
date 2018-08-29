@@ -1,19 +1,14 @@
-<div class="list-group">
-  <a :href="'/post/' + item._id" class="list-group-item list-group-item-action flex-column align-items-start" v-for="item in posts">
-    <div class="d-flex">
-      <img class="rounded-circle avatar" v-bind:src="item.author.avatar" alt="">
-      <div class="w-100">
-        <div class="d-flex mr-9 justify-content-between pl-3">
-          <h6 class="mb-1">
-            <span class="badge badge-secondary" v-if="item.isOriginal">原创</span> 
-            {{ item.title }}
-          </h6>
-          <small>
-            <span class="badge badge-secondary badge-pill">{{ item.replyCount }}</span>
-          </small>
-        </div>
-        <p class="mb-1 pl-3">{{ item.author.loginname }}  <small>{{ dateFns.distanceInWordsToNow(item.updateAt) }}</small></p>
-      </div>
+<div class="list-group mb-2">
+  <a 
+    :href="'/post/' + item._id" 
+    class="list-group-item list-group-item-action flex-column align-items-start" 
+    v-bind:class="{'list-side-blue': item.recommendUrl === '', 'list-side-red': item.recommendUrl !== ''}"
+    v-for="item in posts">
+    <div class="d-flex w-100 justify-content-between">
+      <h5 class="mb-2">
+        {{ item.title }} 
+      </h5>
     </div>
+    <small class="text-muted">{{ item.author.loginname }} {{ dateFns.distanceInWordsToNow(item.updateAt) }}</small>
   </a>
 </div>

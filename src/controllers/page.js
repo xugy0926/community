@@ -1,30 +1,20 @@
 import fs from 'fs';
 import path from 'path';
 import marked from '../common/marked';
-import suggestGoodPosts from '../components/suggestPostsPanel';
-import createPanel from '../components/createPanel';
 import * as db from '../data/db';
 import * as transaction from '../data/transaction';
 import Zone from '../data/models/zone';
-import Post from '../data/models/post';
 import User from '../data/models/user';
 import PostCollect from '../data/models/postCollect';
-import Profile from '../data/models/profile';
 
 export const indexPage = async (req, res, next) => {
   res.render('index');
 };
 
-export const zonePage = async (req, res, next) => {
+export const allPostsPage = async (req, res, next) => {
   try {
-    const zone = res.locals.zone;
-    const html = await createPanel(zone);
-    res.render(`template/${zone.template}/index`, {
-      zoneKey: zone.key,
-      template: zone.template,
-      zoneId: zone._id,
-      type: req.query.type,
-      createPanel: html
+    res.render(`template/base/index`, {
+      type: req.query.type
     });
   } catch (err) {
     next(err);

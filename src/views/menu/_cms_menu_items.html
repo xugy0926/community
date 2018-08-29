@@ -1,8 +1,0 @@
-<% if(currentUser && (currentUser.isAdmin() || currentUser.isSupport())) { %>
-  <a class="dropdown-item" href="<%= apiPrefix.page %>/cms/index"><i class="fa fa-book fa-fw"></i> 文章管理</a>
-  <% if(currentUser.isAdmin()) { %>
-  <a class="dropdown-item" href="<%= apiPrefix.page %>/cms/zone"><i class="fa fa-align-justify fa-fw"></i> 菜单管理</a>
-  <a class="dropdown-item" href="<%= apiPrefix.page %>/cms/user"><i class="fa fa-user fa-fw"></i> 用户管理</a>
-  <a class="dropdown-item" href="<%= apiPrefix.page %>/cms/profile"><i class="fa fa-cog fa-fw"></i> 配置管理</a>
-  <% } %>
-<% } %>

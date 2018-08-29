@@ -1,37 +1,18 @@
 <div id="app" class="row justify-content-center">
   <div class="col-md-10">
-    <h3 class="">
+    <h1>
       <%= post.title %> 
-    </h3>
+    </h1>
     <div>
-      <% if(post.isOriginal) { %>
-      <span class="badge badge-secondary">原创</span>
-      <% } %>
     </div>
-    <div class="card mt-3">
-      <div class="card-header">
-        <img class="avatar-sm" src="<%= post.author.avatar %>" />
-        <a href="<%= apiPrefix.page %>/user/<%= post.author._id %>/info">
-          <%= post.author.loginname %>
-        </a>
-        <span class="date">
-          <%= post.updateAt %>
-        </span>
+    <div class="mt-3">
+      <% if(post.isHtml) { %>
+        <%- post.linkedContent %>
+      <% } else { %>
+      <div class='<%=config.mdType%>' v-pre>
+        <%- marked(post.linkedContent) %>
       </div>
-      <div class="card-body" v-pre>
-        <% if(post.isOriginal) { %>
-        <div class="alert alert-warning" role="alert">
-          <p class="font-weight-bold">版权声明</p> 本文仅用于学习、研究和交流目的，欢迎非商业转载。转载请注明出处、作者和一起学JS的完整链接。
-        </div>
-        <% } %>
-        <% if(post.isHtml) { %>
-          <%- post.linkedContent %>
-        <% } else { %>
-        <div class='<%=config.mdType%>' v-pre>
-          <%- marked(post.linkedContent) %>
-        </div>
-        <% } %>
-      </div>
+      <% } %>
       <div class="card-footer bg-white pt-0 pb-0">
         <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
           <div class="btn-group mr-2" role="group" aria-label="First group">

@@ -1,0 +1,16 @@
+<% if(currentUser) { %>
+  <ul class="navbar-nav flex-row">
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" href="#" id="cmsMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fa fa-plus fa-fw"></i>
+      </a>
+      <div class="dropdown-menu" aria-labelledby="cmsMenuLink">
+        <% if (typeof(navs) !== 'undefined') {
+          navs.forEach(function(item) {
+        %>
+        <a class="dropdown-item" href="<%= apiPrefix.page %>/new?zoneId=<%= item._id %>"><%= item.createText %></a>
+        <% })} %>
+      </div>
+    </li>
+  </ul>
+<% } %>

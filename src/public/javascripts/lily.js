@@ -36,8 +36,6 @@
         canLoadData: true,
         isLoading: false,
         pages: 1,
-        newest: false,
-        good: false,
         postId: '',
         title: '',
         content: '',
@@ -155,9 +153,6 @@
         getPosts(url, params) {
           if (!this.canLoadData) return;
           this.isLoading = true;
-          this.newest =
-            typeof params.good !== 'undefined' ? !params.good : true;
-          this.good = typeof params.good !== 'undefined' ? params.good : false;
           axios
             .get(url, { params })
             .then(this.parse)

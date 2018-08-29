@@ -4,7 +4,7 @@ import { onlyMe, withoutMe } from '../functions/limit';
 import * as at from '../common/at';
 import getPages from '../common/pages';
 import config from '../config';
-import { sendReplyMail, sendUpReplyMail } from '../common/mail';
+import { sendReplyMail } from '../common/mail';
 import * as db from '../data/db';
 import Post from '../data/models/post';
 import Reply from '../data/models/reply';

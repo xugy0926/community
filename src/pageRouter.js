@@ -30,8 +30,8 @@ router.get('/user/:id/collectPosts', page.userCollectPostsPage);
 router.get('/user/messages', userRequired, page.myMessagesPage);
 router.get('/user/messages/all', userRequired, page.allMessagePage);
 
-// zone
-router.get('/zone', page.zonePage);
+// posts
+router.get('/posts', page.allPostsPage);
 
 // post
 router.get('/post/:id', page.showPostPage);
