@@ -18,7 +18,6 @@
         username: '',
         userId: '',
         password: '',
-        rePassword: '',
         email: '',
         weixin: '',
         qq: '',
@@ -80,7 +79,6 @@
             .post(dataPrefix + '/user/signup', {
               loginname: this.loginname,
               password: this.password,
-              rePassword: this.rePassword,
               email: this.email
             })
             .then(this.parse)

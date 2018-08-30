@@ -20,7 +20,7 @@ router.post('/user/signin', sign.signin);
 router.post('/user/signout', sign.signout);
 
 router.post('/user/createSearchPassword', sign.createSearchPassword);
-router.post('/user/authSearchPassword', sign.authSearchPassword);
+router.post('/user/resetPassword', sign.resetPassword);
 router.post('/user/:id/resetPassword', userRequired, sign.updateResetPassword);
 
 // user

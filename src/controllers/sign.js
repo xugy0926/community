@@ -28,10 +28,9 @@ export const signup = async (req, res, next) => {
   const loginname = R.toLower(R.trim(req.body.loginname || ''));
   const email = R.toLower(R.trim(req.body.email || ''));
   const password = R.trim(req.body.password || '');
-  const rePassword = R.trim(req.body.rePassword || '');
 
   // 验证信息的正确性
-  if ([loginname, password, rePassword, email].some(item => item === '')) {
+  if ([loginname, password, email].some(item => item === '')) {
     return next(new Error('信息不完整'));
   }
   if (loginname.length < 5) {
@@ -42,9 +41,6 @@ export const signup = async (req, res, next) => {
   }
   if (!validator.isEmail(email)) {
     return next(new Error('邮箱不合法'));
-  }
-  if (!R.equals(password, rePassword)) {
-    return next(new Error('两次密码输入不一致'));
   }
 
   try {
@@ -181,15 +177,10 @@ export const createSearchPassword = async (req, res, next) => {
   }
 };
 
-export const authSearchPassword = async (req, res, next) => {
+export const resetPassword = async (req, res, next) => {
   const key = R.trim(req.body.key || '');
   const loginname = R.trim(req.body.loginname || '');
   const password = R.trim(req.body.password || '');
-  const rePassword = R.trim(req.body.rePassword || '');
-
-  if (password !== rePassword) {
-    return next(new Error('输入的密码不一致'));
-  }
 
   try {
     const doc = await findOne({
