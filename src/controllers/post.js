@@ -17,7 +17,7 @@ import PostCollect from '../data/models/postCollect';
 
 async function fetchPosts(conditions, options) {
   try {
-    const pages = await getPages(db.count(Post))('pages')(conditions);
+    const pages = await getPages(db.count(Post))(conditions);
     const posts = await db.find(Post)(conditions)(options);
     const authors = await db.find(User)(conditionsIds(props('authorId')(posts)))({});
     return Promise.resolve([posts, pages, authors]);
@@ -150,8 +150,8 @@ export const post = async (req, res, next) => {
   const advertisingMap = req.body.advertisingMap || '';
   const recommendUrl = req.body.recommendUrl || '';
 
-  if (title.length < 10) {
-    return next(new Error('标题不能为空，且需 10 个字或以上'));
+  if (title.length < 5) {
+    return next(new Error('标题不能为空，且需 5 个字或以上'));
   }
 
   const data = {

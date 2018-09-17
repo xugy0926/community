@@ -3,32 +3,32 @@
   <input type="hidden" id="zone-object" value="<%= typeof(zone) !== 'undefined' ? JSON.stringify(zone) : '' %>" />
   <!-- <%- partial('_advertisingMap') %> -->
   <%- partial('../../_notice') %>
-    <div class="card w-100">
-      <div class="card-header">{{ pageTitle }}</div>
-      <div class="card-body">
-        <div class="form-group">
-          <input type="checkbox" class="form-checkbox-input" id="rawhtml" v-model="isHtml">
-          <label class="form-check-label" for="rawhtml">直接输入 html（默认为 markdown）</label>
-        </div>
+  <div class="card w-100">
+    <div class="card-header">{{ pageTitle }}</div>
+    <div class="card-body">
+      <div class="form-group">
+        <input type="checkbox" class="form-checkbox-input" id="rawhtml" v-model="isHtml">
+        <label class="form-check-label" for="rawhtml">直接输入 html（默认为 markdown）</label>
+      </div>
 
-        <div class="form-group">
-          <input autofocus type="text" class="form-control" placeholder="标题字数 5 字以上" v-model="title">
-        </div>
+      <div class="form-group">
+        <input autofocus type="text" class="form-control" placeholder="标题字数 5 字以上" v-model="title">
+      </div>
 
-        <!-- <ul id="postTags"></ul> -->
-        <div class="form-group">
-          <textarea class="form-control" rows="20" placeholder="文章支持 Markdown 语法" v-model="content"></textarea>
-        </div>
-        <button class='btn btn-primary' v-on:click="onUploadImage">上传图片</button>
-        <div class="text-right">
-          <button class="btn btn-primary" v-on:click="onPreview">预览</button>
-          <button class='btn btn-primary' v-on:click="onPublished('D')">保存草稿</button>
-          <button class='btn btn-primary' v-on:click="onPublished('P')">发布</button>
-        </div>
+      <!-- <ul id="postTags"></ul> -->
+      <div class="form-group">
+        <textarea class="form-control" rows="20" placeholder="文章支持 Markdown 语法" v-model="content"></textarea>
+      </div>
+      <button class='btn btn-primary' v-on:click="onUploadImage">上传图片</button>
+      <div class="text-right">
+        <button class="btn btn-primary" v-on:click="onPreview">预览</button>
+        <button class='btn btn-primary' v-on:click="onPublished('D')">保存草稿</button>
+        <button class='btn btn-primary' v-on:click="onPublished('P')">发布</button>
       </div>
     </div>
+  </div>
 
-    <%- partial('_preview_modal') %>
+  <%- partial('_preview_modal') %>
 </div>
 
 <script>

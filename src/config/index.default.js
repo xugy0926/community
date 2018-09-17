@@ -62,13 +62,6 @@ module.exports = {
     url: 'mongodb://127.0.0.1:27017/community'
   },
 
-  redis: {
-    host: '127.0.0.1',
-    port: 6379,
-    db: 0,
-    password: ''
-  },
-
   upload: {
     path: path.join(__dirname, '../upload/'),
     url: '/static/'

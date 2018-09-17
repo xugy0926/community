@@ -67,7 +67,7 @@ export const users = async (req, res, next) => {
       sort: '-createAt'
     };
 
-    const pages = await getPages(db.count(User))('users')({});
+    const pages = await getPages(db.count(User))({});
     const users = await db.find(User)({})(options);
     res.json({ users, pages, currentPage });
   } catch (err) {

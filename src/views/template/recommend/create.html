@@ -1,5 +1,6 @@
 <div id="app" class="row justify-content-md-center">
   <div class="col-md-8">
+    <%- partial('../../_notice') %>
     <div class="card border-default">
       <div class="card-header bg-default">
         {{ pageTitle }}
@@ -34,6 +35,17 @@
     methods: {
       onPublished: function (status) {
         status = typeof status !== 'undefined' ? status : 'P';
+
+        if (this.title === '' || this.title.length < 5) {
+          this.errorMsg = '标题不能为空，且需 5 个字或以上';
+          return;
+        }
+
+        if (this.content === '') {
+          this.errorMsg = '内容不能为空'
+          return;
+        }
+
         this.createPost({
           zoneId,
           title: this.title,

@@ -1,11 +1,9 @@
 <div id="app" class="row justify-content-center">
   <div class="col-md-10">
-    <h1>
+    <h1 class="mb-5">
       <%= post.title %> 
     </h1>
-    <div>
-    </div>
-    <div class="mt-3">
+    <div class="mt-3">
       <% if(post.isHtml) { %>
         <%- post.linkedContent %>
       <% } else { %>
@@ -13,7 +11,7 @@
         <%- marked(post.linkedContent) %>
       </div>
       <% } %>
-      <div class="card-footer bg-white pt-0 pb-0">
+      <div class="card-footer bg-white pt-0 pb-0 mt-5">
         <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
           <div class="btn-group mr-2" role="group" aria-label="First group">
             <button type="button" class="btn btn-white text-secondary" v-if="ups > 0" v-on:click="onUpPost(postId)">

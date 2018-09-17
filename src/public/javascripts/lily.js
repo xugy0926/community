@@ -41,6 +41,7 @@
         description: '',
         advertisingMap: '',
         recommendUrl: '',
+        isHtml: false,
         errorMsg: '',
         successMsg: ''
       }),

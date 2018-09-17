@@ -19,7 +19,7 @@ export const more = async (req, res, next) => {
   const options = { skip: (currentPage - 1) * limit, limit, sort: '_createAt' };
 
   try {
-    const pages = await getPages(db.count(Reply))('reply-post')(conditions);
+    const pages = await getPages(db.count(Reply))(conditions);
     const replies = await db.find(Reply)(conditions)(options);
     const authors = await db.find(User)(
       { _id: { $in: props('authorId')(replies) } },

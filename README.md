@@ -15,7 +15,6 @@
 #### Data storage
 
 - mongodb
-- redis
 
 #### Quick Start
 
@@ -37,7 +36,6 @@ $ yarn
 The three most important configurations
 
 - mongodb
-- redis
 - github，获取 github 登录用的信息请参考 https://github.com/settings/developers
 
 4. Run dev

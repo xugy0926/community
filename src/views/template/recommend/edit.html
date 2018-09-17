@@ -1,5 +1,6 @@
 <div id="app" class="row justify-content-md-center">
-  <div class="col-md-6">
+  <div class="col-md-8">
+    <%- partial('../../_notice') %>
     <input type="hidden" id="zone-object" value="<%= typeof(zone) !== 'undefined' ? JSON.stringify(zone) : '' %>" />
     <div class="card border-primary">
       <div class="card-header bg-primary text-white">
