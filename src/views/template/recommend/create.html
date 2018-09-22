@@ -41,8 +41,13 @@
           return;
         }
 
-        if (this.content === '') {
-          this.errorMsg = '内容不能为空'
+        if (this.recommendUrl === '') {
+          this.errorMsg = '链接不能为空'
+          return;
+        }
+
+        if (this.description === '') {
+          this.errorMsg = '推荐语不能未空'
           return;
         }
 

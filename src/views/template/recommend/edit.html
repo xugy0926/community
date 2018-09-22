@@ -42,8 +42,13 @@
         }
 
         if (this.recommendUrl === '') {
-          this.errorMsg = '内容为空'
-          return
+          this.errorMsg = '链接不能为空'
+          return;
+        }
+
+        if (this.description === '') {
+          this.errorMsg = '推荐语不能未空'
+          return;
         }
 
         lily.savePost(postId, {
