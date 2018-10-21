@@ -1,0 +1,16 @@
+<div id="search" class="col-md-3">
+    <input v-model="searchWords" @keyup.enter="search" type="text" class="form-control" placeholder="搜索">
+  </div>
+<script>
+new Vue ({
+    el: "#search",
+    data: {
+        searchWords: ''
+    },
+    methods: {
+        search () {
+            return window.location = dataPrefix + '/search?q=' + this.searchWords;
+        }
+    }  
+})
+</script>
