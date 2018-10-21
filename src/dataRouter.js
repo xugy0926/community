@@ -4,6 +4,7 @@ import * as user from './controllers/user';
 import * as message from './controllers/message';
 import * as post from './controllers/post';
 import * as reply from './controllers/reply';
+import { search } from './controllers/search';
 
 import {
   authRequired,
@@ -59,5 +60,8 @@ router.post('/message/unread/count', userRequired, message.unreadCount);
 router.post('/message/data', userRequired, message.userMessages);
 router.post('/message/read', userRequired, message.read);
 router.patch('/message/toRead', userRequired, message.toRead);
+
+// search
+router.get('/search', search);
 
 export default router;
